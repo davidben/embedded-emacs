@@ -25,4 +25,5 @@ env = conf.Finish()
 
 env.ParseConfig('pkg-config --cflags --libs nspr')
 
-env.SharedLibrary('emacs-npapi', ['plugin.cc'])
+env.SharedLibrary('emacs-npapi', ['plugin.cc',
+                                  'emacsinstance.cc'])
