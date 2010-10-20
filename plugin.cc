@@ -1,5 +1,7 @@
 #include "plugin.h"
 
+#include <prtypes.h>
+
 #include <algorithm>
 #include <cstring>
 
@@ -48,6 +50,14 @@ NP_EXPORT(NPError) OSCALL NP_Initialize(NPNetscapeFuncs* bFuncs,
     NPError err = initializeBrowserFuncs(bFuncs);
     if (err != NPERR_NO_ERROR)
         return err;
+
+    // Require XEmbed support.
+    PRBool has_xembed = PR_FALSE;
+    if (!g_browser_functions.getvalue)
+        return NPERR_INCOMPATIBLE_VERSION_ERROR;
+    err = g_browser_functions.getvalue(NULL, NPNVSupportsXEmbedBool, &has_xembed);
+    if (err != NPERR_NO_ERROR || !has_xembed)
+        return NPERR_INCOMPATIBLE_VERSION_ERROR;
 
     // On Unix, it looks like NP_GetEntryPoints isn't called directly?
     // The prototype for NP_Initialize is different from everyone
