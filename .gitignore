@@ -1,3 +1,5 @@
 *.os
 libemacs-npapi.so
+
 .sconsign.dblite
+config.log
