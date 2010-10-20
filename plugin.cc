@@ -70,3 +70,9 @@ NP_EXPORT(NPError) OSCALL NP_GetValue(void *instance,
     }
     return err;
 }
+
+// This probably should be const char *, but NPAPI messed up.
+NP_EXPORT(char*) OSCALL NP_GetMIMEDescription(void)
+{
+    return const_cast<char*>("application/x-emacs-npapi::Embed emacs with NPAPI");
+}
