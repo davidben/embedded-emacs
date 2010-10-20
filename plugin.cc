@@ -105,21 +105,24 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance,
                 uint16_t mode, int16_t argc, char* argn[],
                 char* argv[], NPSavedData* saved)
 {
-    return NPERR_GENERIC_ERROR;
+    // TODO: Pass some of these arguments in??
+    EmacsInstance* emacs = new EmacsInstance();
+    instance->pdata = emacs;
+    return NPERR_NO_ERROR;
 }
 
 NPError NPP_Destroy(NPP instance, NPSavedData** save)
 {
-    if (!instance || !instance->pdata)
+    if (!instance->pdata)
         return NPERR_INVALID_INSTANCE_ERROR;
-    EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
-    delete emacs;
+    delete static_cast<EmacsInstance*>(instance->pdata);
+    instance->pdata = NULL;
     return NPERR_NO_ERROR;
 }
 
 NPError NPP_SetWindow(NPP instance, NPWindow* window)
 {
-    if (!instance || !instance->pdata)
+    if (!instance->pdata)
         return NPERR_INVALID_INSTANCE_ERROR;
     EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
     return emacs->setWindow(window);
