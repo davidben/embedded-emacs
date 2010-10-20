@@ -81,7 +81,7 @@ NP_EXPORT(NPError) OSCALL NP_GetValue(void *instance,
                     "Embeds emacs into your browser window with XEmbed.";
             break;
         default:
-            err = NPERR_GENERIC_ERROR;
+            err = NPERR_INVALID_PARAM;
     }
     return err;
 }
@@ -128,7 +128,7 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value)
             *reinterpret_cast<PRBool*>(value) = PR_TRUE;
             break;
         default:
-            err = NPERR_GENERIC_ERROR;
+            err = NPERR_INVALID_PARAM;
     }
     return err;
 }
