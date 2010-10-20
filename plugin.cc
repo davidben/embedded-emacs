@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstring>
 
+#include "emacsinstance.h"
 #include "npapi-headers/npfunctions.h"
 
 NPNetscapeFuncs g_browser_functions = { 0 };
@@ -35,6 +36,8 @@ NP_EXPORT(NPError) OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 {
     pFuncs->size = sizeof(*pFuncs);
     pFuncs->version = 0; // My version?
+    pFuncs->newp = NPP_New;
+    pFuncs->destroy = NPP_Destroy;
     // TODO: implement the functions I need.
     return NPERR_NO_ERROR;
 }
@@ -75,4 +78,20 @@ NP_EXPORT(NPError) OSCALL NP_GetValue(void *instance,
 NP_EXPORT(char*) OSCALL NP_GetMIMEDescription(void)
 {
     return const_cast<char*>("application/x-emacs-npapi::Embed emacs with NPAPI");
+}
+
+/*****************************/
+/* NPP Functions             */
+/*****************************/
+
+NPError NPP_New(NPMIMEType pluginType, NPP instance,
+                uint16_t mode, int16_t argc, char* argn[],
+                char* argv[], NPSavedData* saved)
+{
+    return NPERR_GENERIC_ERROR;
+}
+
+NPError NPP_Destroy(NPP instance, NPSavedData** save)
+{
+    return NPERR_GENERIC_ERROR;
 }
