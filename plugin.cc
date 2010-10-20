@@ -86,6 +86,11 @@ NP_EXPORT(NPError) OSCALL NP_GetValue(void *instance,
     return err;
 }
 
+NP_EXPORT(NPError) OSCALL NP_Shutdown(void)
+{
+    return NPERR_NO_ERROR;
+}
+
 // This probably should be const char *, but NPAPI messed up.
 NP_EXPORT(char*) OSCALL NP_GetMIMEDescription(void)
 {
