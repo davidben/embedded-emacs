@@ -51,3 +51,22 @@ NP_EXPORT(NPError) OSCALL NP_Initialize(NPNetscapeFuncs* bFuncs,
     // else. Meh.
     return NP_GetEntryPoints(pFuncs);
 }
+
+NP_EXPORT(NPError) OSCALL NP_GetValue(void *instance,
+                                      NPPVariable variable,
+                                      void *value)
+{
+    NPError err = NPERR_NO_ERROR;
+    switch (variable) {
+        case NPPVpluginNameString:
+            *reinterpret_cast<const char **>(value) = "Embedded Emacs";
+            break;
+        case NPPVpluginDescriptionString:
+            *reinterpret_cast<const char **>(value) =
+                    "Embeds emacs into your browser window with XEmbed.";
+            break;
+        default:
+            err = NPERR_GENERIC_ERROR;
+    }
+    return err;
+}
