@@ -114,7 +114,10 @@ NPError NPP_Destroy(NPP instance, NPSavedData** save)
 
 NPError NPP_SetWindow(NPP instance, NPWindow* window)
 {
-    return NPERR_GENERIC_ERROR;
+    if (!instance || !instance->pdata)
+        return NPERR_INVALID_INSTANCE_ERROR;
+    EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
+    return emacs->setWindow(window);
 }
 
 NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value)
