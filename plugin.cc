@@ -105,7 +105,11 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance,
 
 NPError NPP_Destroy(NPP instance, NPSavedData** save)
 {
-    return NPERR_GENERIC_ERROR;
+    if (!instance || !instance->pdata)
+        return NPERR_INVALID_INSTANCE_ERROR;
+    EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
+    delete emacs;
+    return NPERR_NO_ERROR;
 }
 
 NPError NPP_SetWindow(NPP instance, NPWindow* window)
