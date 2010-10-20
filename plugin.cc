@@ -40,6 +40,8 @@ NP_EXPORT(NPError) OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
     pFuncs->version = 0; // My version?
     pFuncs->newp = NPP_New;
     pFuncs->destroy = NPP_Destroy;
+    pFuncs->setwindow = NPP_SetWindow;
+    pFuncs->getvalue = NPP_GetValue;
     // TODO: implement the functions I need.
     return NPERR_NO_ERROR;
 }
@@ -104,4 +106,22 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance,
 NPError NPP_Destroy(NPP instance, NPSavedData** save)
 {
     return NPERR_GENERIC_ERROR;
+}
+
+NPError NPP_SetWindow(NPP instance, NPWindow* window)
+{
+    return NPERR_GENERIC_ERROR;
+}
+
+NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value)
+{
+    NPError err = NPERR_NO_ERROR;
+    switch (variable) {
+        case NPPVpluginNeedsXEmbed:
+            *reinterpret_cast<PRBool*>(value) = PR_TRUE;
+            break;
+        default:
+            err = NPERR_GENERIC_ERROR;
+    }
+    return err;
 }
