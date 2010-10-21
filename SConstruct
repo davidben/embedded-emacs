@@ -23,7 +23,8 @@ if not conf.CheckPKG('nspr'):
     Exit(1)
 env = conf.Finish()
 
-env.ParseConfig('pkg-config --cflags --libs nspr')
+# Only pull in the header files; link against NSPR later if needbe.
+env.ParseConfig('pkg-config --cflags nspr')
 
 env.SharedLibrary('emacs-npapi', ['plugin.cc',
                                   'emacsinstance.cc'])
