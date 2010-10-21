@@ -37,7 +37,7 @@ NPError initializeBrowserFuncs(NPNetscapeFuncs* bFuncs)
 NP_EXPORT(NPError) OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 {
     pFuncs->size = sizeof(*pFuncs);
-    pFuncs->version = 0; // My version?
+    pFuncs->version = (NP_VERSION_MAJOR << 8) + NP_VERSION_MINOR;
     pFuncs->newp = NPP_New;
     pFuncs->destroy = NPP_Destroy;
     pFuncs->setwindow = NPP_SetWindow;
