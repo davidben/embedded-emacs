@@ -16,6 +16,8 @@ public:
 		const NPVariant *args,
 		uint32_t argCount,
 		NPVariant *result);
+    bool enumerate(NPIdentifier **identifiers, uint32_t *identifierCount);
+
 
     static NPObject* allocateThunk(NPP npp, NPClass *aClass);
     static void deallocateThunk(NPObject *npobj);
@@ -24,6 +26,8 @@ public:
     static bool invokeThunk(NPObject *npobj, NPIdentifier name,
 			    const NPVariant *args, uint32_t argCount,
 			    NPVariant *result);
+    static bool enumerateThunk(NPObject *npobj, NPIdentifier **identifiers,
+			       uint32_t *identifierCount);
 
 private:
     ScriptObject(NPP npp);

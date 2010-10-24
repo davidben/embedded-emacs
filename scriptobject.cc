@@ -17,7 +17,7 @@ NPClass npclass = {
     NULL,  // getProperty
     NULL,  // setProperty
     NULL,  // removeProperty
-    NULL,  // enumerate
+    ScriptObject::enumerateThunk,  // enumerate
     NULL,  // construct
 };
 
@@ -70,6 +70,19 @@ bool ScriptObject::invoke(NPIdentifier name,
     return false;
 }
 
+bool ScriptObject::enumerate(NPIdentifier **identifiers,
+                             uint32_t *identifierCount)
+{
+    NPIdentifier* properties =
+            static_cast<NPIdentifier*>(NPN_MemAlloc(sizeof(NPIdentifier) * 1));
+    if (!properties) return false;
+
+    properties[0] = identifier::startEditor();
+
+    *identifiers = properties;
+    *identifierCount = 1;
+    return true;
+}
 
 // static
 NPObject* ScriptObject::allocateThunk(NPP npp, NPClass *aClass)
@@ -102,4 +115,12 @@ bool ScriptObject::invokeThunk(NPObject *npobj, NPIdentifier name,
 {
     return static_cast<ScriptObject*>(npobj)->invoke(name, args, argCount,
                                                      result);
+}
+
+// static
+bool ScriptObject::enumerateThunk(NPObject *npobj, NPIdentifier **identifiers,
+                                  uint32_t *identifierCount)
+{
+    return static_cast<ScriptObject*>(npobj)->enumerate(identifiers,
+                                                        identifierCount);
 }
