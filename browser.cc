@@ -40,6 +40,13 @@ NPError NP_LOADDS NPN_GetValue(NPP instance, NPNVariable variable,
     return g_browser_functions.getvalue(instance, variable, value);
 }
 
+void* NP_LOADDS NPN_MemAlloc(uint32_t size)
+{
+    if (!g_browser_functions.memalloc)
+        return NULL;
+    return g_browser_functions.memalloc(size);
+}
+
 NPObject *NPN_CreateObject(NPP npp, NPClass *aClass)
 {
     if (!g_browser_functions.createobject)
