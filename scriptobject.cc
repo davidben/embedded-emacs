@@ -58,15 +58,22 @@ bool ScriptObject::invoke(NPIdentifier name,
                           uint32_t argCount,
                           NPVariant *result)
 {
+    if (!hasMethod(name))
+        return false;
+
     EmacsInstance* emacs = emacsInstance();
-    if (name == identifier::startEditor()) {
-        if (emacs) {
-            emacs->startEditor();
-        }
+    if (!emacs) {
         // TODO: raise an exception if the emacs is missing?
         VOID_TO_NPVARIANT(*result);
         return true;
     }
+
+    if (name == identifier::startEditor()) {
+        emacs->startEditor();
+        VOID_TO_NPVARIANT(*result);
+        return true;
+    }
+    // Shouldn't happen.
     return false;
 }
 

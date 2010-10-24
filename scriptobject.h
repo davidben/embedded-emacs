@@ -18,7 +18,6 @@ public:
 		NPVariant *result);
     bool enumerate(NPIdentifier **identifiers, uint32_t *identifierCount);
 
-
     static NPObject* allocateThunk(NPP npp, NPClass *aClass);
     static void deallocateThunk(NPObject *npobj);
     static void invalidateThunk(NPObject *npobj);
