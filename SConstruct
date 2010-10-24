@@ -26,5 +26,7 @@ env = conf.Finish()
 # Only pull in the header files; link against NSPR later if needbe.
 env.ParseConfig('pkg-config --cflags nspr')
 
-env.SharedLibrary('emacs-npapi', ['plugin.cc',
-                                  'emacsinstance.cc'])
+env.SharedLibrary('emacs-npapi', ['browser.cc',
+                                  'emacsinstance.cc',
+                                  'plugin.cc',
+                                  ])

@@ -3,7 +3,7 @@
 
 #include <sys/types.h>
 
-#include "plugin.h"
+#include "browser.h"
 #include "util.h"
 
 class EmacsInstance {
