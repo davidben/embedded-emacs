@@ -50,7 +50,8 @@ void ScriptObject::invalidate()
 
 bool ScriptObject::hasMethod(NPIdentifier name)
 {
-    return (name == identifier::startEditor());
+    return (name == identifier::startEditor() ||
+            name == identifier::setCallback());
 }
 
 bool ScriptObject::invoke(NPIdentifier name,
@@ -72,6 +73,15 @@ bool ScriptObject::invoke(NPIdentifier name,
         emacs->startEditor();
         VOID_TO_NPVARIANT(*result);
         return true;
+    } else if (name == identifier::setCallback()) {
+        if (argCount >= 1 && NPVARIANT_IS_OBJECT(args[0])) {
+            emacs->setCallback(NPVARIANT_TO_OBJECT(args[0]));
+        } else {
+            // They gave us an integer. Merp. Well, too bad for them.
+            emacs->setCallback(NULL);
+        }
+        VOID_TO_NPVARIANT(*result);
+        return true;
     }
     // Shouldn't happen.
     return false;
@@ -80,14 +90,16 @@ bool ScriptObject::invoke(NPIdentifier name,
 bool ScriptObject::enumerate(NPIdentifier **identifiers,
                              uint32_t *identifierCount)
 {
-    NPIdentifier* properties =
-            static_cast<NPIdentifier*>(NPN_MemAlloc(sizeof(NPIdentifier) * 1));
+    const int NUM_PROPS = 2;
+    NPIdentifier* properties = static_cast<NPIdentifier*>(
+        NPN_MemAlloc(sizeof(NPIdentifier) * NUM_PROPS));
     if (!properties) return false;
 
     properties[0] = identifier::startEditor();
+    properties[1] = identifier::setCallback();
 
     *identifiers = properties;
-    *identifierCount = 1;
+    *identifierCount = NUM_PROPS;
     return true;
 }
 

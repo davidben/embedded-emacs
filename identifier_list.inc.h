@@ -1,3 +1,3 @@
 IDENTIFIER(startEditor)
-IDENTIFIER(callback)
-IDENTIFIER(editorPath)
+IDENTIFIER(setCallback)
+IDENTIFIER(setEditorPath)

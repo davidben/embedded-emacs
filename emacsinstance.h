@@ -18,6 +18,9 @@ public:
     // get created before the window?), always succeed here and just
     // launch this emacs object when we get the window.
     bool startEditor();
+    void setCallback(NPObject* callback);
+
+
     NPError setWindow(NPWindow* window);
     NPObject* getScriptObject();
 private:
@@ -26,6 +29,7 @@ private:
                       // Window?
     pid_t child_pid_;
     ScriptObject* script_object_;
+    NPObject* callback_;
     DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
 };
 
