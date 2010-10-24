@@ -14,6 +14,10 @@ public:
     EmacsInstance(NPP npp);
     ~EmacsInstance();
 
+    // FIXME: to avoid possible race conditions (can the script object
+    // get created before the window?), always succeed here and just
+    // launch this emacs object when we get the window.
+    bool startEditor();
     NPError setWindow(NPWindow* window);
     NPObject* getScriptObject();
 private:

@@ -1,6 +1,7 @@
 #include "scriptobject.h"
 
 #include "emacsinstance.h"
+#include "identifiers.h"
 
 namespace {
 
@@ -8,9 +9,9 @@ NPClass npclass = {
     NP_CLASS_STRUCT_VERSION,
     ScriptObject::allocateThunk,  // allocate
     ScriptObject::deallocateThunk,  // deallocate
-    NULL,  // invalidate
-    NULL,  // hasMethod
-    NULL,  // invoke
+    ScriptObject::invalidateThunk,  // invalidate
+    ScriptObject::hasMethodThunk,  // hasMethod
+    ScriptObject::invokeThunk,  // invoke
     NULL,  // invokeDefault
     NULL,  // hasProperty
     NULL,  // getProperty
@@ -47,6 +48,29 @@ void ScriptObject::invalidate()
     npp_ = NULL;
 }
 
+bool ScriptObject::hasMethod(NPIdentifier name)
+{
+    return (name == identifier::startEditor());
+}
+
+bool ScriptObject::invoke(NPIdentifier name,
+                          const NPVariant *args,
+                          uint32_t argCount,
+                          NPVariant *result)
+{
+    EmacsInstance* emacs = emacsInstance();
+    if (name == identifier::startEditor()) {
+        if (emacs) {
+            emacs->startEditor();
+        }
+        // TODO: raise an exception if the emacs is missing?
+        VOID_TO_NPVARIANT(*result);
+        return true;
+    }
+    return false;
+}
+
+
 // static
 NPObject* ScriptObject::allocateThunk(NPP npp, NPClass *aClass)
 {
@@ -63,4 +87,19 @@ void ScriptObject::deallocateThunk(NPObject *npobj)
 void ScriptObject::invalidateThunk(NPObject *npobj)
 {
     static_cast<ScriptObject*>(npobj)->invalidate();
+}
+
+// static
+bool ScriptObject::hasMethodThunk(NPObject *npobj, NPIdentifier name)
+{
+    return static_cast<ScriptObject*>(npobj)->hasMethod(name);
+}
+
+// static
+bool ScriptObject::invokeThunk(NPObject *npobj, NPIdentifier name,
+                               const NPVariant *args, uint32_t argCount,
+                               NPVariant *result)
+{
+    return static_cast<ScriptObject*>(npobj)->invoke(name, args, argCount,
+                                                     result);
 }
