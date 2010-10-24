@@ -60,6 +60,11 @@ void EmacsInstance::setCallback(NPObject* callback)
     }
 }
 
+void EmacsInstance::setInitialText(const char *utf8Chars, uint32_t len)
+{
+    initial_text_.assign(utf8Chars, len);
+}
+
 NPError EmacsInstance::setWindow(NPWindow* window)
 {
     long window_id = reinterpret_cast<long>(window->window);

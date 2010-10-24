@@ -51,7 +51,8 @@ void ScriptObject::invalidate()
 bool ScriptObject::hasMethod(NPIdentifier name)
 {
     return (name == identifier::startEditor() ||
-            name == identifier::setCallback());
+            name == identifier::setCallback() ||
+            name == identifier::setInitialText());
 }
 
 bool ScriptObject::invoke(NPIdentifier name,
@@ -79,6 +80,15 @@ bool ScriptObject::invoke(NPIdentifier name,
         } else {
             // They gave us an integer. Merp. Well, too bad for them.
             emacs->setCallback(NULL);
+        }
+        VOID_TO_NPVARIANT(*result);
+        return true;
+    } else if (name == identifier::setInitialText()) {
+        if (argCount >= 1 && NPVARIANT_IS_STRING(args[0])) {
+            emacs->setInitialText(NPVARIANT_TO_STRING(args[0]).UTF8Characters,
+                                  NPVARIANT_TO_STRING(args[0]).UTF8Length);
+        } else {
+            emacs->setInitialText(NULL, 0);
         }
         VOID_TO_NPVARIANT(*result);
         return true;
