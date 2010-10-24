@@ -76,3 +76,18 @@ void NPN_GetStringIdentifiers(const NPUTF8 **names,
         return;
     g_browser_functions.getstringidentifiers(names, nameCount, identifiers);
 }
+
+bool NPN_InvokeDefault(NPP npp, NPObject *npobj, const NPVariant *args,
+                       uint32_t argCount, NPVariant *result)
+{
+    if (!g_browser_functions.invokeDefault)
+        return false;
+    g_browser_functions.invokeDefault(npp, npobj, args, argCount, result);
+}
+
+void NPN_ReleaseVariantValue(NPVariant *variant)
+{
+    if (!g_browser_functions.releasevariantvalue)
+        return;
+    g_browser_functions.releasevariantvalue(variant);
+}
