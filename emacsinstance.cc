@@ -1,5 +1,9 @@
 #include "emacsinstance.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include <string>
@@ -21,22 +25,55 @@ EmacsInstance::~EmacsInstance()
     setCallback(NULL);
     if (script_object_)
         NPN_ReleaseObject(script_object_);
+    if (!temp_file_.empty()) {
+        if (unlink(temp_file_.c_str()) < 0)
+            perror("unlink");
+    }
 }
 
 bool EmacsInstance::startEditor()
 {
     if (!window_id_)
         return false;
+    if (child_pid_ || !temp_file_.empty())
+        return false;
+
+    // TODO: Make a scoped temporary file or something.
+    const char *tmpdir = getenv("TMPDIR");
+    if (!tmpdir)
+        tmpdir = "/tmp";
+    std::string temp_file(tmpdir);
+    temp_file += "/.emacs-npapi.XXXXXX";
+    int fd = mkstemp(const_cast<char*>(temp_file.c_str()));
+    if (fd < 0) {
+        perror("mkstemp");
+        return false;
+    }
+    temp_file_ = temp_file;
+    FILE* file = fdopen(fd, "w");
+    if (!file) {
+        perror("fdopen");
+        close(fd);
+        return false;
+    }
+    fwrite(initial_text_.c_str(), initial_text_.size(), 1, file);
+    fclose(file);
+
     std::stringstream ss;
     ss << window_id_;
     std::string window_str = ss.str();
 
     pid_t pid = fork();
     if (pid < 0) {
+        perror("fork");
         return false;
     } else if (pid == 0) {
         // In the child. NO MALLOC AFTER THIS POINT.
-        execlp("emacs", "emacs", "--parent-id", window_str.c_str(), NULL);
+        execlp("emacs", "emacs",
+               "--parent-id",
+               window_str.c_str(),
+               temp_file_.c_str(),
+               NULL);
         _exit(1);
     }
 

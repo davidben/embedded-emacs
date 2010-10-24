@@ -34,6 +34,8 @@ private:
     ScriptObject* script_object_;
     NPObject* callback_;
     std::string initial_text_;  // UTF-8 encoded
+    std::string temp_file_;
+
     DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
 };
 
