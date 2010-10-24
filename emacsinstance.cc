@@ -5,6 +5,8 @@
 #include <string>
 #include <sstream>
 
+#include "scriptobject.h"
+
 EmacsInstance::EmacsInstance(NPP npp)
         : npp_(npp),
           window_id_(0),
@@ -15,6 +17,8 @@ EmacsInstance::EmacsInstance(NPP npp)
 
 EmacsInstance::~EmacsInstance()
 {
+    if (script_object_)
+        NPN_ReleaseObject(script_object_);
 }
 
 NPError EmacsInstance::setWindow(NPWindow* window)
@@ -47,6 +51,9 @@ NPError EmacsInstance::setWindow(NPWindow* window)
 
 NPObject* EmacsInstance::getScriptObject()
 {
-    // TODO
-    return NULL;
+    if (!script_object_) {
+        script_object_ = ScriptObject::create(npp_);
+        NPN_RetainObject(script_object_);
+    }
+    return script_object_;
 }

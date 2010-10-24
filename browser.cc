@@ -39,3 +39,24 @@ NPError NP_LOADDS NPN_GetValue(NPP instance, NPNVariable variable,
         return NPERR_INVALID_FUNCTABLE_ERROR;
     return g_browser_functions.getvalue(instance, variable, value);
 }
+
+NPObject *NPN_CreateObject(NPP npp, NPClass *aClass)
+{
+    if (!g_browser_functions.createobject)
+        return NULL;
+    return g_browser_functions.createobject(npp, aClass);
+}
+
+NPObject *NPN_RetainObject(NPObject *npobj)
+{
+    if (!g_browser_functions.retainobject)
+        return NULL;
+    return g_browser_functions.retainobject(npobj);
+}
+
+void NPN_ReleaseObject(NPObject *npobj)
+{
+    if (!g_browser_functions.releaseobject)
+        return;
+    return g_browser_functions.releaseobject(npobj);
+}

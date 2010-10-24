@@ -7,6 +7,7 @@
 #include "util.h"
 
 typedef struct NPObject NPObject;
+class ScriptObject;
 
 class EmacsInstance {
 public:
@@ -20,7 +21,7 @@ private:
     long window_id_;  // Should I include X11 header files and use
                       // Window?
     pid_t child_pid_;
-    NPObject* script_object_;
+    ScriptObject* script_object_;
     DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
 };
 
