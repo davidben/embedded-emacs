@@ -6,16 +6,21 @@
 #include "browser.h"
 #include "util.h"
 
+typedef struct NPObject NPObject;
+
 class EmacsInstance {
 public:
-    EmacsInstance();
+    EmacsInstance(NPP npp);
     ~EmacsInstance();
 
     NPError setWindow(NPWindow* window);
+    NPObject* getScriptObject();
 private:
+    NPP npp_;
     long window_id_;  // Should I include X11 header files and use
                       // Window?
     pid_t child_pid_;
+    NPObject* script_object_;
     DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
 };
 

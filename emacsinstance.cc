@@ -5,9 +5,11 @@
 #include <string>
 #include <sstream>
 
-EmacsInstance::EmacsInstance()
-        : window_id_(0),
-          child_pid_(0)
+EmacsInstance::EmacsInstance(NPP npp)
+        : npp_(npp),
+          window_id_(0),
+          child_pid_(0),
+          script_object_(NULL)
 {
 }
 
@@ -41,4 +43,10 @@ NPError EmacsInstance::setWindow(NPWindow* window)
             return NPERR_GENERIC_ERROR;
     }
     return NPERR_NO_ERROR;
+}
+
+NPObject* EmacsInstance::getScriptObject()
+{
+    // TODO
+    return NULL;
 }

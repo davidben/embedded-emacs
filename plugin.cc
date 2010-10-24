@@ -76,7 +76,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance,
                 char* argv[], NPSavedData* saved)
 {
     // TODO: Pass some of these arguments in??
-    EmacsInstance* emacs = new EmacsInstance();
+    EmacsInstance* emacs = new EmacsInstance(instance);
     instance->pdata = emacs;
     return NPERR_NO_ERROR;
 }
@@ -101,9 +101,13 @@ NPError NPP_SetWindow(NPP instance, NPWindow* window)
 NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value)
 {
     NPError err = NPERR_NO_ERROR;
+    EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
     switch (variable) {
         case NPPVpluginNeedsXEmbed:
             *reinterpret_cast<PRBool*>(value) = PR_TRUE;
+            break;
+        case NPPVpluginScriptableNPObject:
+            *reinterpret_cast<NPObject**>(value) = emacs->getScriptObject();
             break;
         default:
             err = NPERR_INVALID_PARAM;
