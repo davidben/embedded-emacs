@@ -25,6 +25,9 @@ NPError initializeBrowserFuncs(NPNetscapeFuncs* bFuncs)
     // Require NPRuntime.
     if (minor_version < NPVERS_HAS_NPRUNTIME_SCRIPTING)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
+    // Require sane threading.
+    if (minor_version < NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL)
+        return NPERR_INCOMPATIBLE_VERSION_ERROR;
 
     memcpy(&g_browser_functions, bFuncs,
            std::min(sizeof(g_browser_functions), (size_t)bFuncs->size));
@@ -90,4 +93,14 @@ void NPN_ReleaseVariantValue(NPVariant *variant)
     if (!g_browser_functions.releasevariantvalue)
         return;
     g_browser_functions.releasevariantvalue(variant);
+}
+
+void NPN_PluginThreadAsyncCall(NPP plugin,
+                               void (*func)(void *),
+                               void *userData)
+{
+    // FIXME: This will get called on another thread. Lock this guy?
+    if (!g_browser_functions.pluginthreadasynccall)
+        return;
+    g_browser_functions.pluginthreadasynccall(plugin, func, userData);
 }
