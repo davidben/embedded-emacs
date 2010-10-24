@@ -28,6 +28,7 @@ env.ParseConfig('pkg-config --cflags nspr')
 
 env.SharedLibrary('emacs-npapi', ['browser.cc',
                                   'emacsinstance.cc',
+                                  'identifiers.cc',
                                   'plugin.cc',
                                   'scriptobject.cc'
                                   ])

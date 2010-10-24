@@ -58,5 +58,14 @@ void NPN_ReleaseObject(NPObject *npobj)
 {
     if (!g_browser_functions.releaseobject)
         return;
-    return g_browser_functions.releaseobject(npobj);
+    g_browser_functions.releaseobject(npobj);
+}
+
+void NPN_GetStringIdentifiers(const NPUTF8 **names,
+                              int32_t nameCount,
+                              NPIdentifier *identifiers)
+{
+    if (!g_browser_functions.getstringidentifiers)
+        return;
+    g_browser_functions.getstringidentifiers(names, nameCount, identifiers);
 }

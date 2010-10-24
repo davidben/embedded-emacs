@@ -4,6 +4,7 @@
 
 #include "browser.h"
 #include "emacsinstance.h"
+#include "identifiers.h"
 #include "npapi-headers/npfunctions.h"
 
 NP_EXPORT(NPError) OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
@@ -30,6 +31,8 @@ NP_EXPORT(NPError) OSCALL NP_Initialize(NPNetscapeFuncs* bFuncs,
     err = NPN_GetValue(NULL, NPNVSupportsXEmbedBool, &has_xembed);
     if (err != NPERR_NO_ERROR || !has_xembed)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
+
+    initializeIdentifiers();
 
     // On Unix, it looks like NP_GetEntryPoints isn't called directly?
     // The prototype for NP_Initialize is different from everyone
