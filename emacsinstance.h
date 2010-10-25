@@ -8,7 +8,7 @@
 #include "browser.h"
 #include "util.h"
 
-typdef struct _GAsyncQueue GAsyncQueue;
+G_FORWARD_DECLARE(GAsyncQueue);
 typedef struct NPObject NPObject;
 class ScriptObject;
 class Task;

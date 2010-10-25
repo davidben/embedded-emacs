@@ -5,4 +5,6 @@
     Class(const Class&); \
     void operator=(const Class&);
 
+#define G_FORWARD_DECLARE(GTypeName) typedef struct _ ## GTypeName GTypeName
+
 #endif  // INCLUDED_UTIL_H_
