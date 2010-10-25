@@ -3,6 +3,7 @@
 
 #include "browser.h"
 #include "npapi-headers/npruntime.h"
+#include "util.h"
 
 class EmacsInstance;
 
@@ -35,6 +36,8 @@ private:
     EmacsInstance* emacsInstance();
     
     NPP npp_;
+
+    DISALLOW_COPY_AND_ASSIGN(ScriptObject);
 };
 
 #endif  // INCLUDED_SCRIPT_OBJECT_H_
