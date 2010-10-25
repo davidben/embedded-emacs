@@ -6,6 +6,7 @@
 #include "emacsinstance.h"
 #include "identifiers.h"
 #include "npapi-headers/npfunctions.h"
+#include "process_watcher.h"
 
 NP_EXPORT(NPError) OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 {
@@ -61,6 +62,7 @@ NP_EXPORT(NPError) OSCALL NP_GetValue(void *instance,
 
 NP_EXPORT(NPError) OSCALL NP_Shutdown(void)
 {
+    process_watcher::killAndJoinThread();
     return NPERR_NO_ERROR;
 }
 

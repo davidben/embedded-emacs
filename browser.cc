@@ -85,7 +85,7 @@ bool NPN_InvokeDefault(NPP npp, NPObject *npobj, const NPVariant *args,
 {
     if (!g_browser_functions.invokeDefault)
         return false;
-    g_browser_functions.invokeDefault(npp, npobj, args, argCount, result);
+    return g_browser_functions.invokeDefault(npp, npobj, args, argCount, result);
 }
 
 void NPN_ReleaseVariantValue(NPVariant *variant)

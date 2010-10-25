@@ -39,6 +39,7 @@ env.SharedLibrary('emacs-npapi', ['browser.cc',
                                   'identifiers.cc',
                                   'message_proxy.cc',
                                   'plugin.cc',
+                                  'process_watcher.cc',
                                   'scriptobject.cc',
                                   'task.cc',
                                   ])

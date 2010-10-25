@@ -3,6 +3,7 @@
 #include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -11,6 +12,7 @@
 #include <sstream>
 
 #include "message_proxy.h"
+#include "process_watcher.h"
 #include "scriptobject.h"
 #include "task.h"
 
@@ -64,6 +66,7 @@ bool EmacsInstance::startEditor()
         return false;
 
     // TODO: Make a scoped temporary file or something.
+    // FIXME: Do file io on a dedicated thread.
     const char *tmpdir = getenv("TMPDIR");
     if (!tmpdir)
         tmpdir = "/tmp";
@@ -97,12 +100,14 @@ bool EmacsInstance::startEditor()
     argv[4] = NULL;
     GPid pid;
     if (!g_spawn_async(NULL, argv, NULL,
-		       /* G_SPAWN_DO_NOT_REAP_CHILD | */ G_SPAWN_SEARCH_PATH,
+		       static_cast<GSpawnFlags>(
+                           G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH),
 		       NULL, NULL, &pid, NULL)) {
         g_strfreev(argv);
         return false;
     }
     g_strfreev(argv);
+    process_watcher::watchProcess(pid, this);
 
     child_pid_ = pid;
     return true;
@@ -116,12 +121,6 @@ void EmacsInstance::setCallback(NPObject* callback)
     if (callback_)
         NPN_ReleaseObject(callback_);
     callback_ = callback;
-    if (callback_) {
-        // FIXME: Okay, we'll just call it for now.
-        NPVariant result;
-        NPN_InvokeDefault(npp_, callback_, NULL, 0, &result);
-        NPN_ReleaseVariantValue(&result);
-    }
 }
 
 void EmacsInstance::setInitialText(const char *utf8Chars, uint32_t len)
@@ -157,6 +156,45 @@ void EmacsInstance::processTasks()
     }
 }
 
+void EmacsInstance::childExited(pid_t pid, int status)
+{
+    if (child_pid_ != pid) {
+        fprintf(stderr, "WARNING: Unexpected child exit (pid %d)\n", pid);
+        return;
+    }
+    if (!callback_) {
+        fprintf(stderr, "WARNING: No callback defined.\n");
+        return;
+    }
+    if (temp_file_.empty()) {
+        fprintf(stderr, "ERROR: No temporary file???\n");
+        return;
+    }
+
+    NPVariant args[2];
+    INT32_TO_NPVARIANT(status, args[1]);
+
+    // Get the file contents.
+    gchar *contents;
+    gsize length;
+    if (g_file_get_contents(temp_file_.c_str(),
+                            &contents, &length,
+                            NULL)) {
+        // Copy to NPN_MemAlloc-compatible buffer.
+        NPUTF8 *np_contents = static_cast<NPUTF8*>(NPN_MemAlloc(length));
+        memcpy(np_contents, contents, length);
+        g_free(contents);
+        STRINGN_TO_NPVARIANT(np_contents, length, args[0]);
+    } else {
+        NULL_TO_NPVARIANT(args[0]);
+    }
+
+    NPVariant result;
+    NPN_InvokeDefault(npp_, callback_, args, 2, &result);
+    NPN_ReleaseVariantValue(&args[0]);
+    NPN_ReleaseVariantValue(&args[1]);
+    NPN_ReleaseVariantValue(&result);
+}
 
 NPError EmacsInstance::setWindow(NPWindow* window)
 {

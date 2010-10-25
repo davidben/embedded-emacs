@@ -36,6 +36,9 @@ public:
     // Called on the main plugin thread.
     void processTasks();
 
+    // process_watcher calls this function when a child exitted.
+    void childExited(pid_t pid, int status);
+
     NPError setWindow(NPWindow* window);
     NPObject* getScriptObject();
 private:

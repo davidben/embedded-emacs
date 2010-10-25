@@ -7,6 +7,7 @@ class EmacsInstance;
 G_FORWARD_DECLARE(GMutex);
 class Task;
 
+// FIXME: This needs some serious refactoring, but it should /work/.
 class MessageProxy {
   public:
     // NOTE: THIS SHOULD ONLY BE CALLED BY EmacsInstance.
@@ -16,7 +17,11 @@ class MessageProxy {
     void unref();
 
     void postTask(Task* task);
+    // Only called on the plugin thread.
     void invalidate();
+
+    // NEVER CALL THIS OUTSIDE THE PLUGIN THREAD.
+    EmacsInstance* emacsInstance();
 
   private:
     ~MessageProxy();
