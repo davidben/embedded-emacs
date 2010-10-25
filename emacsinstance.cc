@@ -1,5 +1,6 @@
 #include "emacsinstance.h"
 
+#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -63,19 +64,21 @@ bool EmacsInstance::startEditor()
     ss << window_id_;
     std::string window_str = ss.str();
 
-    pid_t pid = fork();
-    if (pid < 0) {
-        perror("fork");
+    // Apparently g_spawn_async wants non-const. Sigh.
+    char **argv = g_new(char*, 5);
+    argv[0] = g_strdup("emacs");
+    argv[1] = g_strdup("--parent-id");
+    argv[2] = g_strdup(window_str.c_str());
+    argv[3] = g_strdup(temp_file_.c_str());
+    argv[4] = NULL;
+    GPid pid;
+    if (!g_spawn_async(NULL, argv, NULL,
+		       /* G_SPAWN_DO_NOT_REAP_CHILD | */ G_SPAWN_SEARCH_PATH,
+		       NULL, NULL, &pid, NULL)) {
+        g_strfreev(argv);
         return false;
-    } else if (pid == 0) {
-        // In the child. NO MALLOC AFTER THIS POINT.
-        execlp("emacs", "emacs",
-               "--parent-id",
-               window_str.c_str(),
-               temp_file_.c_str(),
-               NULL);
-        _exit(1);
     }
+    g_strfreev(argv);
 
     child_pid_ = pid;
     return true;

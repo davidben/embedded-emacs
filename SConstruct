@@ -21,10 +21,18 @@ if not conf.CheckPKGConfig('0.15.0'):
 if not conf.CheckPKG('nspr'):
     print 'NSPR not found.'
     Exit(1)
+if not conf.CheckPKG('glib-2.0'):
+    print 'GLib not found.'
+    Exit(1)
+if not conf.CheckPKG('gthread-2.0'):
+    print 'GLib not found.'
+    Exit(1)
 env = conf.Finish()
 
 # Only pull in the header files; link against NSPR later if needbe.
 env.ParseConfig('pkg-config --cflags nspr')
+env.ParseConfig('pkg-config --cflags --libs glib-2.0')
+env.ParseConfig('pkg-config --cflags --libs gthread-2.0')
 
 env.SharedLibrary('emacs-npapi', ['browser.cc',
                                   'emacsinstance.cc',
