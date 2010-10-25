@@ -11,6 +11,21 @@
 #include <sstream>
 
 #include "scriptobject.h"
+#include "task.h"
+
+namespace {
+
+void deleteTask(void *ptr)
+{
+    delete static_cast<Task*>(ptr);
+}
+
+void processTasksThunk(void *ptr)
+{
+    static_cast<EmacsInstance*>(ptr)->processTasks();
+}
+
+};
 
 EmacsInstance::EmacsInstance(NPP npp)
         : npp_(npp),
@@ -19,6 +34,7 @@ EmacsInstance::EmacsInstance(NPP npp)
           script_object_(NULL),
           callback_(NULL)
 {
+    task_queue_ = g_async_queue_new_full(deleteTask);
 }
 
 EmacsInstance::~EmacsInstance()
@@ -30,6 +46,7 @@ EmacsInstance::~EmacsInstance()
         if (unlink(temp_file_.c_str()) < 0)
             perror("unlink");
     }
+    g_async_queue_unref(task_queue_);
 }
 
 bool EmacsInstance::startEditor()
@@ -104,6 +121,27 @@ void EmacsInstance::setInitialText(const char *utf8Chars, uint32_t len)
 {
     initial_text_.assign(utf8Chars, len);
 }
+
+void EmacsInstance::postTask(Task* task)
+{
+    if (!task) return;
+    g_async_queue_push(task_queue_, task);
+    // No memory is allocated, so we don't care if this runs or
+    // not. It may also run more often than necessary, but that's
+    // okay.
+    NPN_PluginThreadAsyncCall(npp_, processTasksThunk, this);
+}
+
+void EmacsInstance::processTasks()
+{
+    void* data;
+    while ((data = g_async_queue_try_pop(task_queue_))) {
+        Task* task = static_cast<Task*>(data);
+        task->run();
+        delete task;
+    }
+}
+
 
 NPError EmacsInstance::setWindow(NPWindow* window)
 {

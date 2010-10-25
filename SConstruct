@@ -38,5 +38,6 @@ env.SharedLibrary('emacs-npapi', ['browser.cc',
                                   'emacsinstance.cc',
                                   'identifiers.cc',
                                   'plugin.cc',
-                                  'scriptobject.cc'
+                                  'scriptobject.cc',
+                                  'task.cc',
                                   ])

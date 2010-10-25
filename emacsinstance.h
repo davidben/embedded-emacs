@@ -8,8 +8,10 @@
 #include "browser.h"
 #include "util.h"
 
+typdef struct _GAsyncQueue GAsyncQueue;
 typedef struct NPObject NPObject;
 class ScriptObject;
+class Task;
 
 class EmacsInstance {
 public:
@@ -23,6 +25,13 @@ public:
     void setCallback(NPObject* callback);
     void setInitialText(const char *utf8Chars, uint32_t len);
 
+    // Called on any thread. Safe to call until around the end of the
+    // destructor. Specifically, EmacsInstance should inform everyone
+    // with a reference not to post more tasks before deleting the
+    // queue.
+    void postTask(Task* task);
+    // Called on the main plugin thread.
+    void processTasks();
 
     NPError setWindow(NPWindow* window);
     NPObject* getScriptObject();
@@ -35,6 +44,8 @@ private:
     NPObject* callback_;
     std::string initial_text_;  // UTF-8 encoded
     std::string temp_file_;
+
+    GAsyncQueue* task_queue_;
 
     DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
 };
