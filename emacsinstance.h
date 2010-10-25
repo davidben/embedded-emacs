@@ -9,6 +9,7 @@
 #include "util.h"
 
 G_FORWARD_DECLARE(GAsyncQueue);
+class MessageProxy;
 typedef struct NPObject NPObject;
 class ScriptObject;
 class Task;
@@ -25,6 +26,8 @@ public:
     void setCallback(NPObject* callback);
     void setInitialText(const char *utf8Chars, uint32_t len);
 
+    // Only call this on the plugin thread.
+    MessageProxy* getMessageProxy();
     // Called on any thread. Safe to call until around the end of the
     // destructor. Specifically, EmacsInstance should inform everyone
     // with a reference not to post more tasks before deleting the
@@ -45,6 +48,7 @@ private:
     std::string initial_text_;  // UTF-8 encoded
     std::string temp_file_;
 
+    MessageProxy* message_proxy_;
     GAsyncQueue* task_queue_;
 
     DISALLOW_COPY_AND_ASSIGN(EmacsInstance);

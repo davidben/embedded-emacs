@@ -10,6 +10,7 @@
 #include <string>
 #include <sstream>
 
+#include "message_proxy.h"
 #include "scriptobject.h"
 #include "task.h"
 
@@ -32,13 +33,19 @@ EmacsInstance::EmacsInstance(NPP npp)
           window_id_(0),
           child_pid_(0),
           script_object_(NULL),
-          callback_(NULL)
+          callback_(NULL),
+          message_proxy_(NULL)
 {
     task_queue_ = g_async_queue_new_full(deleteTask);
 }
 
 EmacsInstance::~EmacsInstance()
 {
+    if (message_proxy_) {
+        message_proxy_->invalidate();
+        message_proxy_->unref();
+        message_proxy_ = NULL;
+    }
     setCallback(NULL);
     if (script_object_)
         NPN_ReleaseObject(script_object_);
@@ -120,6 +127,14 @@ void EmacsInstance::setCallback(NPObject* callback)
 void EmacsInstance::setInitialText(const char *utf8Chars, uint32_t len)
 {
     initial_text_.assign(utf8Chars, len);
+}
+
+MessageProxy* EmacsInstance::getMessageProxy()
+{
+    if (!message_proxy_) {
+        message_proxy_ = new MessageProxy(this);
+    }
+    return message_proxy_;
 }
 
 void EmacsInstance::postTask(Task* task)
