@@ -60,10 +60,14 @@ EmacsInstance::~EmacsInstance()
 
 bool EmacsInstance::startEditor()
 {
-    if (!window_id_)
+    if (!window_id_) {
+        fprintf(stderr, "ERROR: Window not yet set\n");
         return false;
-    if (child_pid_ || !temp_file_.empty())
+    }
+    if (child_pid_ || !temp_file_.empty()) {
+        fprintf(stderr, "ERROR: Child process already launched\n");
         return false;
+    }
 
     // TODO: Make a scoped temporary file or something.
     // FIXME: Do file io on a dedicated thread.
@@ -104,6 +108,7 @@ bool EmacsInstance::startEditor()
                            G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH),
 		       NULL, NULL, &pid, NULL)) {
         g_strfreev(argv);
+        fprintf(stderr, "ERROR: Failed to spawn emacs\n");
         return false;
     }
     g_strfreev(argv);
