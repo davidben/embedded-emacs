@@ -16,7 +16,6 @@ NP_EXPORT(NPError) OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
     pFuncs->destroy = NPP_Destroy;
     pFuncs->setwindow = NPP_SetWindow;
     pFuncs->getvalue = NPP_GetValue;
-    // TODO: implement the functions I need.
     return NPERR_NO_ERROR;
 }
 
