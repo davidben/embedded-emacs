@@ -3,6 +3,7 @@
 #include <glib.h>
 
 #include "emacsinstance.h"
+#include "task.h"
 
 MessageProxy::MessageProxy(EmacsInstance* instance)
         : instance_(instance),
@@ -29,13 +30,17 @@ void MessageProxy::unref()
 
 void MessageProxy::postTask(Task* task)
 {
+    bool posted = false;
     g_mutex_lock(lock_);
     // TODO: If we move the message queue into the proxy, the critical
     // section would shrink; it's only really needed for the NPN call.
     if (instance_) {
         instance_->postTask(task);
+        posted = true;
     }
     g_mutex_unlock(lock_);
+    if (!posted)
+        delete task;
 }
 
 void MessageProxy::invalidate()
