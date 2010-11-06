@@ -14,7 +14,13 @@ function hookTextArea(node) {
 	if (node.parentNode) {
 	    var iframe = document.createElement("iframe");
 	    iframe.src = chrome.extension.getURL(iframePath(editorId));
+	    iframe.width = node.offsetWidth;
+	    iframe.height = node.offsetHeight;
 	    node.parentNode.insertBefore(iframe, node);
+	    // FIXME: If another script decides to change this value
+	    // again, act accordingly.
+	    var oldDisplay = node.style.display;
+	    node.style.display = "none";
 	    port.postMessage({
 		type: "editor_msg",
 		id: editorId,
@@ -28,6 +34,7 @@ function hookTextArea(node) {
 	    // callback to avoid leaking memory.
 	    editorCallbacks[editorId] = function (text) {
 		node.value = text;
+		node.style.display = oldDisplay;
 		if (iframe.parentNode)
 		    iframe.parentNode.removeChild(iframe);
 		delete editorCallbacks[editorId];
