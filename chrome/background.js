@@ -110,6 +110,8 @@ EditorHost.prototype = {
 		console.log("Invalid parent message");
 	    } else {
 		console.log("Forwaring message to parent");
+		// Tell the parent who sent it.
+		msg.message.source = this.id;
 		// We don't need to queue up on this end; if the
 		// content script knows its id, its been connected.
 		this.contentScript.port.postMessage(msg.message);
