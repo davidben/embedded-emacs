@@ -1,0 +1,17 @@
+{
+  "name": "Embedded Emacs",
+  "version": "1.0",
+  "description": "Replaces textareas with an embedded Emacs.",
+  "permissions": [
+  ],
+  "background_page": "background.html",
+  "content_scripts": [ {
+    "matches": ["<all_urls>"],
+    "js": ["test_embed.js"],
+    "run_at": "document_idle",
+    "all_frames": true
+  } ],
+  "plugins": [
+    { "path": "libemacs-npapi.so", "public": true }
+  ]
+}
