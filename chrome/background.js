@@ -59,6 +59,10 @@ ContentScriptHost.prototype = {
 	if (this.editors[editor.id] === editor) {
 	    delete this.editors[editor.id];
 	    delete this.pendingEditorMessages[editor.id];
+	    this.port.postMessage({
+		type: 'child_detached',
+		id: editor.id
+	    });
 	}
     },
     postEditorMessage: function (id, msg) {

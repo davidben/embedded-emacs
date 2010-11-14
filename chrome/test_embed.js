@@ -30,8 +30,6 @@ function hookTextArea(node) {
 		}
 	    });
 
-	    // TODO: If child editor gets detached, then drop the
-	    // callback to avoid leaking memory.
 	    editorCallbacks[editorId] = function (text) {
 		node.value = text;
 		node.style.display = oldDisplay;
@@ -62,5 +60,7 @@ port.onMessage.addListener(function (msg) {
     } else if (msg.type === "edit_done") {
 	if (editorCallbacks[msg.source])
 	    editorCallbacks[msg.source](msg.text);
+    } else if (msg.type === "child_detached") {
+	delete editorCallbacks[msg.id];
     }
 });
