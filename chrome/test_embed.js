@@ -61,9 +61,10 @@ port.onMessage.addListener(function (msg) {
 	document.body.addEventListener('DOMNodeInserted', function (ev) {
 	    if (ev.target.nodeType != 1)
 		return;
-	    if (ev.target.tagName.toLowerCase() !== "textarea")
-		return;
-	    hookTextArea(ev.target);
+	    var textareas = ev.target.getElementsByTagName("textarea");
+	    for (var i = 0; i < textareas.length; i++) {
+		hookTextArea(textareas[i]);
+	    }
 	});
     } else if (msg.type === "edit_done") {
 	if (editorCallbacks[msg.source])
