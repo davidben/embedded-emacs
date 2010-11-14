@@ -53,7 +53,7 @@ port.onMessage.addListener(function (msg) {
 
 	// And hook any new ones that get created.
 	document.body.addEventListener('DOMNodeInserted', function (ev) {
-	    if (ev.nodeType != 1)
+	    if (ev.target.nodeType != 1)
 		return;
 	    if (ev.target.tagName.toLowerCase() !== "textarea")
 		return;
