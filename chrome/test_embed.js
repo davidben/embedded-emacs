@@ -52,10 +52,12 @@ port.onMessage.addListener(function (msg) {
 	}
 
 	// And hook any new ones that get created.
-	document.addEventListener('DOMNodeInserted', function (ev) {
-	    if (ev.target.tagName.toLowerCase() === "textarea") {
-		hookTextArea(ev.target);
-	    }
+	document.body.addEventListener('DOMNodeInserted', function (ev) {
+	    if (ev.nodeType != 1)
+		return;
+	    if (ev.target.tagName.toLowerCase() !== "textarea")
+		return;
+	    hookTextArea(ev.target);
 	});
     } else if (msg.type === "edit_done") {
 	if (editorCallbacks[msg.source])
