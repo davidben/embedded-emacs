@@ -37,6 +37,8 @@ function hookTextArea(node) {
 		    iframe.parentNode.removeChild(iframe);
 		delete editorCallbacks[editorId];
 	    }
+
+	    iframe.focus();
 	}
     });
 }

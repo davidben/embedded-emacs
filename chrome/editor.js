@@ -33,6 +33,8 @@ function startEditor(text) {
 	});
     });
     plugin.startEditor();
+    // FIXME: This doesn't work.
+    plugin.focus();
 }
 
 if (parent_id !== undefined && editor_id !== undefined) {
