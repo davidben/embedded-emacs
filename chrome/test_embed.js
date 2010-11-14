@@ -14,8 +14,12 @@ function hookTextArea(node) {
 	if (node.parentNode) {
 	    var iframe = document.createElement("iframe");
 	    iframe.src = chrome.extension.getURL(iframePath(editorId));
+	    // TODO: update these fields.
 	    iframe.width = node.offsetWidth;
 	    iframe.height = node.offsetHeight;
+	    iframe.left = node.offsetLeft;
+	    iframe.top = node.offsetTop;
+	    iframe.position = "absolute";
 	    node.parentNode.insertBefore(iframe, node);
 	    // FIXME: If another script decides to change this value
 	    // again, act accordingly.
