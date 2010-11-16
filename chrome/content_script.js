@@ -14,12 +14,16 @@ function hookTextArea(node) {
 	if (node.parentNode) {
 	    var iframe = document.createElement("iframe");
 	    iframe.src = chrome.extension.getURL(iframePath(editorId));
-	    iframe.style.setProperty("position", "absolute", "important");
 	    function relayout() {
 		iframe.style.setProperty("width", node.offsetWidth, "important");
 		iframe.style.setProperty("height", node.offsetHeight, "important");
 		iframe.style.setProperty("top", node.offsetTop, "important");
 		iframe.style.setProperty("left", node.offsetLeft, "important");
+		if (node.style.position === "fixed") {
+		    iframe.style.setProperty("position", "fixed", "important");
+		} else {
+		    iframe.style.setProperty("position", "absolute", "important");
+		}
 	    }
 	    relayout();
 	    node.parentNode.insertBefore(iframe, node);
