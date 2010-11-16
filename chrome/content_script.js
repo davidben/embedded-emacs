@@ -28,7 +28,13 @@ function hookTextArea(node) {
 	    relayout();
 	    node.parentNode.insertBefore(iframe, node);
 
-	    node.addEventListener("DOMAttrModified", relayout);
+	    function onAttrModified(ev) {
+		if (ev.attrName !== "style")
+		    return;
+		relayout();
+	    }
+	    // FIXME: This doesn't actually catch CSS changes.
+	    node.addEventListener("DOMAttrModified", onAttrModified);
 	    window.addEventListener("resize", relayout);
 
 	    // FIXME: If another script decides to change this value
@@ -45,7 +51,7 @@ function hookTextArea(node) {
 	    });
 
 	    editorCallbacks[editorId] = function (text) {
-		node.removeEventListener("DOMAttrModified", relayout);
+		node.removeEventListener("DOMAttrModified", onAttrModified);
 		window.removeEventListener("resize", relayout);
 
 		node.value = text;
