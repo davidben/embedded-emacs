@@ -17,75 +17,78 @@ function positioned(elem) {
 
 function hookTextArea(node) {
     var editorId = nextId++;
-    node.addEventListener('dblclick', function (ev) {
-	if (node.parentNode) {
-	    var iframe = document.createElement("iframe");
-	    iframe.src = chrome.extension.getURL(iframePath(editorId));
-	    function relayout() {
-		iframe.style.setProperty("width", node.offsetWidth + "px",
-					 "important");
-		iframe.style.setProperty("height", node.offsetHeight + "px",
-					 "important");
-		// Apparently offsetParent is a lie.
-		var parent = node.offsetParent;
-		var top = node.offsetTop;
-		var left = node.offsetLeft;
-		var body = node.ownerDocument.body;
-		var docElem = node.ownerDocument.documentElement;
-		while (parent &&
-		       parent !== body && parent !== docElem &&
-		       !positioned(parent)) {
-		    top += parent.offsetTop;
-		    left += parent.offsetLeft;
-		    parent = parent.offsetParent;
-		}
-		iframe.style.setProperty("top", top + "px", "important");
-		iframe.style.setProperty("left", left + "px", "important");
-		if (window.getComputedStyle(node).position === "fixed") {
-		    iframe.style.setProperty("position", "fixed", "important");
-		} else {
-		    iframe.style.setProperty("position", "absolute", "important");
-		}
+
+    function attachEmacs() {
+	if (!node.parentNode)
+	    return;
+	var iframe = document.createElement("iframe");
+	iframe.src = chrome.extension.getURL(iframePath(editorId));
+	function relayout() {
+	    iframe.style.setProperty("width", node.offsetWidth + "px",
+				     "important");
+	    iframe.style.setProperty("height", node.offsetHeight + "px",
+				     "important");
+	    // Apparently offsetParent is a lie.
+	    var parent = node.offsetParent;
+	    var top = node.offsetTop;
+	    var left = node.offsetLeft;
+	    var body = node.ownerDocument.body;
+	    var docElem = node.ownerDocument.documentElement;
+	    while (parent &&
+		   parent !== body && parent !== docElem &&
+		   !positioned(parent)) {
+		top += parent.offsetTop;
+		left += parent.offsetLeft;
+		parent = parent.offsetParent;
 	    }
-	    relayout();
-	    node.parentNode.insertBefore(iframe, node);
-
-	    function onAttrModified(ev) {
-		if (ev.attrName !== "style")
-		    return;
-		relayout();
+	    iframe.style.setProperty("top", top + "px", "important");
+	    iframe.style.setProperty("left", left + "px", "important");
+	    if (window.getComputedStyle(node).position === "fixed") {
+		iframe.style.setProperty("position", "fixed", "important");
+	    } else {
+		iframe.style.setProperty("position", "absolute", "important");
 	    }
-	    // FIXME: This doesn't actually catch CSS changes.
-	    node.addEventListener("DOMAttrModified", onAttrModified);
-	    window.addEventListener("resize", relayout);
-
-	    // FIXME: If another script decides to change this value
-	    // again, act accordingly.
-	    var oldVisibility = node.style.visibility;
-	    node.style.visibility = "hidden";
-	    port.postMessage({
-		type: "editor_msg",
-		id: editorId,
-		message: {
-		    type: "start_editor",
-		    text: node.value
-		}
-	    });
-
-	    editorCallbacks[editorId] = function (text) {
-		node.removeEventListener("DOMAttrModified", onAttrModified);
-		window.removeEventListener("resize", relayout);
-
-		node.value = text;
-		node.style.visibility = oldVisibility;
-		if (iframe.parentNode)
-		    iframe.parentNode.removeChild(iframe);
-		delete editorCallbacks[editorId];
-	    }
-
-	    iframe.focus();
 	}
-    });
+	relayout();
+	node.parentNode.insertBefore(iframe, node);
+
+	function onAttrModified(ev) {
+	    if (ev.attrName !== "style")
+		return;
+	    relayout();
+	}
+	// FIXME: This doesn't actually catch CSS changes.
+	node.addEventListener("DOMAttrModified", onAttrModified);
+	window.addEventListener("resize", relayout);
+
+	// FIXME: If another script decides to change this value
+	// again, act accordingly.
+	var oldVisibility = node.style.visibility;
+	node.style.visibility = "hidden";
+	port.postMessage({
+	    type: "editor_msg",
+	    id: editorId,
+	    message: {
+		type: "start_editor",
+		text: node.value
+	    }
+	});
+
+	editorCallbacks[editorId] = function (text) {
+	    node.removeEventListener("DOMAttrModified", onAttrModified);
+	    window.removeEventListener("resize", relayout);
+
+	    node.value = text;
+	    node.style.visibility = oldVisibility;
+	    if (iframe.parentNode)
+		iframe.parentNode.removeChild(iframe);
+	    delete editorCallbacks[editorId];
+	}
+
+	iframe.focus();
+    }
+
+    node.addEventListener('dblclick', attachEmacs);
 }
 
 port.onMessage.addListener(function (msg) {
