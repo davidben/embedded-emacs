@@ -15,10 +15,14 @@ function hookTextArea(node) {
 	    var iframe = document.createElement("iframe");
 	    iframe.src = chrome.extension.getURL(iframePath(editorId));
 	    function relayout() {
-		iframe.style.setProperty("width", node.offsetWidth, "important");
-		iframe.style.setProperty("height", node.offsetHeight, "important");
-		iframe.style.setProperty("top", node.offsetTop, "important");
-		iframe.style.setProperty("left", node.offsetLeft, "important");
+		iframe.style.setProperty("width", node.offsetWidth + "px",
+					 "important");
+		iframe.style.setProperty("height", node.offsetHeight + "px",
+					 "important");
+		iframe.style.setProperty("top", node.offsetTop + "px",
+					 "important");
+		iframe.style.setProperty("left", node.offsetLeft + "px",
+					 "important");
 		if (node.style.position === "fixed") {
 		    iframe.style.setProperty("position", "fixed", "important");
 		} else {
