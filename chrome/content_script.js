@@ -8,6 +8,13 @@ function iframePath(editorId) {
     return "editor.html?parent_id=" + id + "&editor_id=" + editorId;
 }
 
+function positioned(elem) {
+    var position = window.getComputedStyle(elem).position;
+    return (position === "absolute" ||
+	    position === "relative" ||
+	    position === "fixed");
+}
+
 function hookTextArea(node) {
     var editorId = nextId++;
     node.addEventListener('dblclick', function (ev) {
@@ -19,11 +26,22 @@ function hookTextArea(node) {
 					 "important");
 		iframe.style.setProperty("height", node.offsetHeight + "px",
 					 "important");
-		iframe.style.setProperty("top", node.offsetTop + "px",
-					 "important");
-		iframe.style.setProperty("left", node.offsetLeft + "px",
-					 "important");
-		if (node.style.position === "fixed") {
+		// Apparently offsetParent is a lie.
+		var parent = node.offsetParent;
+		var top = node.offsetTop;
+		var left = node.offsetLeft;
+		var body = node.ownerDocument.body;
+		var docElem = node.ownerDocument.documentElement;
+		while (parent &&
+		       parent !== body && parent !== docElem &&
+		       !positioned(parent)) {
+		    top += parent.offsetTop;
+		    left += parent.offsetLeft;
+		    parent = parent.offsetParent;
+		}
+		iframe.style.setProperty("top", top + "px", "important");
+		iframe.style.setProperty("left", left + "px", "important");
+		if (window.getComputedStyle(node).position === "fixed") {
 		    iframe.style.setProperty("position", "fixed", "important");
 		} else {
 		    iframe.style.setProperty("position", "absolute", "important");
