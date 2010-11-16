@@ -14,17 +14,23 @@ function hookTextArea(node) {
 	if (node.parentNode) {
 	    var iframe = document.createElement("iframe");
 	    iframe.src = chrome.extension.getURL(iframePath(editorId));
-	    // TODO: update these fields.
-	    iframe.width = node.offsetWidth;
-	    iframe.height = node.offsetHeight;
-	    iframe.left = node.offsetLeft;
-	    iframe.top = node.offsetTop;
-	    iframe.position = "absolute";
+	    iframe.style.setProperty("position", "absolute", "important");
+	    function relayout() {
+		iframe.style.setProperty("width", node.offsetWidth, "important");
+		iframe.style.setProperty("height", node.offsetHeight, "important");
+		iframe.style.setProperty("top", node.offsetTop, "important");
+		iframe.style.setProperty("left", node.offsetLeft, "important");
+	    }
+	    relayout();
 	    node.parentNode.insertBefore(iframe, node);
+
+	    node.addEventListener("DOMAttrModified", relayout);
+	    window.addEventListener("resize", relayout);
+
 	    // FIXME: If another script decides to change this value
 	    // again, act accordingly.
-	    var oldDisplay = node.style.display;
-	    node.style.display = "none";
+	    var oldVisibility = node.style.visibility;
+	    node.style.visibility = "hidden";
 	    port.postMessage({
 		type: "editor_msg",
 		id: editorId,
@@ -35,8 +41,11 @@ function hookTextArea(node) {
 	    });
 
 	    editorCallbacks[editorId] = function (text) {
+		node.removeEventListener("DOMAttrModified", relayout);
+		window.removeEventListener("resize", relayout);
+
 		node.value = text;
-		node.style.display = oldDisplay;
+		node.style.visibility = oldVisibility;
 		if (iframe.parentNode)
 		    iframe.parentNode.removeChild(iframe);
 		delete editorCallbacks[editorId];
