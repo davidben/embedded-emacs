@@ -2,11 +2,33 @@
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
-var port = chrome.extension.connect({name: "content_script"});
+var port;
+var onInit = [];
 var id = -1;
 var nextId = 1;
 
 var editorCallbacks = {}
+
+function ensurePortConnected() {
+    if (port)
+	return;
+    port = chrome.extension.connect({name: "content_script"});
+
+    port.onMessage.addListener(function (msg) {
+	if (msg.type === "init") {
+	    id = msg.id;
+	    for (var i = 0; i < onInit.length; i++) {
+		onInit[i]();
+	    }
+	    onInit = null;
+	} else if (msg.type === "edit_done") {
+	    if (editorCallbacks[msg.source])
+		editorCallbacks[msg.source](msg.text);
+	} else if (msg.type === "child_detached") {
+	    delete editorCallbacks[msg.id];
+	}
+    });
+}
 
 function iframePath(editorId) {
     return "editor.html?parent_id=" + id + "&editor_id=" + editorId;
@@ -91,33 +113,30 @@ function hookTextArea(node) {
 
 	iframe.focus();
     }
+    function attachEmacsWrapper() {
+	if (id < 0) {
+	    ensurePortConnected();
+	    onInit.push(attachEmacs);
+	} else {
+	    attachEmacs();
+	}
+    }
 
-    node.addEventListener('dblclick', attachEmacs);
+    node.addEventListener('dblclick', attachEmacsWrapper);
 }
 
-port.onMessage.addListener(function (msg) {
-    if (msg.type === "init") {
-	id = msg.id;
+// Hook the current textareas.
+var textareas = document.getElementsByTagName("textarea");
+for (var i = 0; i < textareas.length; i++) {
+    hookTextArea(textareas[i]);
+}
 
-	// Hook the current textareas.
-	var textareas = document.getElementsByTagName("textarea");
-	for (var i = 0; i < textareas.length; i++) {
-	    hookTextArea(textareas[i]);
-	}
-
-	// And hook any new ones that get created.
-	document.body.addEventListener('DOMNodeInserted', function (ev) {
-	    if (ev.target.nodeType != 1)
+// And hook any new ones that get created.
+document.body.addEventListener('DOMNodeInserted', function (ev) {
+    if (ev.target.nodeType != 1)
 		return;
-	    var textareas = ev.target.getElementsByTagName("textarea");
-	    for (var i = 0; i < textareas.length; i++) {
-		hookTextArea(textareas[i]);
-	    }
-	});
-    } else if (msg.type === "edit_done") {
-	if (editorCallbacks[msg.source])
-	    editorCallbacks[msg.source](msg.text);
-    } else if (msg.type === "child_detached") {
-	delete editorCallbacks[msg.id];
+    var textareas = ev.target.getElementsByTagName("textarea");
+    for (var i = 0; i < textareas.length; i++) {
+	hookTextArea(textareas[i]);
     }
 });
