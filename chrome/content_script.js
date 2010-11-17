@@ -1,3 +1,7 @@
+// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Use of this source code is governed by an MIT-style license that can be
+// found in the LICENSE file.
+
 var port = chrome.extension.connect({name: "content_script"});
 var id = -1;
 var nextId = 1;
