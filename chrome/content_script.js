@@ -5,7 +5,7 @@
 var port;
 var onInit = [];
 var id = -1;
-var nextId = 1;
+var nextEditorId = 1;
 
 var editorCallbacks = {}
 
@@ -42,7 +42,7 @@ function positioned(elem) {
 }
 
 function hookTextArea(node) {
-    var editorId = nextId++;
+    var editorId = nextEditorId++;
 
     function attachEmacs() {
 	if (!node.parentNode)
