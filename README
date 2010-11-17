@@ -1,0 +1,5 @@
+Embedded Emacs is a NPAPI plugin and Chrome extension pair that
+replaces textareas with embedded emacs.
+
+It uses the XEmbed-based NPAPI mode on Linux and emacs --parent-id to
+embed your system emacs binary into your browser.
