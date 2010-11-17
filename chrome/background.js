@@ -30,7 +30,6 @@ ContentScriptHost.prototype = {
 	    if (msg.id === undefined || msg.message === undefined) {
 		console.log("Invalid editor message");
 	    } else {
-		console.log("Forwarding editor message");
 		this.postEditorMessage(msg.id, msg.message);
 	    }
 	} else {
@@ -39,7 +38,6 @@ ContentScriptHost.prototype = {
 	}
     },
     onDisconnect: function () {
-	console.log("Content script detaching");
 	delete contentScripts[this.id];
     },
     attachEditor: function (editor) {
@@ -53,7 +51,6 @@ ContentScriptHost.prototype = {
 	var pending = this.pendingEditorMessages[editor.id];
 	delete this.pendingEditorMessages[editor.id];
 	if (pending) {
-	    console.log("Sending " + pending.length + " pending messages");
 	    for (var i = 0; i < pending.length; i++) {
 		editor.port.postMessage(pending[i]);
 	    }
@@ -73,7 +70,6 @@ ContentScriptHost.prototype = {
 	if (this.editors[id]) {
 	    this.editors[id].port.postMessage(msg);
 	} else {
-	    console.log("Queueing editor message");
 	    if (this.pendingEditorMessages[id] === undefined)
 		this.pendingEditorMessages[id] = [];
 	    this.pendingEditorMessages[id].push(msg);
@@ -117,7 +113,6 @@ EditorHost.prototype = {
 	    if (msg.message === undefined) {
 		console.log("Invalid parent message");
 	    } else {
-		console.log("Forwaring message to parent");
 		// Tell the parent who sent it.
 		msg.message.source = this.id;
 		// We don't need to queue up on this end; if the
@@ -130,18 +125,14 @@ EditorHost.prototype = {
 	}
     },
     onDisconnect: function () {
-	console.log("Editor detaching");
 	this.contentScript.detachEditor(this);
     },
 };
 
 chrome.extension.onConnect.addListener(function (port) {
-    console.log("New port!");
     if (port.name === "content_script") {
-	console.log("New ContentScriptHost " + port.name);
 	new ContentScriptHost(port);
     } else {
-	console.log("New EditorHost " + port.name);
 	new EditorHost(port);
     }
 });
