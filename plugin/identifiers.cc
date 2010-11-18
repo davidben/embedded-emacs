@@ -7,12 +7,8 @@
 
 namespace {
 
-#define IDENTIFIER(symbol) const NPUTF8 STR_ ## symbol [] = #symbol;
-#include "identifier_list.inc.h"
-#undef IDENTIFIER
-
 const NPUTF8 *strings[] = {
-    #define IDENTIFIER(symbol) STR_ ## symbol ,
+    #define IDENTIFIER(symbol) # symbol ,
     #include "identifier_list.inc.h"
     #undef IDENTIFIER
 };
