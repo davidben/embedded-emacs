@@ -18,3 +18,4 @@ Known issues / TODO:
 - trigger not configurable
 - buildsystem does not build both 32-bit and 64-bit plugins
 - buildsystem does not package crx
+- emacs23 seems to have a resizing bug, you may need a development build of emacs24 or so
