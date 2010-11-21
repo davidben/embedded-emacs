@@ -23,9 +23,6 @@ class MessageProxy {
     // Only called on the plugin thread.
     void invalidate();
 
-    // NEVER CALL THIS OUTSIDE THE PLUGIN THREAD.
-    EmacsInstance* emacsInstance();
-
   private:
     ~MessageProxy();
 

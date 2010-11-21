@@ -4,11 +4,13 @@
 #ifndef INCLUDED_TASK_H_
 #define INCLUDED_TASK_H_
 
+class EmacsInstance;
+
 class Task {
   public:
     // Don't inline this to avoid emitting everywhere.
     virtual ~Task();
-    virtual void run() = 0;
+    virtual void run(EmacsInstance* instance) = 0;
 };
 
 #endif  // INCLUDED_TASK_H_

@@ -52,8 +52,3 @@ void MessageProxy::invalidate()
     instance_ = NULL;
     g_mutex_unlock(lock_);
 }
-
-EmacsInstance* MessageProxy::emacsInstance()
-{
-    return instance_;
-}

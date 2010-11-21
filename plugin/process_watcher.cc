@@ -28,10 +28,8 @@ class ChildExitNotifyTask : public Task {
         proxy_ = NULL;
     }
 
-    virtual void run() {
-        // Can call this unlocked because we're on the plugin thread.
-        if (proxy_->emacsInstance())
-            proxy_->emacsInstance()->childExited(pid_, status_);
+    virtual void run(EmacsInstance* instance) {
+        instance->childExited(pid_, status_);
     }
 
   private:

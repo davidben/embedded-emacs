@@ -159,7 +159,7 @@ void EmacsInstance::processTasks()
     void* data;
     while ((data = g_async_queue_try_pop(task_queue_))) {
         Task* task = static_cast<Task*>(data);
-        task->run();
+        task->run(this);
         delete task;
     }
 }
