@@ -1,7 +1,6 @@
 // Copyright (c) 2010 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
-#include <prtypes.h>
 
 #include <cstdio>
 
@@ -30,7 +29,7 @@ NP_EXPORT(NPError) OSCALL NP_Initialize(NPNetscapeFuncs* bFuncs,
         return err;
 
     // Require XEmbed support.
-    PRBool has_xembed = PR_FALSE;
+    NPBool has_xembed = false;
     err = NPN_GetValue(NULL, NPNVSupportsXEmbedBool, &has_xembed);
     if (err != NPERR_NO_ERROR || !has_xembed)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
@@ -111,7 +110,7 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value)
     EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
     switch (variable) {
         case NPPVpluginNeedsXEmbed:
-            *reinterpret_cast<PRBool*>(value) = PR_TRUE;
+            *reinterpret_cast<NPBool*>(value) = true;
             break;
         case NPPVpluginScriptableNPObject:
             *reinterpret_cast<NPObject**>(value) = emacs->getScriptObject();
