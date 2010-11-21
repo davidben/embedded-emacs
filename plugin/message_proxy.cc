@@ -5,7 +5,7 @@
 
 #include <glib.h>
 
-#include "emacsinstance.h"
+#include "emacs_instance.h"
 #include "task.h"
 
 MessageProxy::MessageProxy(EmacsInstance* instance)

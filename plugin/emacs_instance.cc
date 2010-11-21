@@ -1,7 +1,7 @@
 // Copyright (c) 2010 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
-#include "emacsinstance.h"
+#include "emacs_instance.h"
 
 #include <glib.h>
 #include <stdio.h>
@@ -16,7 +16,7 @@
 
 #include "message_proxy.h"
 #include "process_watcher.h"
-#include "scriptobject.h"
+#include "script_object.h"
 #include "task.h"
 
 namespace {

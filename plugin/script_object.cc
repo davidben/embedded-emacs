@@ -1,6 +1,6 @@
-#include "scriptobject.h"
+#include "script_object.h"
 
-#include "emacsinstance.h"
+#include "emacs_instance.h"
 #include "identifiers.h"
 
 namespace {

@@ -8,7 +8,7 @@
 
 #include <tr1/unordered_map>
 
-#include "emacsinstance.h"
+#include "emacs_instance.h"
 #include "message_proxy.h"
 #include "task.h"
 #include "util.h"

@@ -5,7 +5,7 @@
 #include <cstdio>
 
 #include "browser.h"
-#include "emacsinstance.h"
+#include "emacs_instance.h"
 #include "identifiers.h"
 #include "npapi-headers/npfunctions.h"
 #include "process_watcher.h"
