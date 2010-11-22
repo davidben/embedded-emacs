@@ -12,13 +12,13 @@ NPClass npclass = {
     ScriptObject::invalidateThunk,  // invalidate
     ScriptObject::hasMethodThunk,  // hasMethod
     ScriptObject::invokeThunk,  // invoke
-    NULL,  // invokeDefault
-    NULL,  // hasProperty
-    NULL,  // getProperty
-    NULL,  // setProperty
-    NULL,  // removeProperty
+    ScriptObject::invokeDefaultThunk,  // invokeDefault
+    ScriptObject::hasPropertyThunk,  // hasProperty
+    ScriptObject::getPropertyThunk,  // getProperty
+    ScriptObject::setPropertyThunk,  // setProperty
+    ScriptObject::removePropertyThunk,  // removeProperty
     ScriptObject::enumerateThunk,  // enumerate
-    NULL,  // construct
+    ScriptObject::constructThunk,  // construct
 };
 
 }  // namespace
@@ -97,6 +97,33 @@ bool ScriptObject::invoke(NPIdentifier name,
     return false;
 }
 
+bool ScriptObject::invokeDefault(const NPVariant *args,
+                                 uint32_t argCount,
+                                 NPVariant *result)
+{
+    return false;
+}
+
+bool ScriptObject::hasProperty(NPIdentifier name)
+{
+    return false;
+}
+
+bool ScriptObject::getProperty(NPIdentifier name, NPVariant *result)
+{
+    return false;
+}
+
+bool ScriptObject::setProperty(NPIdentifier name, const NPVariant *value)
+{
+    return false;
+}
+
+bool ScriptObject::removeProperty(NPIdentifier name)
+{
+    return false;
+}
+
 bool ScriptObject::enumerate(NPIdentifier **identifiers,
                              uint32_t *identifierCount)
 {
@@ -112,6 +139,12 @@ bool ScriptObject::enumerate(NPIdentifier **identifiers,
     *identifiers = properties;
     *identifierCount = NUM_PROPS;
     return true;
+}
+
+bool ScriptObject::construct(const NPVariant *args, uint32_t argCount,
+                             NPVariant *result)
+{
+    return false;
 }
 
 // static
@@ -148,9 +181,54 @@ bool ScriptObject::invokeThunk(NPObject *npobj, NPIdentifier name,
 }
 
 // static
+bool ScriptObject::invokeDefaultThunk(NPObject *npobj,
+                                      const NPVariant *args, uint32_t argCount,
+                                      NPVariant *result)
+{
+    return static_cast<ScriptObject*>(npobj)->invokeDefault(
+        args, argCount, result);
+}
+
+// static
+bool ScriptObject::hasPropertyThunk(NPObject *npobj, NPIdentifier name)
+{
+    return static_cast<ScriptObject*>(npobj)->hasProperty(name);
+}
+
+// static
+bool ScriptObject::getPropertyThunk(NPObject *npobj,
+                                    NPIdentifier name,
+                                    NPVariant *result)
+{
+    return static_cast<ScriptObject*>(npobj)->getProperty(name, result);
+}
+
+// static
+bool ScriptObject::setPropertyThunk(NPObject *npobj,
+				 NPIdentifier name,
+				 const NPVariant *value)
+{
+    return static_cast<ScriptObject*>(npobj)->setProperty(name, value);
+}
+
+// static
+bool ScriptObject::removePropertyThunk(NPObject *npobj, NPIdentifier name)
+{
+    return static_cast<ScriptObject*>(npobj)->removeProperty(name);
+}
+
+// static
 bool ScriptObject::enumerateThunk(NPObject *npobj, NPIdentifier **identifiers,
                                   uint32_t *identifierCount)
 {
     return static_cast<ScriptObject*>(npobj)->enumerate(identifiers,
                                                         identifierCount);
+}
+
+// static
+bool ScriptObject::constructThunk(NPObject *npobj,
+                                  const NPVariant *args, uint32_t argCount,
+                                  NPVariant *result)
+{
+    return static_cast<ScriptObject*>(npobj)->construct(args, argCount, result);
 }

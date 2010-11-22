@@ -20,7 +20,14 @@ public:
 		const NPVariant *args,
 		uint32_t argCount,
 		NPVariant *result);
+    bool invokeDefault(const NPVariant *args, uint32_t argCount,
+		       NPVariant *result);
+    bool hasProperty(NPIdentifier name);
+    bool getProperty(NPIdentifier name, NPVariant *result);
+    bool setProperty(NPIdentifier name, const NPVariant *value);
+    bool removeProperty(NPIdentifier name);
     bool enumerate(NPIdentifier **identifiers, uint32_t *identifierCount);
+    bool construct(const NPVariant *args, uint32_t argCount, NPVariant *result);
 
     static NPObject* allocateThunk(NPP npp, NPClass *aClass);
     static void deallocateThunk(NPObject *npobj);
@@ -29,8 +36,23 @@ public:
     static bool invokeThunk(NPObject *npobj, NPIdentifier name,
 			    const NPVariant *args, uint32_t argCount,
 			    NPVariant *result);
+    static bool invokeDefaultThunk(NPObject *npobj,
+				   const NPVariant *args, uint32_t argCount,
+				   NPVariant *result);
+    static bool hasPropertyThunk(NPObject *npobj, NPIdentifier name);
+    static bool getPropertyThunk(NPObject *npobj,
+				 NPIdentifier name,
+				 NPVariant *result);
+    static bool setPropertyThunk(NPObject *npobj,
+				 NPIdentifier name,
+				 const NPVariant *value);
+    static bool removePropertyThunk(NPObject *npobj, NPIdentifier name);
     static bool enumerateThunk(NPObject *npobj, NPIdentifier **identifiers,
 			       uint32_t *identifierCount);
+    static bool constructThunk(NPObject *npobj,
+			       const NPVariant *args,
+			       uint32_t argCount,
+			       NPVariant *result);
 
 private:
     ScriptObject(NPP npp);
