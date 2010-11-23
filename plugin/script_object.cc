@@ -52,7 +52,8 @@ bool ScriptObject::hasMethod(NPIdentifier name)
 {
     return (name == identifier::startEditor() ||
             name == identifier::setCallback() ||
-            name == identifier::setInitialText());
+            name == identifier::setInitialText() ||
+            name == identifier::setEditorCommand());
 }
 
 bool ScriptObject::invoke(NPIdentifier name,
@@ -71,7 +72,9 @@ bool ScriptObject::invoke(NPIdentifier name,
     }
 
     if (name == identifier::startEditor()) {
-        emacs->startEditor();
+        std::string error;
+        if (!emacs->startEditor(&error))
+            NPN_SetException(this, error.c_str());
         VOID_TO_NPVARIANT(*result);
         return true;
     } else if (name == identifier::setCallback()) {
@@ -93,6 +96,18 @@ bool ScriptObject::invoke(NPIdentifier name,
         } else {
             emacs->setInitialText(NPVARIANT_TO_STRING(args[0]).UTF8Characters,
                                   NPVARIANT_TO_STRING(args[0]).UTF8Length);
+        }
+        VOID_TO_NPVARIANT(*result);
+        return true;
+    } else if (name == identifier::setEditorCommand()) {
+        if (argCount < 1) {
+            NPN_SetException(this, "setEditorCommand takes one argument");
+        } else if (!NPVARIANT_IS_STRING(args[0])) {
+            NPN_SetException(
+                this, "argument to setEditorCommand is not a string");
+        } else {
+            emacs->setEditorCommand(NPVARIANT_TO_STRING(args[0]).UTF8Characters,
+                                    NPVARIANT_TO_STRING(args[0]).UTF8Length);
         }
         VOID_TO_NPVARIANT(*result);
         return true;

@@ -14,6 +14,7 @@
 #include <string>
 #include <sstream>
 
+#include "command_template.h"
 #include "message_proxy.h"
 #include "process_watcher.h"
 #include "script_object.h"
@@ -61,18 +62,20 @@ EmacsInstance::~EmacsInstance()
     g_async_queue_unref(task_queue_);
 }
 
-bool EmacsInstance::startEditor()
+bool EmacsInstance::startEditor(std::string *error)
 {
     if (!window_id_) {
-        fprintf(stderr, "ERROR: Window not yet set\n");
+        fprintf(stderr, "Error: Window not yet set\n");
+        *error = "window not yet set";
         return false;
     }
     if (child_pid_ || !temp_file_.empty()) {
-        fprintf(stderr, "ERROR: Child process already launched\n");
+        fprintf(stderr, "Error: Child process already launched\n");
+        *error = "child process already launched";
         return false;
     }
 
-    // TODO: Make a scoped temporary file or something.
+    // FIXME: REALLY REALLY need a scoped temporary file.
     // FIXME: Do file io on a dedicated thread.
     const char *tmpdir = getenv("TMPDIR");
     if (!tmpdir)
@@ -82,13 +85,16 @@ bool EmacsInstance::startEditor()
     int fd = mkstemp(const_cast<char*>(temp_file.c_str()));
     if (fd < 0) {
         perror("mkstemp");
+        *error = "failed to create temporary file";
         return false;
     }
-    temp_file_ = temp_file;
     FILE* file = fdopen(fd, "w");
     if (!file) {
         perror("fdopen");
         close(fd);
+        if (unlink(temp_file.c_str()) < 0)
+            perror("unlink");
+        *error = "failed to fdopen temporary file";
         return false;
     }
     fwrite(initial_text_.c_str(), initial_text_.size(), 1, file);
@@ -98,25 +104,39 @@ bool EmacsInstance::startEditor()
     ss << window_id_;
     std::string window_str = ss.str();
 
-    // Apparently g_spawn_async wants non-const. Sigh.
-    char **argv = g_new(char*, 5);
-    argv[0] = g_strdup("emacs");
-    argv[1] = g_strdup("--parent-id");
-    argv[2] = g_strdup(window_str.c_str());
-    argv[3] = g_strdup(temp_file_.c_str());
-    argv[4] = NULL;
+    std::vector<std::string> params;
+    command_template::Environment env;
+    env["WINDOW"] = window_str;
+    env["PATH"] = temp_file;
+    if (!command_template::applyTemplate(editor_command_, env, params, error)) {
+        if (unlink(temp_file.c_str()) < 0)
+            perror("unlink");
+        return false;
+    }
+    if (params.size() == 0) {
+        *error = "empty parameter list";
+        if (unlink(temp_file.c_str()) < 0)
+            perror("unlink");
+        return false;
+    }
+
+    char **argv = command_template::stringVectorToArgv(params);
     GPid pid;
     if (!g_spawn_async(NULL, argv, NULL,
 		       static_cast<GSpawnFlags>(
                            G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH),
 		       NULL, NULL, &pid, NULL)) {
         g_strfreev(argv);
-        fprintf(stderr, "ERROR: Failed to spawn emacs\n");
+        *error = "failed to spawn child process";
+        fprintf(stderr, "Error: Failed to spawn child process\n");
+        if (unlink(temp_file.c_str()) < 0)
+            perror("unlink");
         return false;
     }
     g_strfreev(argv);
     process_watcher::watchProcess(pid, this);
 
+    temp_file_ = temp_file;
     child_pid_ = pid;
     return true;
 }
@@ -134,6 +154,11 @@ void EmacsInstance::setCallback(NPObject* callback)
 void EmacsInstance::setInitialText(const char *utf8Chars, uint32_t len)
 {
     initial_text_.assign(utf8Chars, len);
+}
+
+void EmacsInstance::setEditorCommand(const char *utf8Chars, uint32_t len)
+{
+    editor_command_.assign(utf8Chars, len);
 }
 
 MessageProxy* EmacsInstance::getMessageProxy()

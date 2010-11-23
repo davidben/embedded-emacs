@@ -25,9 +25,10 @@ public:
     // FIXME: to avoid possible race conditions (can the script object
     // get created before the window?), always succeed here and just
     // launch this emacs object when we get the window.
-    bool startEditor();
+    bool startEditor(std::string *error);
     void setCallback(NPObject* callback);
     void setInitialText(const char *utf8Chars, uint32_t len);
+    void setEditorCommand(const char *utf8Chars, uint32_t len);
 
     // Only call this on the plugin thread.
     MessageProxy* getMessageProxy();
@@ -52,6 +53,7 @@ private:
     ScriptObject* script_object_;
     NPObject* callback_;
     std::string initial_text_;  // UTF-8 encoded
+    std::string editor_command_;  // UTF-8 encoded
     std::string temp_file_;
 
     MessageProxy* message_proxy_;
