@@ -2,6 +2,11 @@
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
+// Initialize default settings:
+if (localStorage['commandPattern'] === undefined)
+    localStorage['commandPattern'] = "emacs --parent-id $WINDOW $PATH";
+    // "gvim --nofork --socketid $WINDOW $PATH"
+
 var nextId = 1;
 var contentScripts = {};
 

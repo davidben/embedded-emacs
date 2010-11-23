@@ -26,8 +26,7 @@ function startEditor(text) {
 	return;
     editor_started = true;
     var plugin = document.getElementById("plugin");
-    // plugin.setEditorCommand("gvim --nofork --socketid $WINDOW $PATH");
-    plugin.setEditorCommand("emacs --parent-id $WINDOW $PATH");
+    plugin.setEditorCommand(localStorage['commandPattern']);
     plugin.setInitialText(text);
     plugin.setCallback(function(contents, status) {
 	port.postMessage({
