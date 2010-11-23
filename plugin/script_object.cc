@@ -75,25 +75,29 @@ bool ScriptObject::invoke(NPIdentifier name,
         VOID_TO_NPVARIANT(*result);
         return true;
     } else if (name == identifier::setCallback()) {
-        if (argCount >= 1 && NPVARIANT_IS_OBJECT(args[0])) {
+        if (argCount < 1) {
+            NPN_SetException(NULL, "setCallback takes one argument");
+        } else if (NPVARIANT_IS_OBJECT(args[0])) {
             emacs->setCallback(NPVARIANT_TO_OBJECT(args[0]));
         } else {
-            // They gave us an integer. Merp. Well, too bad for them.
+            // Passed null, void, or some value. Throw the callback away.
             emacs->setCallback(NULL);
         }
         VOID_TO_NPVARIANT(*result);
         return true;
     } else if (name == identifier::setInitialText()) {
-        if (argCount >= 1 && NPVARIANT_IS_STRING(args[0])) {
+        if (argCount < 1) {
+            NPN_SetException(this, "setInitialText takes one argument");
+        } else if (!NPVARIANT_IS_STRING(args[0])) {
+            NPN_SetException(this, "argument to setInitialText is not a string");
+        } else {
             emacs->setInitialText(NPVARIANT_TO_STRING(args[0]).UTF8Characters,
                                   NPVARIANT_TO_STRING(args[0]).UTF8Length);
-        } else {
-            emacs->setInitialText(NULL, 0);
         }
         VOID_TO_NPVARIANT(*result);
         return true;
     }
-    // Shouldn't happen.
+
     return false;
 }
 

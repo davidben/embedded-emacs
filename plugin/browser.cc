@@ -98,6 +98,13 @@ void NPN_ReleaseVariantValue(NPVariant *variant)
     g_browser_functions.releasevariantvalue(variant);
 }
 
+void NPN_SetException(NPObject *npobj, const NPUTF8 *message)
+{
+    if (!g_browser_functions.setexception)
+        return;
+    g_browser_functions.setexception(npobj, message);
+}
+
 void NPN_PluginThreadAsyncCall(NPP plugin,
                                void (*func)(void *),
                                void *userData)
