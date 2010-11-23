@@ -30,7 +30,7 @@ bool findVariable(const std::string& pattern,
         // Look for whitespace.
         int end;
         for (end = pos+1; end < pattern.size(); end++) {
-            if (g_ascii_isspace(pattern[end]) || pattern[end] == '$')
+            if (!g_ascii_isalnum(pattern[end]) && pattern[end] != '_')
                 break;
         }
         *endp = end;
