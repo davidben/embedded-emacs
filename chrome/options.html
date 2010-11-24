@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Embedded Emacs Options</title>
+    <script type="text/javascript">
+      var presets = [ {
+        name: "Emacs",
+        pattern: "emacs --parent-id $WINDOW $PATH",
+        icon: "editors/emacs.png"
+      }, {
+        name: "gVim",
+        pattern: "gvim --nofork --socketid $WINDOW $PATH",
+        icon: "editors/gvim.png"
+      }];
+
+      function makeButton(spec) {
+          var img = document.createElement("img");
+          var button = document.createElement("button");
+          img.setAttribute("src", spec.icon);
+          img.setAttribute("alt", "");
+          button.setAttribute("class", "presetButton");
+          button.appendChild(img);
+          button.appendChild(document.createTextNode(spec.name));
+          button.addEventListener("click", function (ev) {
+              document.getElementById("commandPattern").value = spec.pattern;
+              // This doesn't fire the change event.
+              saveCommandPattern();
+          });
+          return button;
+      }
+
+      function setup() {
+          // Make the preset buttons.
+          var list = document.getElementById("presetsList");
+          for (var i = 0; i < presets.length; i++) {
+              list.appendChild(makeButton(presets[i]));
+          }
+
+          // Hook up a listener to commandPattern. TODO: Make this automatic somehow.
+          document.getElementById("commandPattern").addEventListener("change", saveCommandPattern);
+          loadOptions();
+      }
+
+      function loadOptions() {
+          document.getElementById("commandPattern").value = localStorage["commandPattern"];
+      }
+
+      function saveCommandPattern() {
+          localStorage["commandPattern"] = document.getElementById("commandPattern").value;
+      }
+
+    </script>
+    <style type="text/css">
+        /* Look shamelessly borrowed from the Chromium tabbed settings page. */
+        body {
+            font-family: sans-serif;
+            font-size: 84%;
+            width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        h1 {
+            color: #54637f;
+            font-size: 125%;
+            margin: 0px;
+            padding-bottom: 1em;
+            padding-top: 1em;
+            border-bottom: 1px solid #eee;
+        }
+        section {
+            border-bottom: 1px solid #eee;
+            display: -webkit-box;
+            -webkit-box-orient: horizontal;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            padding-bottom: 0.5em;
+        }
+        section > h2 {
+            width: 150px;
+            vertical-align: middle;
+            margin: 0px;
+            font-weight: bold;
+            font-size: 100%;
+            padding-top: 2px;
+        }
+        section > div {
+            -webkit-box-flex: 1;
+        }
+        section > div label {
+            display: block;
+            margin: 3px 0px;
+        }
+        section > div h3 {
+            font-size: 100%;
+            font-weight: bold;
+            margin: 0px;
+            padding-top: 2px;
+        }
+
+        .presetButton > img {
+            vertical-align: text-bottom;
+            margin-right: 5px;
+        }
+        #commandPattern {
+            width: 100%;
+            font-family: monospace;
+        }
+
+    </style>
+  </head>
+  <body onload="setup()">
+    <h1>Embedded Emacs Options</h1>
+
+    <section>
+      <h2>Text Editor</h2>
+      <div>
+          <p id="presetsList"></p>
+
+          <p>Command to run:
+          <input id="commandPattern" /></p>
+
+          <p>
+          The template syntax is similar to the shell, except that variables
+          needn't be quoted. Single quotes, double quotes, and variables are
+          supported. The variables are
+          </p>
+          <dl>
+              <dt><var>WINDOW</var></dt>
+              <dd>The X11 window id the editor should embed into.</dd>
+              <dt><var>PATH</var></dt>
+              <dd>The path to the temporary file to read and write textarea
+              contents from.</dd>
+          </dl>
+
+      </div>
+    </section>
+
+    <section>
+        <h2>Invocation</h2>
+        <div>
+            <b>TODO: Make this do something.</b>
+            Embed into textareas on
+            <label>
+                <input type="checkbox" id="doubleClick" />
+                Double-click
+            </label>
+            <label>
+                <input type="checkbox" id="handWaving" />
+                When I wave my hands
+            </label>
+            <label>
+                <input type="checkbox" id="twoOClock" />
+                At two o'clock
+            </label>
+            <label>
+                <input type="checkbox" id="mindReading" />
+                Telepathically
+            </label>
+        </div>
+    </section>
+
+  </body>
+</html>

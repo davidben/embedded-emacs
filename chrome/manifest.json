@@ -16,6 +16,7 @@
      "48": "icon-48.png",
     "128": "icon-128.png"
   },
+  "options_page": "options.html",
   "plugins": [
     { "path": "libemacs-npapi.so", "public": true }
   ]
