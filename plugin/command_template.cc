@@ -109,6 +109,18 @@ bool applyTemplate(const std::string& pattern,
                 i = end-1;
                 continue;
             }
+            // Backslashes are somewhat more complicated than this,
+            // but whatever. Honestly, if you want something fancy,
+            // you should write a wrapper shell script.
+            if (pattern[i] == '\\') {
+                if (i+1 >= pattern.size()) {
+                    *error = "expected character after \\";
+                    return false;
+                }
+                curParam += pattern[i+1];
+                i++;
+                continue;
+            }
         }
         // Okay, there's nothing interesting to be done. Just append
         // the character.
