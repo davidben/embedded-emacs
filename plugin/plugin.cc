@@ -10,7 +10,7 @@
 #include "npapi-headers/npfunctions.h"
 #include "process_watcher.h"
 
-NP_EXPORT(NPError) OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
+NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 {
     pFuncs->size = sizeof(*pFuncs);
     pFuncs->version = (NP_VERSION_MAJOR << 8) + NP_VERSION_MINOR;
@@ -21,8 +21,8 @@ NP_EXPORT(NPError) OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
     return NPERR_NO_ERROR;
 }
 
-NP_EXPORT(NPError) OSCALL NP_Initialize(NPNetscapeFuncs* bFuncs,
-					NPPluginFuncs* pFuncs)
+NPError NP_Initialize(NPNetscapeFuncs* bFuncs,
+		      NPPluginFuncs* pFuncs)
 {
     NPError err = initializeBrowserFuncs(bFuncs);
     if (err != NPERR_NO_ERROR)
@@ -42,9 +42,9 @@ NP_EXPORT(NPError) OSCALL NP_Initialize(NPNetscapeFuncs* bFuncs,
     return NP_GetEntryPoints(pFuncs);
 }
 
-NP_EXPORT(NPError) OSCALL NP_GetValue(void *instance,
-                                      NPPVariable variable,
-                                      void *value)
+NPError NP_GetValue(void *instance,
+		    NPPVariable variable,
+		    void *value)
 {
     NPError err = NPERR_NO_ERROR;
     switch (variable) {
@@ -61,14 +61,14 @@ NP_EXPORT(NPError) OSCALL NP_GetValue(void *instance,
     return err;
 }
 
-NP_EXPORT(NPError) OSCALL NP_Shutdown(void)
+NPError NP_Shutdown(void)
 {
     process_watcher::killAndJoinThread();
     return NPERR_NO_ERROR;
 }
 
 // This probably should be const char *, but NPAPI messed up.
-NP_EXPORT(char*) OSCALL NP_GetMIMEDescription(void)
+char* NP_GetMIMEDescription(void)
 {
     return const_cast<char*>("application/x-emacs-npapi::Embed emacs with NPAPI");
 }
