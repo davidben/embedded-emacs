@@ -37,4 +37,5 @@ env.SharedLibrary('emacs-npapi', ['browser.cc',
                                          'process_watcher.cc',
                                          'script_object.cc',
                                          'task.cc',
-                                         ])
+                                         ],
+                  CCFLAGS="-fvisibility=hidden -fvisibility-inlines-hidden")
