@@ -5,6 +5,7 @@
 #include "plugin.h"
 
 #include "browser.h"
+#include "identifiers.h"
 #include "emacs_instance.h"
 #include "process_watcher.h"
 
@@ -33,6 +34,8 @@ class EmacsPlugin : public Plugin {
         NPError err = NPN_GetValue(NULL, NPNVSupportsXEmbedBool, &has_xembed);
         if (err != NPERR_NO_ERROR || !has_xembed)
             return NPERR_INCOMPATIBLE_VERSION_ERROR;
+
+        initializeIdentifiers();
 
         return NPERR_NO_ERROR;
     }

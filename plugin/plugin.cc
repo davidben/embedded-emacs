@@ -6,7 +6,6 @@
 
 #include "browser.h"
 #include "emacs_instance.h"
-#include "identifiers.h"
 #include "npapi-headers/npfunctions.h"
 #include "plugin.h"
 #include "plugin_instance.h"
@@ -64,8 +63,6 @@ NPError NP_Initialize(NPNetscapeFuncs* bFuncs,
     err = Plugin::get()->init();
     if (err != NPERR_NO_ERROR)
         return err;
-
-    initializeIdentifiers();
 
     // On Unix, it looks like NP_GetEntryPoints isn't called directly?
     // The prototype for NP_Initialize is different from everyone
