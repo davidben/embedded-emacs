@@ -65,12 +65,6 @@ NPError NP_Initialize(NPNetscapeFuncs* bFuncs,
     if (err != NPERR_NO_ERROR)
         return err;
 
-    // Require XEmbed support.
-    NPBool has_xembed = false;
-    err = NPN_GetValue(NULL, NPNVSupportsXEmbedBool, &has_xembed);
-    if (err != NPERR_NO_ERROR || !has_xembed)
-        return NPERR_INCOMPATIBLE_VERSION_ERROR;
-
     initializeIdentifiers();
 
     // On Unix, it looks like NP_GetEntryPoints isn't called directly?

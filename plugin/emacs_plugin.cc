@@ -23,6 +23,12 @@ class EmacsPlugin : public Plugin {
         if (minor_version < NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL)
             return NPERR_INCOMPATIBLE_VERSION_ERROR;
 
+        // Require XEmbed support.
+        NPBool has_xembed = false;
+        NPError err = NPN_GetValue(NULL, NPNVSupportsXEmbedBool, &has_xembed);
+        if (err != NPERR_NO_ERROR || !has_xembed)
+            return NPERR_INCOMPATIBLE_VERSION_ERROR;
+
         return NPERR_NO_ERROR;
     }
 
