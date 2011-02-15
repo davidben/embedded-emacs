@@ -41,8 +41,7 @@ NPError Plugin::getValue(NPPVariable variable, void *value) {
 /* NP Functions              */
 /*****************************/
 
-NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs)
-{
+NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs) {
     pFuncs->size = sizeof(*pFuncs);
     pFuncs->version = (NP_VERSION_MAJOR << 8) + NP_VERSION_MINOR;
     pFuncs->newp = NPP_New;
@@ -53,8 +52,7 @@ NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 }
 
 NPError NP_Initialize(NPNetscapeFuncs* bFuncs,
-		      NPPluginFuncs* pFuncs)
-{
+		      NPPluginFuncs* pFuncs) {
     NPError err = initializeBrowserFuncs(bFuncs);
     if (err != NPERR_NO_ERROR)
         return err;
