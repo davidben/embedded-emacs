@@ -8,6 +8,7 @@
 #include "emacs_instance.h"
 #include "identifiers.h"
 #include "npapi-headers/npfunctions.h"
+#include "plugin_instance.h"
 #include "process_watcher.h"
 
 NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs)
@@ -77,37 +78,33 @@ char* NP_GetMIMEDescription(void)
 /* NPP Functions             */
 /*****************************/
 
-NPError NPP_New(NPMIMEType pluginType, NPP instance,
+#define GET_INSTANCE(npp, instance)                                     \
+    if (!npp->pdata)                                                    \
+        return NPERR_INVALID_INSTANCE_ERROR;                            \
+    PluginInstance *instance = static_cast<PluginInstance*>(npp->pdata)
+
+NPError NPP_New(NPMIMEType pluginType, NPP npp,
                 uint16_t mode, int16_t argc, char* argn[],
-                char* argv[], NPSavedData* saved)
-{
+                char* argv[], NPSavedData* saved) {
     // TODO: Pass some of these arguments in??
-    EmacsInstance* emacs = new EmacsInstance(instance);
-    instance->pdata = emacs;
+    EmacsInstance* emacs = new EmacsInstance(npp);
+    npp->pdata = emacs;
     return NPERR_NO_ERROR;
 }
 
-NPError NPP_Destroy(NPP instance, NPSavedData** save)
-{
-    if (!instance->pdata)
-        return NPERR_INVALID_INSTANCE_ERROR;
-    delete static_cast<EmacsInstance*>(instance->pdata);
-    instance->pdata = NULL;
+NPError NPP_Destroy(NPP npp, NPSavedData** save) {
+    GET_INSTANCE(npp, instance);
+    delete instance;
+    npp->pdata = NULL;
     return NPERR_NO_ERROR;
 }
 
-NPError NPP_SetWindow(NPP instance, NPWindow* window)
-{
-    if (!instance->pdata)
-        return NPERR_INVALID_INSTANCE_ERROR;
-    EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
-    return emacs->setWindow(window);
+NPError NPP_SetWindow(NPP npp, NPWindow* window) {
+    GET_INSTANCE(npp, instance);
+    return instance->setWindow(window);
 }
 
-NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value)
-{
-    if (!instance->pdata)
-        return NPERR_INVALID_INSTANCE_ERROR;
-    EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
-    return emacs->getValue(variable, value);
+NPError NPP_GetValue(NPP npp, NPPVariable variable, void* value) {
+    GET_INSTANCE(npp, instance);
+    return instance->getValue(variable, value);
 }
