@@ -31,6 +31,7 @@ env.ParseConfig('pkg-config --cflags --libs gthread-2.0')
 env.SharedLibrary('emacs-npapi', ['browser.cc',
                                   'command_template.cc',
                                   'emacs_instance.cc',
+                                  'emacs_plugin.cc',
                                   'identifiers.cc',
                                   'message_proxy.cc',
                                   'plugin.cc',

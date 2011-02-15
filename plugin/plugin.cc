@@ -8,8 +8,39 @@
 #include "emacs_instance.h"
 #include "identifiers.h"
 #include "npapi-headers/npfunctions.h"
+#include "plugin.h"
 #include "plugin_instance.h"
 #include "process_watcher.h"
+
+/*****************************/
+/* Plugin implementation     */
+/*****************************/
+
+namespace {
+Plugin* g_plugin_instance = NULL;
+}  // namespace
+
+Plugin::Plugin() {
+}
+
+Plugin::~Plugin() {
+}
+
+Plugin* Plugin::get() {
+    return g_plugin_instance;
+}
+
+NPError Plugin::init() {
+    return NPERR_NO_ERROR;
+}
+
+NPError Plugin::getValue(NPPVariable variable, void *value) {
+    return NPERR_INVALID_PARAM;
+}
+
+/*****************************/
+/* NP Functions              */
+/*****************************/
 
 NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 {
@@ -26,6 +57,11 @@ NPError NP_Initialize(NPNetscapeFuncs* bFuncs,
 		      NPPluginFuncs* pFuncs)
 {
     NPError err = initializeBrowserFuncs(bFuncs);
+    if (err != NPERR_NO_ERROR)
+        return err;
+
+    g_plugin_instance = Plugin::createPlugin();
+    err = g_plugin_instance->init();
     if (err != NPERR_NO_ERROR)
         return err;
 
