@@ -25,13 +25,6 @@ NPError initializeBrowserFuncs(NPNetscapeFuncs* bFuncs)
     if (major_version != NP_VERSION_MAJOR)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
 
-    // Require NPRuntime.
-    if (minor_version < NPVERS_HAS_NPRUNTIME_SCRIPTING)
-        return NPERR_INCOMPATIBLE_VERSION_ERROR;
-    // Require sane threading.
-    if (minor_version < NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL)
-        return NPERR_INCOMPATIBLE_VERSION_ERROR;
-
     memcpy(&g_browser_functions, bFuncs,
            std::min(sizeof(g_browser_functions), (size_t)bFuncs->size));
 
