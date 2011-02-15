@@ -24,6 +24,7 @@ void processTasksThunk(void *ptr) {
 PluginInstance::PluginInstance(NPP npp)
         : npp_(npp),
           message_proxy_(NULL) {
+    npp_->pdata = this;
     task_queue_ = g_async_queue_new_full(deleteTask);
 }
 
@@ -34,6 +35,7 @@ PluginInstance::~PluginInstance() {
         message_proxy_ = NULL;
     }
     g_async_queue_unref(task_queue_);
+    npp_->pdata = NULL;
 }
 
 NPP PluginInstance::npp() {

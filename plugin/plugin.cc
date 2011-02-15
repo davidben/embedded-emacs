@@ -87,15 +87,13 @@ NPError NPP_New(NPMIMEType pluginType, NPP npp,
                 uint16_t mode, int16_t argc, char* argn[],
                 char* argv[], NPSavedData* saved) {
     // TODO: Pass some of these arguments in??
-    EmacsInstance* emacs = new EmacsInstance(npp);
-    npp->pdata = emacs;
+    new EmacsInstance(npp);
     return NPERR_NO_ERROR;
 }
 
 NPError NPP_Destroy(NPP npp, NPSavedData** save) {
     GET_INSTANCE(npp, instance);
     delete instance;
-    npp->pdata = NULL;
     return NPERR_NO_ERROR;
 }
 
