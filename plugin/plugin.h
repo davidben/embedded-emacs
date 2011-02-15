@@ -10,6 +10,11 @@ class PluginInstance;
 
 class Plugin {
   public:
+    // Constructors and destructors should be cheap. It seems that
+    // Chrome will call NP_GetMIMEDescription before NP_Initialize
+    // when probing, so it probably never even calls the latter. TODO:
+    // Check if this is the case and if this means dtor needs to work
+    // without init being called.
     Plugin();
     virtual ~Plugin();
 
@@ -23,6 +28,8 @@ class Plugin {
     virtual NPError init();
 
     virtual NPError getValue(NPPVariable variable, void *value);
+    // NOTE: This function must be safe to call before init() is
+    // called.
     virtual const char* getMIMEDescription() = 0;
 
     virtual PluginInstance* createInstance(NPMIMEType pluginType, NPP npp,

@@ -10,14 +10,13 @@
 #include "npapi-headers/npfunctions.h"
 #include "plugin.h"
 #include "plugin_instance.h"
-#include "process_watcher.h"
 
 /*****************************/
 /* Plugin implementation     */
 /*****************************/
 
 namespace {
-Plugin* g_plugin_instance = NULL;
+Plugin* g_plugin = NULL;
 }  // namespace
 
 Plugin::Plugin() {
@@ -27,7 +26,9 @@ Plugin::~Plugin() {
 }
 
 Plugin* Plugin::get() {
-    return g_plugin_instance;
+    if (g_plugin == NULL)
+        g_plugin = Plugin::createPlugin();
+    return g_plugin;
 }
 
 NPError Plugin::init() {
@@ -60,8 +61,7 @@ NPError NP_Initialize(NPNetscapeFuncs* bFuncs,
     if (err != NPERR_NO_ERROR)
         return err;
 
-    g_plugin_instance = Plugin::createPlugin();
-    err = g_plugin_instance->init();
+    err = Plugin::get()->init();
     if (err != NPERR_NO_ERROR)
         return err;
 
@@ -92,16 +92,14 @@ NPError NP_GetValue(void *instance,
     return err;
 }
 
-NPError NP_Shutdown(void)
-{
-    process_watcher::killAndJoinThread();
+NPError NP_Shutdown(void) {
+    delete g_plugin;
     return NPERR_NO_ERROR;
 }
 
 // This probably should be const char *, but NPAPI messed up.
-char* NP_GetMIMEDescription(void)
-{
-    return const_cast<char*>("application/x-emacs-npapi::Embed emacs with NPAPI");
+char* NP_GetMIMEDescription(void) {
+    return const_cast<char*>(Plugin::get()->getMIMEDescription());
 }
 
 /*****************************/
