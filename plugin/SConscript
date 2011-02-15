@@ -29,13 +29,14 @@ env.ParseConfig('pkg-config --cflags --libs glib-2.0')
 env.ParseConfig('pkg-config --cflags --libs gthread-2.0')
 
 env.SharedLibrary('emacs-npapi', ['browser.cc',
-                                         'command_template.cc',
-                                         'emacs_instance.cc',
-                                         'identifiers.cc',
-                                         'message_proxy.cc',
-                                         'plugin.cc',
-                                         'process_watcher.cc',
-                                         'script_object.cc',
-                                         'task.cc',
-                                         ],
+                                  'command_template.cc',
+                                  'emacs_instance.cc',
+                                  'identifiers.cc',
+                                  'message_proxy.cc',
+                                  'plugin.cc',
+                                  'plugin_instance.cc',
+                                  'process_watcher.cc',
+                                  'script_object.cc',
+                                  'task.cc',
+                                  ],
                   CCFLAGS="-fvisibility=hidden -fvisibility-inlines-hidden")

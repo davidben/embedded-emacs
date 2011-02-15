@@ -1,4 +1,4 @@
-// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #ifndef INCLUDED_EMACS_INSTANCE_H_
@@ -9,15 +9,12 @@
 #include <sys/types.h>
 
 #include "browser.h"
+#include "plugin_instance.h"
 #include "util.h"
 
-G_FORWARD_DECLARE(GAsyncQueue);
-class MessageProxy;
-typedef struct NPObject NPObject;
 class ScriptObject;
-class Task;
 
-class EmacsInstance {
+class EmacsInstance : public PluginInstance {
 public:
     EmacsInstance(NPP npp);
     ~EmacsInstance();
@@ -30,23 +27,12 @@ public:
     void setInitialText(const char *utf8Chars, uint32_t len);
     void setEditorCommand(const char *utf8Chars, uint32_t len);
 
-    // Only call this on the plugin thread.
-    MessageProxy* getMessageProxy();
-    // Called on any thread. Safe to call until around the end of the
-    // destructor. Specifically, EmacsInstance should inform everyone
-    // with a reference not to post more tasks before deleting the
-    // queue.
-    void postTask(Task* task);
-    // Called on the main plugin thread.
-    void processTasks();
-
     // process_watcher calls this function when a child exitted.
     void childExited(pid_t pid, int status);
 
     NPError setWindow(NPWindow* window);
-    NPObject* getScriptObject();
+    NPError getValue(NPPVariable variable, void* value);
 private:
-    NPP npp_;
     long window_id_;  // Should I include X11 header files and use
                       // Window?
     pid_t child_pid_;
@@ -55,9 +41,6 @@ private:
     std::string initial_text_;  // UTF-8 encoded
     std::string editor_command_;  // UTF-8 encoded
     std::string temp_file_;
-
-    MessageProxy* message_proxy_;
-    GAsyncQueue* task_queue_;
 
     DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
 };

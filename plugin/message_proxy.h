@@ -1,4 +1,4 @@
-// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #ifndef INCLUDED_MESSAGE_PROXY_H_
@@ -6,15 +6,15 @@
 
 #include "util.h"
 
-class EmacsInstance;
+class PluginInstance;
 G_FORWARD_DECLARE(GMutex);
 class Task;
 
 // FIXME: This needs some serious refactoring, but it should /work/.
 class MessageProxy {
   public:
-    // NOTE: THIS SHOULD ONLY BE CALLED BY EmacsInstance.
-    MessageProxy(EmacsInstance* instance);
+    // NOTE: THIS SHOULD ONLY BE CALLED BY PluginInstance.
+    MessageProxy(PluginInstance* instance);
 
     MessageProxy* ref();
     void unref();
@@ -26,7 +26,7 @@ class MessageProxy {
   private:
     ~MessageProxy();
 
-    EmacsInstance* instance_;
+    PluginInstance* instance_;
     volatile int ref_count_;
 
     GMutex* lock_;

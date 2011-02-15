@@ -1,4 +1,4 @@
-// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #include "process_watcher.h"
@@ -28,8 +28,9 @@ class ChildExitNotifyTask : public Task {
         proxy_ = NULL;
     }
 
-    virtual void run(EmacsInstance* instance) {
-        instance->childExited(pid_, status_);
+    virtual void run(PluginInstance* instance) {
+        // TODO: Get rid of this ridiculous cast.
+        static_cast<EmacsInstance*>(instance)->childExited(pid_, status_);
     }
 
   private:

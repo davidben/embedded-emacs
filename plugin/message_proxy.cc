@@ -1,14 +1,14 @@
-// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #include "message_proxy.h"
 
 #include <glib.h>
 
-#include "emacs_instance.h"
+#include "plugin_instance.h"
 #include "task.h"
 
-MessageProxy::MessageProxy(EmacsInstance* instance)
+MessageProxy::MessageProxy(PluginInstance* instance)
         : instance_(instance),
           ref_count_(1),
           lock_(g_mutex_new())

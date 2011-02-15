@@ -1,4 +1,4 @@
-// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #include "emacs_instance.h"
@@ -15,43 +15,20 @@
 #include <sstream>
 
 #include "command_template.h"
-#include "message_proxy.h"
 #include "process_watcher.h"
 #include "script_object.h"
-#include "task.h"
-
-namespace {
-
-void deleteTask(void *ptr)
-{
-    delete static_cast<Task*>(ptr);
-}
-
-void processTasksThunk(void *ptr)
-{
-    static_cast<EmacsInstance*>(ptr)->processTasks();
-}
-
-};
 
 EmacsInstance::EmacsInstance(NPP npp)
-        : npp_(npp),
+        : PluginInstance(npp),
           window_id_(0),
           child_pid_(0),
           script_object_(NULL),
-          callback_(NULL),
-          message_proxy_(NULL)
+          callback_(NULL)
 {
-    task_queue_ = g_async_queue_new_full(deleteTask);
 }
 
 EmacsInstance::~EmacsInstance()
 {
-    if (message_proxy_) {
-        message_proxy_->invalidate();
-        message_proxy_->unref();
-        message_proxy_ = NULL;
-    }
     setCallback(NULL);
     if (script_object_)
         NPN_ReleaseObject(script_object_);
@@ -59,7 +36,6 @@ EmacsInstance::~EmacsInstance()
         if (unlink(temp_file_.c_str()) < 0)
             perror("unlink");
     }
-    g_async_queue_unref(task_queue_);
 }
 
 bool EmacsInstance::startEditor(std::string *error)
@@ -161,34 +137,6 @@ void EmacsInstance::setEditorCommand(const char *utf8Chars, uint32_t len)
     editor_command_.assign(utf8Chars, len);
 }
 
-MessageProxy* EmacsInstance::getMessageProxy()
-{
-    if (!message_proxy_) {
-        message_proxy_ = new MessageProxy(this);
-    }
-    return message_proxy_;
-}
-
-void EmacsInstance::postTask(Task* task)
-{
-    if (!task) return;
-    g_async_queue_push(task_queue_, task);
-    // No memory is allocated, so we don't care if this runs or
-    // not. It may also run more often than necessary, but that's
-    // okay.
-    NPN_PluginThreadAsyncCall(npp_, processTasksThunk, this);
-}
-
-void EmacsInstance::processTasks()
-{
-    void* data;
-    while ((data = g_async_queue_try_pop(task_queue_))) {
-        Task* task = static_cast<Task*>(data);
-        task->run(this);
-        delete task;
-    }
-}
-
 void EmacsInstance::childExited(pid_t pid, int status)
 {
     if (child_pid_ != pid) {
@@ -223,7 +171,7 @@ void EmacsInstance::childExited(pid_t pid, int status)
     }
 
     NPVariant result;
-    NPN_InvokeDefault(npp_, callback_, args, 2, &result);
+    NPN_InvokeDefault(npp(), callback_, args, 2, &result);
     NPN_ReleaseVariantValue(&args[0]);
     NPN_ReleaseVariantValue(&args[1]);
     NPN_ReleaseVariantValue(&result);
@@ -243,11 +191,24 @@ NPError EmacsInstance::setWindow(NPWindow* window)
     return NPERR_NO_ERROR;
 }
 
-NPObject* EmacsInstance::getScriptObject()
+NPError EmacsInstance::getValue(NPPVariable variable, void* value)
 {
-    if (!script_object_) {
-        script_object_ = ScriptObject::create(npp_);
-        NPN_RetainObject(script_object_);
+    NPError err = NPERR_NO_ERROR;
+    switch (variable) {
+        case NPPVpluginNeedsXEmbed:
+            *reinterpret_cast<NPBool*>(value) = true;
+            break;
+        case NPPVpluginScriptableNPObject: {
+            if (!script_object_) {
+                script_object_ = ScriptObject::create(npp());
+                NPN_RetainObject(script_object_);
+            }
+            *reinterpret_cast<NPObject**>(value) =
+                    static_cast<NPObject*>(script_object_);
+            break;
+        }
+        default:
+            err = PluginInstance::getValue(variable, value);
     }
-    return script_object_;
+    return err;
 }

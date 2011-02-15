@@ -1,4 +1,4 @@
-// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
@@ -106,17 +106,8 @@ NPError NPP_SetWindow(NPP instance, NPWindow* window)
 
 NPError NPP_GetValue(NPP instance, NPPVariable variable, void* value)
 {
-    NPError err = NPERR_NO_ERROR;
+    if (!instance->pdata)
+        return NPERR_INVALID_INSTANCE_ERROR;
     EmacsInstance* emacs = static_cast<EmacsInstance*>(instance->pdata);
-    switch (variable) {
-        case NPPVpluginNeedsXEmbed:
-            *reinterpret_cast<NPBool*>(value) = true;
-            break;
-        case NPPVpluginScriptableNPObject:
-            *reinterpret_cast<NPObject**>(value) = emacs->getScriptObject();
-            break;
-        default:
-            err = NPERR_INVALID_PARAM;
-    }
-    return err;
+    return emacs->getValue(variable, value);
 }
