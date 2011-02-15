@@ -44,6 +44,22 @@ class EmacsPlugin : public Plugin {
         return "application/x-emacs-npapi::Embed emacs with NPAPI";
     }
 
+    NPError getValue(NPPVariable variable, void *value) {
+        NPError err = NPERR_NO_ERROR;
+        switch (variable) {
+            case NPPVpluginNameString:
+                *reinterpret_cast<const char **>(value) = "Embedded Emacs";
+                break;
+            case NPPVpluginDescriptionString:
+                *reinterpret_cast<const char **>(value) =
+                        "Embeds emacs into your browser window with XEmbed.";
+                break;
+            default:
+                err = Plugin::getValue(variable, value);
+        }
+        return err;
+    }
+
     PluginInstance* createInstance(NPMIMEType pluginType, NPP npp,
                                    uint16_t mode,
                                    int16_t argc,

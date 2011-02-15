@@ -71,21 +71,8 @@ NPError NP_Initialize(NPNetscapeFuncs* bFuncs,
 
 NPError NP_GetValue(void *instance,
 		    NPPVariable variable,
-		    void *value)
-{
-    NPError err = NPERR_NO_ERROR;
-    switch (variable) {
-        case NPPVpluginNameString:
-            *reinterpret_cast<const char **>(value) = "Embedded Emacs";
-            break;
-        case NPPVpluginDescriptionString:
-            *reinterpret_cast<const char **>(value) =
-                    "Embeds emacs into your browser window with XEmbed.";
-            break;
-        default:
-            err = NPERR_INVALID_PARAM;
-    }
-    return err;
+		    void *value) {
+    return Plugin::get()->getValue(variable, value);
 }
 
 NPError NP_Shutdown(void) {
