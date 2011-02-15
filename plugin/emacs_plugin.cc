@@ -50,7 +50,8 @@ class EmacsPlugin : public Plugin {
                                    char *argn[], char *argv[],
                                    NPSavedData* saved,
                                    NPError* error) {
-        // TODO
+        // TODO: Pass some of these arguments in??
+        return new EmacsInstance(npp);
     }
 
 };

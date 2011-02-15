@@ -5,7 +5,6 @@
 #include <cstdio>
 
 #include "browser.h"
-#include "emacs_instance.h"
 #include "npapi-headers/npfunctions.h"
 #include "plugin.h"
 #include "plugin_instance.h"
@@ -111,9 +110,10 @@ char* NP_GetMIMEDescription(void) {
 NPError NPP_New(NPMIMEType pluginType, NPP npp,
                 uint16_t mode, int16_t argc, char* argn[],
                 char* argv[], NPSavedData* saved) {
-    // TODO: Pass some of these arguments in??
-    new EmacsInstance(npp);
-    return NPERR_NO_ERROR;
+    NPError err = NPERR_NO_ERROR;
+    Plugin::get()->createInstance(pluginType, npp, mode,
+                                  argc, argn, argv, saved, &err);
+    return err;
 }
 
 NPError NPP_Destroy(NPP npp, NPSavedData** save) {
