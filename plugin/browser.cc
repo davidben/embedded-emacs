@@ -39,12 +39,16 @@ NPError initializeBrowserFuncs(NPNetscapeFuncs* bFuncs)
 }
 
 void NPN_Version(int* plugin_major, int* plugin_minor,
-		    int* netscape_major, int* netscape_minor) {
-    *netscape_major = g_browser_functions.version >> 8;
-    *netscape_minor = g_browser_functions.version & 0xff;
+                 int* netscape_major, int* netscape_minor) {
+    if (netscape_major)
+        *netscape_major = g_browser_functions.version >> 8;
+    if (netscape_minor)
+        *netscape_minor = g_browser_functions.version & 0xff;
 
-    *plugin_major = NP_VERSION_MAJOR;
-    *plugin_minor = NP_VERSION_MINOR;
+    if (plugin_major)
+        *plugin_major = NP_VERSION_MAJOR;
+    if (plugin_minor)
+        *plugin_minor = NP_VERSION_MINOR;
 }
 
 NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
