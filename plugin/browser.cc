@@ -38,15 +38,23 @@ NPError initializeBrowserFuncs(NPNetscapeFuncs* bFuncs)
     return NPERR_NO_ERROR;
 }
 
-NPError NP_LOADDS NPN_GetValue(NPP instance, NPNVariable variable,
-                               void *value)
+void NPN_Version(int* plugin_major, int* plugin_minor,
+		    int* netscape_major, int* netscape_minor) {
+    *netscape_major = g_browser_functions.version >> 8;
+    *netscape_minor = g_browser_functions.version & 0xff;
+
+    *plugin_major = NP_VERSION_MAJOR;
+    *plugin_minor = NP_VERSION_MINOR;
+}
+
+NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
 {
     if (!g_browser_functions.getvalue)
         return NPERR_INVALID_FUNCTABLE_ERROR;
     return g_browser_functions.getvalue(instance, variable, value);
 }
 
-void* NP_LOADDS NPN_MemAlloc(uint32_t size)
+void* NPN_MemAlloc(uint32_t size)
 {
     if (!g_browser_functions.memalloc)
         return NULL;
