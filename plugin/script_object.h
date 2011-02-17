@@ -1,4 +1,4 @@
-// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #ifndef INCLUDED_SCRIPT_OBJECT_H_
@@ -8,28 +8,30 @@
 #include "npapi-headers/npruntime.h"
 #include "util.h"
 
-class EmacsInstance;
+class PluginInstance;
 
-class ScriptObject : public NPObject {
+class ScriptObjectBase : public NPObject {
 public:
-    static ScriptObject* create(NPP npp);
+    virtual void invalidate();
+    virtual bool hasMethod(NPIdentifier name);
+    virtual bool invoke(NPIdentifier name,
+                        const NPVariant *args,
+                        uint32_t argCount,
+                        NPVariant *result);
+    virtual bool invokeDefault(const NPVariant *args, uint32_t argCount,
+                               NPVariant *result);
+    virtual bool hasProperty(NPIdentifier name);
+    virtual bool getProperty(NPIdentifier name, NPVariant *result);
+    virtual bool setProperty(NPIdentifier name, const NPVariant *value);
+    virtual bool removeProperty(NPIdentifier name);
+    virtual bool enumerate(NPIdentifier **identifiers,
+                           uint32_t *identifierCount);
+    virtual bool construct(const NPVariant *args, uint32_t argCount,
+                           NPVariant *result);
 
-    void invalidate();
-    bool hasMethod(NPIdentifier name);
-    bool invoke(NPIdentifier name,
-		const NPVariant *args,
-		uint32_t argCount,
-		NPVariant *result);
-    bool invokeDefault(const NPVariant *args, uint32_t argCount,
-		       NPVariant *result);
-    bool hasProperty(NPIdentifier name);
-    bool getProperty(NPIdentifier name, NPVariant *result);
-    bool setProperty(NPIdentifier name, const NPVariant *value);
-    bool removeProperty(NPIdentifier name);
-    bool enumerate(NPIdentifier **identifiers, uint32_t *identifierCount);
-    bool construct(const NPVariant *args, uint32_t argCount, NPVariant *result);
+    PluginInstance* pluginInstance();
 
-    static NPObject* allocateThunk(NPP npp, NPClass *aClass);
+protected:
     static void deallocateThunk(NPObject *npobj);
     static void invalidateThunk(NPObject *npobj);
     static bool hasMethodThunk(NPObject *npobj, NPIdentifier name);
@@ -53,16 +55,52 @@ public:
 			       const NPVariant *args,
 			       uint32_t argCount,
 			       NPVariant *result);
+    ScriptObjectBase(NPP npp);
+    ~ScriptObjectBase();
 
-private:
-    ScriptObject(NPP npp);
-    ~ScriptObject();
-
-    EmacsInstance* emacsInstance();
-    
     NPP npp_;
 
-    DISALLOW_COPY_AND_ASSIGN(ScriptObject);
+  private:
+    DISALLOW_COPY_AND_ASSIGN(ScriptObjectBase);
 };
+
+template <class T>
+class ScriptObject : public ScriptObjectBase {
+  public:
+    static T* create(NPP npp) {
+        return static_cast<T*>(NPN_CreateObject(npp, &npclass));
+    }
+
+  protected:
+    static NPClass npclass;
+
+    static NPObject* allocateThunk(NPP npp, NPClass *aClass) {
+        return new T(npp);
+    }
+
+    ScriptObject(NPP npp) : ScriptObjectBase(npp) {}
+
+  private:
+    DISALLOW_COPY_AND_ASSIGN(ScriptObject<T>);
+};
+
+// Apparently I'm not allowed to define this inline. Okay, then.
+template <class T>
+NPClass ScriptObject<T>::npclass = {
+    NP_CLASS_STRUCT_VERSION,
+    ScriptObject::allocateThunk,  // allocate
+    ScriptObjectBase::deallocateThunk,  // deallocate
+    ScriptObjectBase::invalidateThunk,  // invalidate
+    ScriptObjectBase::hasMethodThunk,  // hasMethod
+    ScriptObjectBase::invokeThunk,  // invoke
+    ScriptObjectBase::invokeDefaultThunk,  // invokeDefault
+    ScriptObjectBase::hasPropertyThunk,  // hasProperty
+    ScriptObjectBase::getPropertyThunk,  // getProperty
+    ScriptObjectBase::setPropertyThunk,  // setProperty
+    ScriptObjectBase::removePropertyThunk,  // removeProperty
+    ScriptObjectBase::enumerateThunk,  // enumerate
+    ScriptObjectBase::constructThunk,  // construct
+};
+
 
 #endif  // INCLUDED_SCRIPT_OBJECT_H_

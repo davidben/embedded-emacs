@@ -12,7 +12,7 @@
 #include "plugin_instance.h"
 #include "util.h"
 
-class ScriptObject;
+class EmacsObject;
 
 class EmacsInstance : public PluginInstance {
 public:
@@ -36,7 +36,7 @@ private:
     long window_id_;  // Should I include X11 header files and use
                       // Window?
     pid_t child_pid_;
-    ScriptObject* script_object_;
+    EmacsObject* script_object_;
     NPObject* callback_;
     std::string initial_text_;  // UTF-8 encoded
     std::string editor_command_;  // UTF-8 encoded

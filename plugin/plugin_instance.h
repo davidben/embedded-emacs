@@ -14,13 +14,17 @@
 G_FORWARD_DECLARE(GAsyncQueue);
 class MessageProxy;
 typedef struct NPObject NPObject;
-class ScriptObject;
 class Task;
 
 class PluginInstance {
   public:
     PluginInstance(NPP npp);
     virtual ~PluginInstance();
+
+    static PluginInstance* fromNPP(NPP npp) {
+        if (!npp) return NULL;
+        return static_cast<PluginInstance*>(npp->pdata);
+    }
 
     NPP npp();
 

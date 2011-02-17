@@ -15,8 +15,8 @@
 #include <sstream>
 
 #include "command_template.h"
+#include "emacs_object.h"
 #include "process_watcher.h"
-#include "script_object.h"
 
 EmacsInstance::EmacsInstance(NPP npp)
         : PluginInstance(npp),
@@ -200,7 +200,7 @@ NPError EmacsInstance::getValue(NPPVariable variable, void* value)
             break;
         case NPPVpluginScriptableNPObject: {
             if (!script_object_) {
-                script_object_ = ScriptObject::create(npp());
+                script_object_ = EmacsObject::create(npp());
                 NPN_RetainObject(script_object_);
             }
             *reinterpret_cast<NPObject**>(value) =
