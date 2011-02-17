@@ -83,7 +83,7 @@ bool EmacsObject::invoke(NPIdentifier name,
 }
 
 bool EmacsObject::enumerate(NPIdentifier **identifiers,
-                             uint32_t *identifierCount) {
+			    uint32_t *identifierCount) {
     const int NUM_PROPS = 3;
     NPIdentifier* properties = static_cast<NPIdentifier*>(
         NPN_MemAlloc(sizeof(NPIdentifier) * NUM_PROPS));
