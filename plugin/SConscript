@@ -1,4 +1,4 @@
-env = Environment(CPPPATH='.')
+env = Environment()
 def CheckPKGConfig(context, version):
     context.Message( 'Checking for pkg-config... ' )
     ret = context.TryAction('pkg-config --atleast-pkgconfig-version=%s' % version)[0]
@@ -24,6 +24,11 @@ if not conf.CheckPKG('gthread-2.0'):
     Exit(1)
 env = conf.Finish()
 
+# Allow includes relative to the top-level directory.
+env.Append(CPPPATH=['.'])
+# Hide symbols unless told otherwise.
+env.Append(CCFLAGS=['-fvisibility=hidden', '-fvisibility-inlines-hidden'])
+
 # Only pull in the header files; link against NSPR later if needbe.
 env.ParseConfig('pkg-config --cflags --libs glib-2.0')
 env.ParseConfig('pkg-config --cflags --libs gthread-2.0')
@@ -43,5 +48,4 @@ env.SharedLibrary('emacs-npapi', base_files + \
                        'emacs_plugin.cc',
                        'identifiers.cc',
                        'process_watcher.cc',
-                       ],
-                  CCFLAGS="-Iplugin/ -fvisibility=hidden -fvisibility-inlines-hidden")
+                       ])
