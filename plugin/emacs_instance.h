@@ -8,8 +8,8 @@
 
 #include <sys/types.h>
 
-#include "browser.h"
-#include "plugin_instance.h"
+#include "npapi-cxx/browser.h"
+#include "npapi-cxx/plugin_instance.h"
 #include "util.h"
 
 class EmacsObject;

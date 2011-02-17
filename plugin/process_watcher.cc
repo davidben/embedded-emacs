@@ -9,8 +9,8 @@
 #include <tr1/unordered_map>
 
 #include "emacs_instance.h"
-#include "message_proxy.h"
-#include "task.h"
+#include "npapi-cxx/message_proxy.h"
+#include "npapi-cxx/task.h"
 #include "util.h"
 
 namespace {

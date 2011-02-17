@@ -2,11 +2,11 @@
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
-#include "plugin.h"
 
-#include "browser.h"
 #include "identifiers.h"
 #include "emacs_instance.h"
+#include "npapi-cxx/browser.h"
+#include "npapi-cxx/plugin.h"
 #include "process_watcher.h"
 
 namespace {

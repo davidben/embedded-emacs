@@ -1,12 +1,12 @@
 // Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
-#include "message_proxy.h"
+#include "npapi-cxx/message_proxy.h"
 
 #include <glib.h>
 
-#include "plugin_instance.h"
-#include "task.h"
+#include "npapi-cxx/plugin_instance.h"
+#include "npapi-cxx/task.h"
 
 namespace npapi {
 

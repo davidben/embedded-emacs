@@ -4,7 +4,7 @@
 #ifndef INCLUDED_SCRIPT_OBJECT_H_
 #define INCLUDED_SCRIPT_OBJECT_H_
 
-#include "browser.h"
+#include "npapi-cxx/browser.h"
 #include "npapi-headers/npruntime.h"
 #include "util.h"
 

@@ -1,9 +1,9 @@
 // Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
-#include "script_object.h"
+#include "npapi-cxx/script_object.h"
 
-#include "plugin_instance.h"
+#include "npapi-cxx/plugin_instance.h"
 
 namespace npapi {
 

@@ -3,8 +3,6 @@
 // found in the LICENSE file.
 #include "identifiers.h"
 
-#include "browser.h"
-
 namespace {
 
 const NPUTF8 *strings[] = {

@@ -4,7 +4,7 @@
 #ifndef INCLUDED_EMACS_OBJECT_H_
 #define INCLUDED_EMACS_OBJECT_H_
 
-#include "script_object.h"
+#include "npapi-cxx/script_object.h"
 
 class EmacsInstance;
 

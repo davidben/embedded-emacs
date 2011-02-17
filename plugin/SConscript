@@ -1,4 +1,4 @@
-env = Environment()
+env = Environment(CPPPATH='.')
 def CheckPKGConfig(context, version):
     context.Message( 'Checking for pkg-config... ' )
     ret = context.TryAction('pkg-config --atleast-pkgconfig-version=%s' % version)[0]
@@ -28,17 +28,20 @@ env = conf.Finish()
 env.ParseConfig('pkg-config --cflags --libs glib-2.0')
 env.ParseConfig('pkg-config --cflags --libs gthread-2.0')
 
-env.SharedLibrary('emacs-npapi', ['browser.cc',
-                                  'command_template.cc',
-                                  'emacs_instance.cc',
-                                  'emacs_object.cc',
-                                  'emacs_plugin.cc',
-                                  'identifiers.cc',
-                                  'message_proxy.cc',
-                                  'plugin.cc',
-                                  'plugin_instance.cc',
-                                  'process_watcher.cc',
-                                  'script_object.cc',
-                                  'task.cc',
-                                  ],
-                  CCFLAGS="-fvisibility=hidden -fvisibility-inlines-hidden")
+base_files = ['npapi-cxx/browser.cc',
+              'npapi-cxx/message_proxy.cc',
+              'npapi-cxx/plugin.cc',
+              'npapi-cxx/plugin_instance.cc',
+              'npapi-cxx/script_object.cc',
+              'npapi-cxx/task.cc',
+              ]
+
+env.SharedLibrary('emacs-npapi', base_files + \
+                      ['command_template.cc',
+                       'emacs_instance.cc',
+                       'emacs_object.cc',
+                       'emacs_plugin.cc',
+                       'identifiers.cc',
+                       'process_watcher.cc',
+                       ],
+                  CCFLAGS="-Iplugin/ -fvisibility=hidden -fvisibility-inlines-hidden")

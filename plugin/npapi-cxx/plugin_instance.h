@@ -8,7 +8,7 @@
 
 #include <sys/types.h>
 
-#include "browser.h"
+#include "npapi-cxx/browser.h"
 #include "util.h"
 
 G_FORWARD_DECLARE(GAsyncQueue);

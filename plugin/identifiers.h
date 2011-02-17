@@ -4,7 +4,7 @@
 #ifndef INCLUDED_IDENTIFIERS_H_
 #define INCLUDED_IDENTIFIERS_H_
 
-#include "browser.h"
+#include "npapi-cxx/browser.h"
 #include "npapi-headers/npruntime.h"
 
 namespace identifier {
