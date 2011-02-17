@@ -8,6 +8,8 @@
 #include "plugin_instance.h"
 #include "task.h"
 
+namespace npapi {
+
 MessageProxy::MessageProxy(PluginInstance* instance)
         : instance_(instance),
           ref_count_(1),
@@ -52,3 +54,5 @@ void MessageProxy::invalidate()
     instance_ = NULL;
     g_mutex_unlock(lock_);
 }
+
+}  // namespace npapi

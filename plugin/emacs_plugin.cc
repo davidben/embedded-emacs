@@ -11,7 +11,7 @@
 
 namespace {
 
-class EmacsPlugin : public Plugin {
+class EmacsPlugin : public npapi::Plugin {
   public:
     ~EmacsPlugin() {
         process_watcher::killAndJoinThread();
@@ -60,12 +60,12 @@ class EmacsPlugin : public Plugin {
         return err;
     }
 
-    PluginInstance* createInstance(NPMIMEType pluginType, NPP npp,
-                                   uint16_t mode,
-                                   int16_t argc,
-                                   char *argn[], char *argv[],
-                                   NPSavedData* saved,
-                                   NPError* error) {
+    npapi::PluginInstance* createInstance(NPMIMEType pluginType, NPP npp,
+                                          uint16_t mode,
+                                          int16_t argc,
+                                          char *argn[], char *argv[],
+                                          NPSavedData* saved,
+                                          NPError* error) {
         // TODO: Pass some of these arguments in??
         return new EmacsInstance(npp);
     }
@@ -74,6 +74,8 @@ class EmacsPlugin : public Plugin {
 
 }  // namespace
 
+namespace npapi {
 Plugin* Plugin::createPlugin() {
     return new EmacsPlugin();
 }
+}  // namespace npapi

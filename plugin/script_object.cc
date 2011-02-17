@@ -5,6 +5,8 @@
 
 #include "plugin_instance.h"
 
+namespace npapi {
+
 ScriptObjectBase::ScriptObjectBase(NPP npp)
         : npp_(npp) {
 }
@@ -131,3 +133,5 @@ bool ScriptObjectBase::constructThunk(NPObject *npobj,
                                   NPVariant *result) {
     return static_cast<ScriptObjectBase*>(npobj)->construct(args, argCount, result);
 }
+
+}  // namespace npapi

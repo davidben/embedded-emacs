@@ -19,7 +19,7 @@
 #include "process_watcher.h"
 
 EmacsInstance::EmacsInstance(NPP npp)
-        : PluginInstance(npp),
+        : npapi::PluginInstance(npp),
           window_id_(0),
           child_pid_(0),
           script_object_(NULL),

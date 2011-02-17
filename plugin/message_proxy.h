@@ -6,8 +6,11 @@
 
 #include "util.h"
 
-class PluginInstance;
 G_FORWARD_DECLARE(GMutex);
+
+namespace npapi {
+
+class PluginInstance;
 class Task;
 
 // FIXME: This needs some serious refactoring, but it should /work/.
@@ -33,5 +36,7 @@ class MessageProxy {
 
     DISALLOW_COPY_AND_ASSIGN(MessageProxy);
 };
+
+}  // namespace npapi
 
 #endif  // INCLUDED_MESSAGE_PROXY_H_

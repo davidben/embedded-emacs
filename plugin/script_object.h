@@ -8,6 +8,8 @@
 #include "npapi-headers/npruntime.h"
 #include "util.h"
 
+namespace npapi {
+
 class PluginInstance;
 
 class ScriptObjectBase : public NPObject {
@@ -101,6 +103,8 @@ NPClass ScriptObject<T>::npclass = {
     ScriptObjectBase::enumerateThunk,  // enumerate
     ScriptObjectBase::constructThunk,  // construct
 };
+
+}  // namespace npapi
 
 
 #endif  // INCLUDED_SCRIPT_OBJECT_H_

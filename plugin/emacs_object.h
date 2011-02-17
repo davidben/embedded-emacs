@@ -8,7 +8,7 @@
 
 class EmacsInstance;
 
-class EmacsObject : public ScriptObject<EmacsObject> {
+class EmacsObject : public npapi::ScriptObject<EmacsObject> {
 public:
     bool hasMethod(NPIdentifier name);
     bool invoke(NPIdentifier name,
@@ -18,7 +18,7 @@ public:
     bool enumerate(NPIdentifier **identifiers, uint32_t *identifierCount);
 
 private:
-    friend class ScriptObject<EmacsObject>;
+    friend class npapi::ScriptObject<EmacsObject>;
     EmacsObject(NPP npp);
     ~EmacsObject();
 

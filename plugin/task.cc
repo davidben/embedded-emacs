@@ -3,6 +3,10 @@
 // found in the LICENSE file.
 #include "task.h"
 
+namespace npapi {
+
 Task::~Task()
 {
 }
+
+}  // namespace npapi

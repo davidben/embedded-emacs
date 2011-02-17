@@ -6,7 +6,7 @@
 #include "emacs_instance.h"
 #include "identifiers.h"
 
-EmacsObject::EmacsObject(NPP npp) : ScriptObject<EmacsObject>(npp) {
+EmacsObject::EmacsObject(NPP npp) : npapi::ScriptObject<EmacsObject>(npp) {
 }
 
 EmacsObject::~EmacsObject() {

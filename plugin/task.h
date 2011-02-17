@@ -4,6 +4,8 @@
 #ifndef INCLUDED_TASK_H_
 #define INCLUDED_TASK_H_
 
+namespace npapi {
+
 class PluginInstance;
 
 class Task {
@@ -12,5 +14,7 @@ class Task {
     virtual ~Task();
     virtual void run(PluginInstance* instance) = 0;
 };
+
+}  // namespace npapi
 
 #endif  // INCLUDED_TASK_H_

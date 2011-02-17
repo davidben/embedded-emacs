@@ -12,14 +12,16 @@
 namespace {
 
 void deleteTask(void *ptr) {
-    delete static_cast<Task*>(ptr);
+    delete static_cast<npapi::Task*>(ptr);
 }
 
 void processTasksThunk(void *ptr) {
-    static_cast<PluginInstance*>(ptr)->processTasks();
+    static_cast<npapi::PluginInstance*>(ptr)->processTasks();
 }
 
 }  // namespace
+
+namespace npapi {
 
 PluginInstance::PluginInstance(NPP npp)
         : npp_(npp),
@@ -74,3 +76,5 @@ NPError PluginInstance::setWindow(NPWindow* window) {
 NPError PluginInstance::getValue(NPPVariable variable, void* value) {
     return NPERR_INVALID_PARAM;
 }
+
+}  // namespace npapi

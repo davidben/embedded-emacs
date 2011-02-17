@@ -12,8 +12,10 @@
 #include "util.h"
 
 G_FORWARD_DECLARE(GAsyncQueue);
+
+namespace npapi {
+
 class MessageProxy;
-typedef struct NPObject NPObject;
 class Task;
 
 class PluginInstance {
@@ -48,5 +50,7 @@ class PluginInstance {
 
     DISALLOW_COPY_AND_ASSIGN(PluginInstance);
 };
+
+}  // namespace npapi
 
 #endif  // INCLUDED_PLUGIN_INSTANCE_H_

@@ -15,9 +15,9 @@
 
 namespace {
 
-class ChildExitNotifyTask : public Task {
+class ChildExitNotifyTask : public npapi::Task {
   public:
-    ChildExitNotifyTask(MessageProxy* proxy, pid_t pid, int status)
+    ChildExitNotifyTask(npapi::MessageProxy* proxy, pid_t pid, int status)
             : proxy_(proxy->ref()),
               pid_(pid),
               status_(status) {
@@ -28,13 +28,13 @@ class ChildExitNotifyTask : public Task {
         proxy_ = NULL;
     }
 
-    virtual void run(PluginInstance* instance) {
+    virtual void run(npapi::PluginInstance* instance) {
         // TODO: Get rid of this ridiculous cast.
         static_cast<EmacsInstance*>(instance)->childExited(pid_, status_);
     }
 
   private:
-    MessageProxy* proxy_;
+    npapi::MessageProxy* proxy_;
     pid_t pid_;
     int status_;
 };
@@ -59,7 +59,8 @@ class ProcessWatcher {
         g_main_loop_unref(loop_);
 
         // Unref any message proxies still alive.
-        typedef std::tr1::unordered_map<pid_t, MessageProxy*>::iterator iter_t;
+        typedef std::tr1::unordered_map<pid_t, npapi::MessageProxy*>::iterator
+                iter_t;
         for (iter_t iter = pid_to_npp_.begin();
              iter != pid_to_npp_.end();
              ++iter) {
@@ -109,7 +110,7 @@ class ProcessWatcher {
     GMainLoop* loop_;
     GThread* thread_;
 
-    std::tr1::unordered_map<pid_t, MessageProxy*> pid_to_npp_;
+    std::tr1::unordered_map<pid_t, npapi::MessageProxy*> pid_to_npp_;
     DISALLOW_COPY_AND_ASSIGN(ProcessWatcher);
 };
 

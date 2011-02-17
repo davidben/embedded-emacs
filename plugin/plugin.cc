@@ -14,8 +14,10 @@
 /*****************************/
 
 namespace {
-Plugin* g_plugin = NULL;
+npapi::Plugin* g_plugin = NULL;
 }  // namespace
+
+namespace npapi {
 
 Plugin::Plugin() {
 }
@@ -37,9 +39,14 @@ NPError Plugin::getValue(NPPVariable variable, void *value) {
     return NPERR_INVALID_PARAM;
 }
 
+}  // namespace npapi
+
 /*****************************/
 /* NP Functions              */
 /*****************************/
+
+using npapi::Plugin;
+using npapi::PluginInstance;
 
 NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs) {
     pFuncs->size = sizeof(*pFuncs);

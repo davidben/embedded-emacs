@@ -13,8 +13,9 @@
 #include "util.h"
 
 class EmacsObject;
+typedef struct NPObject NPObject;
 
-class EmacsInstance : public PluginInstance {
+class EmacsInstance : public npapi::PluginInstance {
 public:
     EmacsInstance(NPP npp);
     ~EmacsInstance();

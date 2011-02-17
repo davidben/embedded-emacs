@@ -6,6 +6,8 @@
 
 #include "npapi-headers/npapi.h"
 
+namespace npapi {
+
 class PluginInstance;
 
 class Plugin {
@@ -39,4 +41,7 @@ class Plugin {
                                            NPSavedData* saved,
                                            NPError* error) = 0;
 };
+
+}  // namespace npapi
+
 #endif  // INCLUDED_PLUGIN_H_
