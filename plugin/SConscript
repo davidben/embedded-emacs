@@ -49,3 +49,6 @@ env.SharedLibrary('emacs-npapi', base_files + \
                        'identifiers.cc',
                        'process_watcher.cc',
                        ])
+
+env.SharedLibrary('embedded-emacs-container', base_files + \
+                      ['xembed_container_plugin.cc'])
