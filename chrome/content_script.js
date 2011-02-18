@@ -33,13 +33,22 @@ function hookTextArea(node) {
     function attachEmacs() {
 	if (!node.parentNode)
 	    return;
-	var container = document.createElement("embed");
-	container.type = "application/x-embedded-emacs-container";
+	var container = document.createElement("div");
+	var embed = document.createElement("embed");
+	embed.type = "application/x-embedded-emacs-container";
+	embed.style.setProperty("width", "100%", "important");
+	embed.style.setProperty("height", "100%", "important");
+	embed.style.setProperty("padding", "0px", "important");
+	embed.style.setProperty("margin", "0px", "important");
+	container.appendChild(embed);
+	container.style.setProperty("border", "1px solid black", "important");
+	container.style.setProperty("padding", "0px", "important");
+	container.style.setProperty("margin", "0px", "important");
 	function relayout() {
 	    container.style.setProperty("width", node.offsetWidth + "px",
-				     "important");
+					"important");
 	    container.style.setProperty("height", node.offsetHeight + "px",
-				     "important");
+					"important");
 	    // Apparently offsetParent is a lie.
 	    var parent = node.offsetParent;
 	    var top = node.offsetTop;
@@ -81,7 +90,7 @@ function hookTextArea(node) {
 	    type: "start_editor",
 	    id: editorId,
             text: node.value,
-            windowId: container.windowId
+            windowId: embed.windowId
 	});
 
 	editorCallbacks[editorId] = function (text) {
