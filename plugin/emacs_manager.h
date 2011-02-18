@@ -10,6 +10,7 @@
 #include <sys/types.h>
 
 #include "npapi-cxx/plugin_instance.h"
+#include "npapi-cxx/scoped_npobject.h"
 #include "util.h"
 
 class EmacsInstance;
@@ -36,7 +37,7 @@ public:
     NPError getValue(NPPVariable variable, void* value);
 private:
     int next_job_id_;
-    EmacsObject* script_object_;
+    npapi::scoped_npobject<EmacsObject> script_object_;
     std::string editor_command_;  // UTF-8 encoded
     std::tr1::unordered_map<int, EmacsInstance*> emacs_jobs_;
 

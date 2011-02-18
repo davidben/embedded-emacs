@@ -17,7 +17,6 @@
 #include "command_template.h"
 #include "emacs_manager.h"
 #include "npapi-cxx/browser.h"
-#include "npapi-headers/npruntime.h"
 
 EmacsInstance::EmacsInstance(EmacsManager* parent,
                              long window_id,
@@ -25,16 +24,13 @@ EmacsInstance::EmacsInstance(EmacsManager* parent,
                              const char *initial_text, uint32_t text_len,
                              NPObject *callback)
         : parent_(parent),
-          child_pid_(0),
-          callback_(NULL) {
+          child_pid_(0) {
     if (startEditor(window_id, editor_command, initial_text, text_len)) {
-        callback_ = NPN_RetainObject(callback);
+        callback_.reset(callback);
     }
 }
 
 EmacsInstance::~EmacsInstance() {
-    if (callback_)
-        NPN_ReleaseObject(callback_);
     if (!temp_file_.empty()) {
         if (unlink(temp_file_.c_str()) < 0)
             perror("unlink");
@@ -124,7 +120,7 @@ void EmacsInstance::childExited(pid_t pid, int status) {
         fprintf(stderr, "WARNING: Unexpected child exit (pid %d)\n", pid);
         return;
     }
-    if (!callback_) {
+    if (!callback_.get()) {
         fprintf(stderr, "WARNING: No callback defined.\n");
         return;
     }
@@ -155,7 +151,7 @@ void EmacsInstance::childExited(pid_t pid, int status) {
     }
 
     NPVariant result;
-    NPN_InvokeDefault(parent_->npp(), callback_, args, 2, &result);
+    NPN_InvokeDefault(parent_->npp(), callback_.get(), args, 2, &result);
     NPN_ReleaseVariantValue(&args[0]);
     NPN_ReleaseVariantValue(&args[1]);
     NPN_ReleaseVariantValue(&result);

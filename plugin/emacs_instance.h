@@ -9,6 +9,7 @@
 #include <sys/types.h>
 
 #include "npapi-cxx/browser.h"
+#include "npapi-cxx/scoped_npobject.h"
 #include "util.h"
 
 class EmacsManager;
@@ -36,7 +37,7 @@ private:
     EmacsManager *parent_;
     std::string error_;
     pid_t child_pid_;
-    NPObject* callback_;
+    npapi::scoped_npobject<NPObject> callback_;
 
     std::string temp_file_;
 

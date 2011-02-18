@@ -22,8 +22,7 @@
 
 EmacsManager::EmacsManager(NPP npp)
         : npapi::PluginInstance(npp),
-          next_job_id_(1),
-          script_object_(NULL) {
+          next_job_id_(1) {
     // Set window-less so Chromium doesn't try to XEmbed us.
     // NOTE: Chromium source says Mozilla documentation is lying; NULL
     // is true for both Mozilla and Chromium.
@@ -31,8 +30,6 @@ EmacsManager::EmacsManager(NPP npp)
 }
 
 EmacsManager::~EmacsManager() {
-    if (script_object_)
-        NPN_ReleaseObject(script_object_);
     // Clean up all remaining EmacsInstances
     typedef std::tr1::unordered_map<int, EmacsInstance*>::iterator iter_t;
     for (iter_t i = emacs_jobs_.begin(), end = emacs_jobs_.end();
@@ -81,12 +78,11 @@ NPError EmacsManager::getValue(NPPVariable variable, void* value) {
     NPError err = NPERR_NO_ERROR;
     switch (variable) {
         case NPPVpluginScriptableNPObject: {
-            if (!script_object_) {
-                script_object_ = EmacsObject::create(npp());
-                NPN_RetainObject(script_object_);
+            if (!script_object_.get()) {
+                script_object_.reset(EmacsObject::create(npp()));
             }
             *reinterpret_cast<NPObject**>(value) =
-                    static_cast<NPObject*>(script_object_);
+                    static_cast<NPObject*>(script_object_.get());
             break;
         }
         default:

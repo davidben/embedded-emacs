@@ -6,6 +6,7 @@
 #include "npapi-cxx/plugin.h"
 #include "npapi-cxx/plugin_instance.h"
 #include "npapi-cxx/script_object.h"
+#include "npapi-cxx/scoped_npobject.h"
 #include "util.h"
 
 namespace {
@@ -33,7 +34,6 @@ class XEmbedContainerPlugin : public npapi::Plugin {
 class XEmbedContainerInstance : public npapi::PluginInstance {
   public:
     XEmbedContainerInstance(NPP npp);
-    ~XEmbedContainerInstance();
 
     long windowId() { return window_id_; }
 
@@ -41,7 +41,7 @@ class XEmbedContainerInstance : public npapi::PluginInstance {
     NPError getValue(NPPVariable variable, void* value);
   private:
     long window_id_;
-    XEmbedContainerObject *script_object_;
+    npapi::scoped_npobject<XEmbedContainerObject> script_object_;
 };
 
 class XEmbedContainerObject : public npapi::ScriptObject<XEmbedContainerObject> {
@@ -119,13 +119,7 @@ npapi::PluginInstance* XEmbedContainerPlugin::createInstance(
 
 XEmbedContainerInstance::XEmbedContainerInstance(NPP npp)
     : PluginInstance(npp),
-      window_id_(0),
-      script_object_(NULL) {
-}
-
-XEmbedContainerInstance::~XEmbedContainerInstance() {
-    if (script_object_)
-        NPN_ReleaseObject(script_object_);
+      window_id_(0) {
 }
 
 NPError XEmbedContainerInstance::setWindow(NPWindow* window) {
@@ -147,12 +141,11 @@ NPError XEmbedContainerInstance::getValue(NPPVariable variable, void* value) {
             *reinterpret_cast<NPBool*>(value) = true;
             break;
         case NPPVpluginScriptableNPObject: {
-            if (!script_object_) {
-                script_object_ = XEmbedContainerObject::create(npp());
-                NPN_RetainObject(script_object_);
+            if (!script_object_.get()) {
+                script_object_.reset(XEmbedContainerObject::create(npp()));
             }
             *reinterpret_cast<NPObject**>(value) =
-                    static_cast<NPObject*>(script_object_);
+                    static_cast<NPObject*>(script_object_.get());
             break;
         }
         default:
