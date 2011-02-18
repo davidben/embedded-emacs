@@ -5,11 +5,11 @@
     <script type="text/javascript">
       var presets = [ {
         name: "Emacs",
-        pattern: "emacs --parent-id $WINDOW $PATH",
+        pattern: "emacs --parent-id $WINDOW --file $PATH",
         icon: "editors/emacs.png"
       }, {
         name: "gVim",
-        pattern: "gvim --nofork --socketid $WINDOW $PATH",
+        pattern: "gvim --nofork --socketid $WINDOW -- $PATH",
         icon: "editors/gvim.png"
       }];
 
