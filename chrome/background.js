@@ -9,6 +9,7 @@ if (localStorage['commandPattern'] === undefined)
 
 var nextId = 1;
 var contentScripts = {};
+var launcher = document.getElementById('launcher');
 
 function ContentScriptHost(port) {
     this.id = nextId++;
@@ -124,6 +125,19 @@ EditorHost.prototype = {
 		// content script knows its id, its been connected.
 		this.contentScript.port.postMessage(msg.message);
 	    }
+	} else if (msg.type === "launch_editor") {
+	    console.log(launcher);
+	    launcher.setEditorCommand(localStorage['commandPattern']);
+	    var self = this;
+	    launcher.startEditor(
+                msg.windowId, msg.text,
+                function (contents, status) {
+                    self.contentScript.port.postMessage({
+                        type: 'edit_done',
+                        source: self.id,
+                        text: contents
+                    });
+            });
 	} else {
 	    console.log("WARNING: ContentScriptHost: Unknown message type '" +
 			msg.type + "'");

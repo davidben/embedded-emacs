@@ -18,7 +18,7 @@
   },
   "options_page": "options.html",
   "plugins": [
-    { "path": "libemacs-npapi.so", "public": true },
+    { "path": "libembedded-emacs-launcher.so" },
     { "path": "libembedded-emacs-container.so", "public": true }
   ]
 }

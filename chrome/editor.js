@@ -26,18 +26,12 @@ function startEditor(text) {
 	return;
     editor_started = true;
     var plugin = document.getElementById("plugin");
-    plugin.setEditorCommand(localStorage['commandPattern']);
-    plugin.setInitialText(text);
-    plugin.setCallback(function(contents, status) {
-	port.postMessage({
-	    type: "parent_msg",
-	    message: {
-		type: "edit_done",
-		text: contents
-	    }
-	});
+    // TODO: Get rid of this pointless indirection.
+    port.postMessage({
+        type: "launch_editor",
+        text: text,
+        windowId: plugin.windowId
     });
-    plugin.startEditor();
     // FIXME: This doesn't work.
     plugin.focus();
 }
