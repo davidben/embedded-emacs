@@ -4,13 +4,7 @@ replaces textareas with embedded emacs.
 It uses the XEmbed-based NPAPI mode on Linux and emacs --parent-id to
 embed your system emacs binary into your browser.
 
-Note: DO NOT USE THIS PLUGIN IN YOUR PRIMARY BROWSER. It exposes the
-NPAPI plugin publically to all webpages. Private plugins don't work in
-iframes; I need to talk to the Chrome extensions people to see if this
-is intentional.
-
 Known issues / TODO:
-- plugin is public
 - keyboard focus doesn't work (need to talk to Chrome guys)
 - if web page modified CSS of textarea, emacs instance does not update
 - textareas do not update until emacs instance exits
