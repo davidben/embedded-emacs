@@ -1,10 +1,8 @@
-// Copyright (c) 2010 David Benjamin. All rights reserved.
+// Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
 var port;
-var onInit = [];
-var id = -1;
 var nextEditorId = 1;
 
 var editorCallbacks = {}
@@ -15,23 +13,11 @@ function ensurePortConnected() {
     port = chrome.extension.connect({name: "content_script"});
 
     port.onMessage.addListener(function (msg) {
-	if (msg.type === "init") {
-	    id = msg.id;
-	    for (var i = 0; i < onInit.length; i++) {
-		onInit[i]();
-	    }
-	    onInit = null;
-	} else if (msg.type === "edit_done") {
+	if (msg.type === "edit_done") {
 	    if (editorCallbacks[msg.source])
 		editorCallbacks[msg.source](msg.text);
-	} else if (msg.type === "child_detached") {
-	    delete editorCallbacks[msg.id];
 	}
     });
-}
-
-function iframePath(editorId) {
-    return "editor.html?parent_id=" + id + "&editor_id=" + editorId;
 }
 
 function positioned(elem) {
@@ -47,12 +33,12 @@ function hookTextArea(node) {
     function attachEmacs() {
 	if (!node.parentNode)
 	    return;
-	var iframe = document.createElement("iframe");
-	iframe.src = chrome.extension.getURL(iframePath(editorId));
+	var container = document.createElement("embed");
+	container.type = "application/x-embedded-emacs-container";
 	function relayout() {
-	    iframe.style.setProperty("width", node.offsetWidth + "px",
+	    container.style.setProperty("width", node.offsetWidth + "px",
 				     "important");
-	    iframe.style.setProperty("height", node.offsetHeight + "px",
+	    container.style.setProperty("height", node.offsetHeight + "px",
 				     "important");
 	    // Apparently offsetParent is a lie.
 	    var parent = node.offsetParent;
@@ -67,16 +53,16 @@ function hookTextArea(node) {
 		left += parent.offsetLeft;
 		parent = parent.offsetParent;
 	    }
-	    iframe.style.setProperty("top", top + "px", "important");
-	    iframe.style.setProperty("left", left + "px", "important");
+	    container.style.setProperty("top", top + "px", "important");
+	    container.style.setProperty("left", left + "px", "important");
 	    if (window.getComputedStyle(node).position === "fixed") {
-		iframe.style.setProperty("position", "fixed", "important");
+		container.style.setProperty("position", "fixed", "important");
 	    } else {
-		iframe.style.setProperty("position", "absolute", "important");
+		container.style.setProperty("position", "absolute", "important");
 	    }
 	}
 	relayout();
-	node.parentNode.insertBefore(iframe, node);
+	node.parentNode.insertBefore(container, node);
 
 	function onAttrModified(ev) {
 	    if (ev.attrName !== "style")
@@ -92,12 +78,10 @@ function hookTextArea(node) {
 	var oldVisibility = node.style.visibility;
 	node.style.visibility = "hidden";
 	port.postMessage({
-	    type: "editor_msg",
+	    type: "start_editor",
 	    id: editorId,
-	    message: {
-		type: "start_editor",
-		text: node.value
-	    }
+            text: node.value,
+            windowId: container.windowId
 	});
 
 	editorCallbacks[editorId] = function (text) {
@@ -106,20 +90,17 @@ function hookTextArea(node) {
 
 	    node.value = text;
 	    node.style.visibility = oldVisibility;
-	    if (iframe.parentNode)
-		iframe.parentNode.removeChild(iframe);
+	    if (container.parentNode)
+		container.parentNode.removeChild(container);
 	    delete editorCallbacks[editorId];
 	}
 
-	iframe.focus();
+	// FIXME: This doesn't work.
+	container.focus();
     }
     function attachEmacsWrapper() {
-	if (id < 0) {
-	    ensurePortConnected();
-	    onInit.push(attachEmacs);
-	} else {
-	    attachEmacs();
-	}
+	ensurePortConnected();
+	attachEmacs();
     }
 
     node.addEventListener('dblclick', attachEmacsWrapper);
