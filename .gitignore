@@ -1,6 +1,5 @@
 *.os
-plugin/libemacs-npapi.so
-chrome/libemacs-npapi.so
+*.so
 
 .sconsign.dblite
 config.log
