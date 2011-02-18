@@ -40,8 +40,8 @@ class XEmbedContainerInstance : public npapi::PluginInstance {
     NPError setWindow(NPWindow* window);
     NPError getValue(NPPVariable variable, void* value);
   private:
-    XEmbedContainerObject *script_object_;
     long window_id_;
+    XEmbedContainerObject *script_object_;
 };
 
 class XEmbedContainerObject : public npapi::ScriptObject<XEmbedContainerObject> {
@@ -180,6 +180,7 @@ bool XEmbedContainerObject::getProperty(NPIdentifier name, NPVariant *result) {
     if (!pluginInstance())
         return false;
     INT32_TO_NPVARIANT(pluginInstance()->windowId(), *result);
+    return true;
 }
 
 XEmbedContainerObject::XEmbedContainerObject(NPP npp)
