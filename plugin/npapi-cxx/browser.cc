@@ -51,6 +51,12 @@ NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
     return g_browser_functions.getvalue(instance, variable, value);
 }
 
+NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value) {
+    if (!g_browser_functions.setvalue)
+        return NPERR_INVALID_FUNCTABLE_ERROR;
+    return g_browser_functions.setvalue(instance, variable, value);
+}
+
 void* NPN_MemAlloc(uint32_t size)
 {
     if (!g_browser_functions.memalloc)
