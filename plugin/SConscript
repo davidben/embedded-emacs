@@ -27,7 +27,7 @@ env = conf.Finish()
 # Allow includes relative to the top-level directory.
 env.Append(CPPPATH=['.'])
 # Hide symbols unless told otherwise.
-env.Append(CCFLAGS=['-fvisibility=hidden', '-fvisibility-inlines-hidden'])
+env.Append(CCFLAGS=['-fvisibility=hidden', '-fvisibility-inlines-hidden', '-Wall'])
 
 # Only pull in the header files; link against NSPR later if needbe.
 env.ParseConfig('pkg-config --cflags --libs glib-2.0')
