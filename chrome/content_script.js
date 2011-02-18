@@ -2,24 +2,6 @@
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
-var port;
-var nextEditorId = 1;
-
-var editorCallbacks = {}
-
-function ensurePortConnected() {
-    if (port)
-	return;
-    port = chrome.extension.connect({name: "content_script"});
-
-    port.onMessage.addListener(function (msg) {
-	if (msg.type === "edit_done") {
-	    if (editorCallbacks[msg.source])
-		editorCallbacks[msg.source](msg.text);
-	}
-    });
-}
-
 function positioned(elem) {
     var position = window.getComputedStyle(elem).position;
     return (position === "absolute" ||
@@ -28,8 +10,6 @@ function positioned(elem) {
 }
 
 function hookTextArea(node) {
-    var editorId = nextEditorId++;
-
     function attachEmacs() {
 	if (!node.parentNode)
 	    return;
@@ -86,14 +66,12 @@ function hookTextArea(node) {
 	// again, act accordingly.
 	var oldVisibility = node.style.visibility;
 	node.style.visibility = "hidden";
-	port.postMessage({
+
+	chrome.extension.sendRequest({
 	    type: "start_editor",
-	    id: editorId,
             text: node.value,
             windowId: embed.windowId
-	});
-
-	editorCallbacks[editorId] = function (text) {
+	}, function (text) {
 	    node.removeEventListener("DOMAttrModified", onAttrModified);
 	    window.removeEventListener("resize", relayout);
 
@@ -101,18 +79,12 @@ function hookTextArea(node) {
 	    node.style.visibility = oldVisibility;
 	    if (container.parentNode)
 		container.parentNode.removeChild(container);
-	    delete editorCallbacks[editorId];
-	}
+	});
 
 	// FIXME: This doesn't work.
 	container.focus();
     }
-    function attachEmacsWrapper() {
-	ensurePortConnected();
-	attachEmacs();
-    }
-
-    node.addEventListener('dblclick', attachEmacsWrapper);
+    node.addEventListener('dblclick', attachEmacs);
 }
 
 // Hook the current textareas.
