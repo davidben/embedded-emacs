@@ -4,8 +4,8 @@
 
 // Initialize default settings:
 if (localStorage['commandPattern'] === undefined)
-    localStorage['commandPattern'] = "emacs --parent-id $WINDOW $PATH";
-    // "gvim --nofork --socketid $WINDOW $PATH"
+    // FIXME: This string is also in options.html
+    localStorage['commandPattern'] = "emacs --parent-id $WINDOW --file $PATH";
 
 var nextId = 1;
 var contentScripts = {};
