@@ -94,12 +94,12 @@ NPError XEmbedContainerPlugin::getValue(NPPVariable variable, void *value) {
             break;
         case NPPVpluginDescriptionString:
             *reinterpret_cast<const char **>(value) =
-                        "Dummy plugin that exports X11 window id for a"
-                        " trusted plugin to embed Emacs into.";
-                break;
-            default:
-                err = Plugin::getValue(variable, value);
-        }
+                    "Dummy plugin that exports X11 window id for a"
+                    " trusted plugin to embed Emacs into.";
+            break;
+        default:
+            err = Plugin::getValue(variable, value);
+    }
     return err;
 }
 
