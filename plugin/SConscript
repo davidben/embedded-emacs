@@ -41,9 +41,10 @@ base_files = ['npapi-cxx/browser.cc',
               'npapi-cxx/task.cc',
               ]
 
-env.SharedLibrary('emacs-npapi', base_files + \
+env.SharedLibrary('embedded-emacs-launcher', base_files + \
                       ['command_template.cc',
                        'emacs_instance.cc',
+                       'emacs_manager.cc',
                        'emacs_object.cc',
                        'emacs_plugin.cc',
                        'identifiers.cc',

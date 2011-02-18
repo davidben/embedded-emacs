@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 #include "emacs_object.h"
 
-#include "emacs_instance.h"
+#include "emacs_manager.h"
 #include "identifiers.h"
 
 EmacsObject::EmacsObject(NPP npp) : npapi::ScriptObject<EmacsObject>(npp) {
@@ -12,14 +12,12 @@ EmacsObject::EmacsObject(NPP npp) : npapi::ScriptObject<EmacsObject>(npp) {
 EmacsObject::~EmacsObject() {
 }
 
-EmacsInstance* EmacsObject::emacsInstance() {
-    return static_cast<EmacsInstance*>(pluginInstance());
+EmacsManager* EmacsObject::emacsManager() {
+    return static_cast<EmacsManager*>(pluginInstance());
 }
 
 bool EmacsObject::hasMethod(NPIdentifier name) {
     return (name == identifier::startEditor() ||
-            name == identifier::setCallback() ||
-            name == identifier::setInitialText() ||
             name == identifier::setEditorCommand());
 }
 
@@ -27,44 +25,45 @@ bool EmacsObject::invoke(NPIdentifier name,
                           const NPVariant *args,
                           uint32_t argCount,
                           NPVariant *result) {
-    if (!hasMethod(name))
-        return false;
-
-    EmacsInstance* emacs = emacsInstance();
+    EmacsManager* emacs = emacsManager();
     if (!emacs) {
         // TODO: raise an exception if the emacs is missing?
         VOID_TO_NPVARIANT(*result);
         return true;
     }
-
     if (name == identifier::startEditor()) {
+        if (argCount < 3) {
+            NPN_SetException(this, "startEditor takes three arguments");
+            return true;
+        }
+        int windowId;
+        if (NPVARIANT_IS_INT32(args[0])) {
+            windowId = NPVARIANT_TO_INT32(args[0]);
+        } else if (NPVARIANT_IS_DOUBLE(args[0])) {
+            // WHAT???
+            windowId = static_cast<int>(NPVARIANT_TO_DOUBLE(args[0]));
+        } else {
+            NPN_SetException(this, "window argument is not a number");
+	}
+        if (!NPVARIANT_IS_STRING(args[1])) {
+            NPN_SetException(this, "text argument is not a string");
+            return true;
+        }
+        if (!NPVARIANT_IS_OBJECT(args[2])) {
+            NPN_SetException(this, "callback argument is not an object");
+            return true;
+        }
         std::string error;
-        if (!emacs->startEditor(&error))
+        int jobId = emacs->startEditor(
+            windowId,
+            NPVARIANT_TO_STRING(args[1]).UTF8Characters,
+            NPVARIANT_TO_STRING(args[1]).UTF8Length,
+            NPVARIANT_TO_OBJECT(args[2]),
+            &error);
+        if (jobId == 0)
             NPN_SetException(this, error.c_str());
-        VOID_TO_NPVARIANT(*result);
-        return true;
-    } else if (name == identifier::setCallback()) {
-        if (argCount < 1) {
-            NPN_SetException(NULL, "setCallback takes one argument");
-        } else if (NPVARIANT_IS_OBJECT(args[0])) {
-            emacs->setCallback(NPVARIANT_TO_OBJECT(args[0]));
-        } else {
-            // Passed null, void, or some value. Throw the callback away.
-            emacs->setCallback(NULL);
-        }
-        VOID_TO_NPVARIANT(*result);
-        return true;
-    } else if (name == identifier::setInitialText()) {
-        if (argCount < 1) {
-            NPN_SetException(this, "setInitialText takes one argument");
-        } else if (!NPVARIANT_IS_STRING(args[0])) {
-            NPN_SetException(this, "argument to setInitialText is not a string");
-        } else {
-            emacs->setInitialText(NPVARIANT_TO_STRING(args[0]).UTF8Characters,
-                                  NPVARIANT_TO_STRING(args[0]).UTF8Length);
-        }
-        VOID_TO_NPVARIANT(*result);
-        return true;
+        INT32_TO_NPVARIANT(jobId, *result);
+	return true;
     } else if (name == identifier::setEditorCommand()) {
         if (argCount < 1) {
             NPN_SetException(this, "setEditorCommand takes one argument");
@@ -84,14 +83,13 @@ bool EmacsObject::invoke(NPIdentifier name,
 
 bool EmacsObject::enumerate(NPIdentifier **identifiers,
 			    uint32_t *identifierCount) {
-    const int NUM_PROPS = 3;
+    const int NUM_PROPS = 2;
     NPIdentifier* properties = static_cast<NPIdentifier*>(
         NPN_MemAlloc(sizeof(NPIdentifier) * NUM_PROPS));
     if (!properties) return false;
 
     properties[0] = identifier::startEditor();
-    properties[1] = identifier::setCallback();
-    properties[2] = identifier::setInitialText();
+    properties[1] = identifier::setEditorCommand();
 
     *identifiers = properties;
     *identifierCount = NUM_PROPS;

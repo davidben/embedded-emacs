@@ -6,11 +6,11 @@
 
 #include <sys/types.h>
 
-class EmacsInstance;
+class EmacsManager;
 
 namespace process_watcher {
 
-void watchProcess(pid_t pid, EmacsInstance* emacs);
+void watchProcess(int job_id, pid_t pid, EmacsManager* emacs);
 void killAndJoinThread();
 
 }

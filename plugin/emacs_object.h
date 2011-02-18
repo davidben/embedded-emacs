@@ -6,7 +6,7 @@
 
 #include "npapi-cxx/script_object.h"
 
-class EmacsInstance;
+class EmacsManager;
 
 class EmacsObject : public npapi::ScriptObject<EmacsObject> {
 public:
@@ -22,7 +22,7 @@ private:
     EmacsObject(NPP npp);
     ~EmacsObject();
 
-    EmacsInstance* emacsInstance();
+    EmacsManager* emacsManager();
 
     DISALLOW_COPY_AND_ASSIGN(EmacsObject);
 };

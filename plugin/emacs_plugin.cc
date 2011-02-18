@@ -4,7 +4,7 @@
 
 
 #include "identifiers.h"
-#include "emacs_instance.h"
+#include "emacs_manager.h"
 #include "npapi-cxx/browser.h"
 #include "npapi-cxx/plugin.h"
 #include "process_watcher.h"
@@ -41,18 +41,20 @@ class EmacsPlugin : public npapi::Plugin {
     }
 
     const char* getMIMEDescription() {
-        return "application/x-emacs-npapi::Embed emacs with NPAPI";
+        return "application/x-embedded-emacs-launcher::Embed emacs with NPAPI";
     }
 
     NPError getValue(NPPVariable variable, void *value) {
         NPError err = NPERR_NO_ERROR;
         switch (variable) {
             case NPPVpluginNameString:
-                *reinterpret_cast<const char **>(value) = "Embedded Emacs";
+                *reinterpret_cast<const char **>(value) =
+                        "Embedded Emacs - Launcher";
                 break;
             case NPPVpluginDescriptionString:
                 *reinterpret_cast<const char **>(value) =
-                        "Embeds emacs into your browser window with XEmbed.";
+                        "Private half of embedded emacs; takes a window id"
+                        " and launches your editor on behalf of the renderer.";
                 break;
             default:
                 err = Plugin::getValue(variable, value);
@@ -67,7 +69,7 @@ class EmacsPlugin : public npapi::Plugin {
                                           NPSavedData* saved,
                                           NPError* error) {
         // TODO: Pass some of these arguments in??
-        return new EmacsInstance(npp);
+        return new EmacsManager(npp);
     }
 
 };

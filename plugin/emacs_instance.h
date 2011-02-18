@@ -9,38 +9,35 @@
 #include <sys/types.h>
 
 #include "npapi-cxx/browser.h"
-#include "npapi-cxx/plugin_instance.h"
 #include "util.h"
 
-class EmacsObject;
+class EmacsManager;
 typedef struct NPObject NPObject;
 
-class EmacsInstance : public npapi::PluginInstance {
-public:
-    EmacsInstance(NPP npp);
+class EmacsInstance {
+  public:
+    EmacsInstance(EmacsManager* parent,
+                  long window_id,
+                  const std::string& editor_command,
+                  const char *initial_text, uint32_t text_len,
+                  NPObject *callback);
     ~EmacsInstance();
 
-    // FIXME: to avoid possible race conditions (can the script object
-    // get created before the window?), always succeed here and just
-    // launch this emacs object when we get the window.
-    bool startEditor(std::string *error);
-    void setCallback(NPObject* callback);
-    void setInitialText(const char *utf8Chars, uint32_t len);
-    void setEditorCommand(const char *utf8Chars, uint32_t len);
+    // Returns 0 if the launch failed.
+    pid_t pid() const { return child_pid_; }
+    const std::string& error() const { return error_; }
 
-    // process_watcher calls this function when a child exitted.
     void childExited(pid_t pid, int status);
-
-    NPError setWindow(NPWindow* window);
-    NPError getValue(NPPVariable variable, void* value);
 private:
-    long window_id_;  // Should I include X11 header files and use
-                      // Window?
+    bool startEditor(long window_id,
+                     const std::string& editor_command,
+                     const char *initial_text, uint32_t text_len);
+
+    EmacsManager *parent_;
+    std::string error_;
     pid_t child_pid_;
-    EmacsObject* script_object_;
     NPObject* callback_;
-    std::string initial_text_;  // UTF-8 encoded
-    std::string editor_command_;  // UTF-8 encoded
+
     std::string temp_file_;
 
     DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
