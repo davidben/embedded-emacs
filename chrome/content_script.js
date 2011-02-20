@@ -82,7 +82,7 @@ function hookTextArea(node) {
 	});
 
 	// FIXME: This doesn't work.
-	container.focus();
+	embed.focus();
     }
     node.addEventListener('dblclick', attachEmacs);
 }
