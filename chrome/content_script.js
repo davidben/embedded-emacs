@@ -20,6 +20,8 @@ function hookTextArea(node) {
 	embed.style.setProperty("height", "100%", "important");
 	embed.style.setProperty("padding", "0px", "important");
 	embed.style.setProperty("margin", "0px", "important");
+        // WebKit refuses to focus an embed element unless it has a tabIndex.
+	embed.setAttribute("tabIndex", "0");
 	container.appendChild(embed);
 	container.style.setProperty("border", "1px solid black", "important");
 	container.style.setProperty("padding", "0px", "important");
