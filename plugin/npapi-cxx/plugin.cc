@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include <cstdio>
+#include <cstring>
 
 #include "browser.h"
 #include "npapi-headers/npfunctions.h"
@@ -49,12 +50,14 @@ using npapi::Plugin;
 using npapi::PluginInstance;
 
 NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs) {
-    pFuncs->size = sizeof(*pFuncs);
-    pFuncs->version = (NP_VERSION_MAJOR << 8) + NP_VERSION_MINOR;
-    pFuncs->newp = NPP_New;
-    pFuncs->destroy = NPP_Destroy;
-    pFuncs->setwindow = NPP_SetWindow;
-    pFuncs->getvalue = NPP_GetValue;
+    static NPPluginFuncs myFuncs;
+    myFuncs.size = std::min((size_t)pFuncs->size, sizeof(myFuncs));
+    myFuncs.version = (NP_VERSION_MAJOR << 8) + NP_VERSION_MINOR;
+    myFuncs.newp = NPP_New;
+    myFuncs.destroy = NPP_Destroy;
+    myFuncs.setwindow = NPP_SetWindow;
+    myFuncs.getvalue = NPP_GetValue;
+    memcpy(pFuncs, &myFuncs, myFuncs.size);
     return NPERR_NO_ERROR;
 }
 
