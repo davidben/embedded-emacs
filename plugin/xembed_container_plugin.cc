@@ -49,6 +49,7 @@ class XEmbedContainerObject : public npapi::ScriptObject<XEmbedContainerObject> 
     XEmbedContainerInstance* pluginInstance();
     bool hasProperty(NPIdentifier name);
     bool getProperty(NPIdentifier name, NPVariant *result);
+    bool enumerate(NPIdentifier **identifiers, uint32_t *identifierCount);
   private:
     friend class npapi::ScriptObject<XEmbedContainerObject>;
     XEmbedContainerObject(NPP npp);
@@ -173,6 +174,19 @@ bool XEmbedContainerObject::getProperty(NPIdentifier name, NPVariant *result) {
     if (!pluginInstance())
         return false;
     INT32_TO_NPVARIANT(pluginInstance()->windowId(), *result);
+    return true;
+}
+
+bool XEmbedContainerObject::enumerate(NPIdentifier **identifiers,
+                                      uint32_t *identifierCount) {
+    NPIdentifier* properties = static_cast<NPIdentifier*>(
+        NPN_MemAlloc(sizeof(NPIdentifier)));
+    if (!properties) return false;
+
+    properties[0] = g_identifier_windowId;
+
+    *identifiers = properties;
+    *identifierCount = 1;
     return true;
 }
 
