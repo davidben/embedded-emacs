@@ -88,9 +88,8 @@ NPError NP_Shutdown(void) {
     return NPERR_NO_ERROR;
 }
 
-// This probably should be const char *, but NPAPI messed up.
-char* NP_GetMIMEDescription(void) {
-    return const_cast<char*>(Plugin::get()->getMIMEDescription());
+const char* NP_GetMIMEDescription(void) {
+    return Plugin::get()->getMIMEDescription();
 }
 
 /*****************************/
