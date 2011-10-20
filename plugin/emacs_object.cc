@@ -22,9 +22,9 @@ bool EmacsObject::hasMethod(NPIdentifier name) {
 }
 
 bool EmacsObject::invoke(NPIdentifier name,
-                          const NPVariant *args,
-                          uint32_t argCount,
-                          NPVariant *result) {
+                         const NPVariant *args,
+                         uint32_t argCount,
+                         NPVariant *result) {
     EmacsManager* emacs = emacsManager();
     if (!emacs) {
         // TODO: raise an exception if the emacs is missing?
