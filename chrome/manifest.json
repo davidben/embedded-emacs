@@ -11,6 +11,7 @@
     "run_at": "document_idle",
     "all_frames": true
   } ],
+  "content_security_policy": "default-src 'self'",
   "homepage_url": "https://github.com/davidben/embedded-emacs",
   "icons": {
      "16": "icon-16.png",
