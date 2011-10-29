@@ -5,13 +5,19 @@
 // Initialize default settings:
 if (localStorage['commandPattern'] === undefined)
     // FIXME: This string is also in options.html
-    localStorage['commandPattern'] = "emacs --parent-id $WINDOW --file $PATH";
+    localStorage['commandPattern'] = 'emacs --parent-id $WINDOW --file $PATH';
 
 var launcher = document.getElementById('launcher');
 
 chrome.extension.onRequest.addListener(
     function (request, sender, sendResponse) {
-	if (request.type === "start_editor") {
+	if (request.type === 'get_config') {
+            // TODO: send other config options when we get them.
+            var enabled = launcher.hasOwnProperty('setEditorCommand');
+            sendResponse({
+                enabled: enabled
+            });
+        } else if (request.type === 'start_editor') {
 	    launcher.setEditorCommand(localStorage['commandPattern']);
 	    launcher.startEditor(
                 request.windowId, request.text,

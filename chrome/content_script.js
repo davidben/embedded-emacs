@@ -89,18 +89,24 @@ function hookTextArea(node) {
     node.addEventListener('dblclick', attachEmacs);
 }
 
-// Hook the current textareas.
-var textareas = document.getElementsByTagName("textarea");
-for (var i = 0; i < textareas.length; i++) {
-    hookTextArea(textareas[i]);
-}
+chrome.extension.sendRequest({
+    type: 'get_config'
+}, function (config) {
+    if (config.enabled) {
+        // Hook the current textareas.
+        var textareas = document.getElementsByTagName("textarea");
+        for (var i = 0; i < textareas.length; i++) {
+            hookTextArea(textareas[i]);
+        }
 
-// And hook any new ones that get created.
-document.body.addEventListener('DOMNodeInserted', function (ev) {
-    if (ev.target.nodeType != 1)
-		return;
-    var textareas = ev.target.getElementsByTagName("textarea");
-    for (var i = 0; i < textareas.length; i++) {
-	hookTextArea(textareas[i]);
+        // And hook any new ones that get created.
+        document.body.addEventListener('DOMNodeInserted', function (ev) {
+            if (ev.target.nodeType != 1)
+                        return;
+            var textareas = ev.target.getElementsByTagName("textarea");
+            for (var i = 0; i < textareas.length; i++) {
+                hookTextArea(textareas[i]);
+            }
+        });
     }
 });
