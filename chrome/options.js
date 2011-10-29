@@ -2,6 +2,9 @@
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
+// Doesn't hurt. Not sure if relying on the background page can race.
+initDefaultSettings();
+
 var presets = [ {
     name: "Emacs",
     pattern: "emacs --parent-id $WINDOW --file $PATH",
@@ -35,17 +38,25 @@ function setup() {
         list.appendChild(makeButton(presets[i]));
     }
 
-    // Hook up a listener to commandPattern. TODO: Make this automatic somehow.
-    document.getElementById("commandPattern").addEventListener("change", saveCommandPattern);
     loadOptions();
+
+    // Hook up listeners.
+    document.getElementById("commandPattern").addEventListener("change", saveOptions);
+    document.getElementById("triggerAltX").addEventListener("change", saveOptions);
+    document.getElementById("triggerDoubleClick").addEventListener("change", saveOptions);
 }
 
 function loadOptions() {
     document.getElementById("commandPattern").value = localStorage["commandPattern"];
+    document.getElementById("triggerAltX").checked = (localStorage["triggerAltX"] == "true");
+    document.getElementById("triggerDoubleClick").checked = (localStorage["triggerDoubleClick"] == "true");
 }
 
-function saveCommandPattern() {
+function saveOptions() {
+    console.log('saveOptions');
     localStorage["commandPattern"] = document.getElementById("commandPattern").value;
+    localStorage["triggerAltX"] = (document.getElementById("triggerAltX").checked ? "true" : "false");
+    localStorage["triggerDoubleClick"] = (document.getElementById("triggerDoubleClick").checked ? "true" : "false");
 }
 
 window.addEventListener("load", setup);

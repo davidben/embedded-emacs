@@ -9,7 +9,7 @@ function positioned(elem) {
 	    position === "fixed");
 }
 
-function hookTextArea(node) {
+function hookTextArea(node, config) {
     function attachEmacs() {
 	if (!node.parentNode)
 	    return;
@@ -86,7 +86,19 @@ function hookTextArea(node) {
 	// FIXME: This doesn't work.
 	embed.focus();
     }
-    node.addEventListener('dblclick', attachEmacs);
+
+    if (config.triggerAltX)
+        // Apparently I don't get keypress for Alt-X.
+        node.addEventListener('keydown', function (evt) {
+            if ((evt.altKey || evt.metaKey) &&
+                !evt.ctrlKey &&
+                !evt.shiftKey &&
+                evt.keyCode === 88) {
+                attachEmacs();
+            }
+        });
+    if (config.triggerDoubleClick)
+        node.addEventListener('dblclick', attachEmacs);
 }
 
 chrome.extension.sendRequest({
@@ -96,7 +108,7 @@ chrome.extension.sendRequest({
         // Hook the current textareas.
         var textareas = document.getElementsByTagName("textarea");
         for (var i = 0; i < textareas.length; i++) {
-            hookTextArea(textareas[i]);
+            hookTextArea(textareas[i], config);
         }
 
         // And hook any new ones that get created.
@@ -105,7 +117,7 @@ chrome.extension.sendRequest({
                         return;
             var textareas = ev.target.getElementsByTagName("textarea");
             for (var i = 0; i < textareas.length; i++) {
-                hookTextArea(textareas[i]);
+                hookTextArea(textareas[i], config);
             }
         });
     }

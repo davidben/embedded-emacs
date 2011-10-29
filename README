@@ -8,6 +8,5 @@ Known issues / TODO:
 - keyboard focus doesn't work (need to talk to Chrome guys)
 - if web page modified CSS of textarea, emacs instance does not update
 - textareas do not update until emacs instance exits
-- trigger not configurable
 - buildsystem does not package crx
 - emacs23 seems to have a resizing bug, you may need a development build of emacs24 or so

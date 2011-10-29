@@ -2,10 +2,7 @@
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
-// Initialize default settings:
-if (localStorage['commandPattern'] === undefined)
-    // FIXME: This string is also in options.html
-    localStorage['commandPattern'] = 'emacs --parent-id $WINDOW --file $PATH';
+initDefaultSettings();
 
 var launcher = document.getElementById('launcher');
 
@@ -15,7 +12,9 @@ chrome.extension.onRequest.addListener(
             // TODO: send other config options when we get them.
             var enabled = launcher.hasOwnProperty('setEditorCommand');
             sendResponse({
-                enabled: enabled
+                enabled: enabled,
+                triggerAltX: (localStorage['triggerAltX'] == 'true'),
+                triggerDoubleClick: (localStorage['triggerDoubleClick'] == 'true')
             });
         } else if (request.type === 'start_editor') {
 	    launcher.setEditorCommand(localStorage['commandPattern']);

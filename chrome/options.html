@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Embedded Emacs Options</title>
+    <script type="text/javascript" src="/default_settings.js"></script>
     <script type="text/javascript" src="/options.js"></script>
     <link rel="stylesheet" href="options.css">
   </head>
@@ -14,7 +15,7 @@
           <p id="presetsList"></p>
 
           <p>Command to run:
-          <input id="commandPattern" type="text" /></p>
+          <input id="commandPattern" type="text"></p>
 
           <p>
           The template syntax is similar to the shell, except that variables
@@ -35,23 +36,14 @@
     <section>
         <h2>Invocation</h2>
         <div>
-            <b>TODO: Make this do something.</b>
             Embed into textareas on
             <label>
-                <input type="checkbox" id="doubleClick" />
+                <input type="checkbox" id="triggerAltX">
+                Pressing <kbd>M-x</kbd> (<kbd>Alt-x</kbd>)
+            </label>
+            <label>
+                <input type="checkbox" id="triggerDoubleClick">
                 Double-click
-            </label>
-            <label>
-                <input type="checkbox" id="handWaving" />
-                When I wave my hands
-            </label>
-            <label>
-                <input type="checkbox" id="twoOClock" />
-                At two o'clock
-            </label>
-            <label>
-                <input type="checkbox" id="mindReading" />
-                Telepathically
             </label>
         </div>
     </section>
