@@ -53,7 +53,6 @@ function loadOptions() {
 }
 
 function saveOptions() {
-    console.log('saveOptions');
     localStorage["commandPattern"] = document.getElementById("commandPattern").value;
     localStorage["triggerAltX"] = (document.getElementById("triggerAltX").checked ? "true" : "false");
     localStorage["triggerDoubleClick"] = (document.getElementById("triggerDoubleClick").checked ? "true" : "false");
