@@ -7,7 +7,7 @@ initDefaultSettings();
 
 var presets = [ {
     name: "Emacs",
-    pattern: "emacs --parent-id $WINDOW --file $PATH",
+    pattern: "emacs --parent-id $WINDOW -- $PATH",
     icon: "editors/emacs.png"
 }, {
     name: "gVim",
