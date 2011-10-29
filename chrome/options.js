@@ -26,7 +26,7 @@ function makeButton(spec) {
     button.addEventListener("click", function (ev) {
         document.getElementById("commandPattern").value = spec.pattern;
         // This doesn't fire the change event.
-        saveCommandPattern();
+        saveOptions();
     });
     return button;
 }
