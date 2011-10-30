@@ -55,6 +55,13 @@ function hookTextArea(node, config) {
 	relayout();
 	node.parentNode.insertBefore(container, node);
 
+        // Make sure the plugin loaded.
+        if (!embed.hasOwnProperty('windowId')) {
+            console.log('Could not load container');
+            container.parentNode.removeChild(container);
+            return;
+        }
+
 	function onAttrModified(ev) {
 	    if (ev.attrName !== "style")
 		return;
