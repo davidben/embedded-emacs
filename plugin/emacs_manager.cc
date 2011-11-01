@@ -80,6 +80,7 @@ int EmacsManager::startEditor(long windowId,
                               initialText, textLen, callback);
     if (!instance->pid()) {
         *error = instance->error();
+        fprintf(stderr, "Error: %s\n", error->c_str());
         delete instance;
         return 0;
     }

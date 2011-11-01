@@ -40,32 +40,29 @@ EmacsInstance::~EmacsInstance() {
 bool EmacsInstance::startEditor(long window_id,
                                 const std::string& editor_command,
                                 const char *initial_text, uint32_t text_len) {
+    GError *gerror = NULL;
+
     if (!window_id) {
         fprintf(stderr, "Error: Invalid window.\n");
         error_ = "invalid window";
         return false;
     }
 
-    // FIXME: REALLY REALLY need a scoped temporary file.
     // FIXME: Do file io on a dedicated thread.
-    const char *tmpdir = getenv("TMPDIR");
-    if (!tmpdir)
-        tmpdir = "/tmp";
-    std::string temp_file(tmpdir);
-    temp_file += "/.embedded-emacs.XXXXXX";
-    int fd = mkstemp(const_cast<char*>(temp_file.c_str()));
+    char *name = NULL;
+    int fd = g_file_open_tmp(".embedded-emacs.XXXXXX", &name, &gerror);
     if (fd < 0) {
-        perror("mkstemp");
-        error_ = "failed to create temporary file";
+        error_ = "failed to create temporary file: ";
+        error_ += gerror->message;
         return false;
     }
+    temp_file_.assign(name);
+    g_free(name);
     FILE* file = fdopen(fd, "w");
     if (!file) {
-        perror("fdopen");
         close(fd);
-        if (unlink(temp_file.c_str()) < 0)
-            perror("unlink");
-        error_ = "failed to fdopen temporary file";
+        // FIXME: strerror_r and UNIX are a trainwreck.
+        error_ = "failed to fdopen";
         return false;
     }
     fwrite(initial_text, text_len, 1, file);
@@ -78,22 +75,17 @@ bool EmacsInstance::startEditor(long window_id,
     std::vector<std::string> params;
     command_template::Environment env;
     env["WINDOW"] = window_str;
-    env["PATH"] = temp_file;
+    env["PATH"] = temp_file_;
     if (!command_template::applyTemplate(editor_command, env, params, &error_)) {
-        if (unlink(temp_file.c_str()) < 0)
-            perror("unlink");
         return false;
     }
     if (params.size() == 0) {
         error_ = "empty parameter list";
-        if (unlink(temp_file.c_str()) < 0)
-            perror("unlink");
         return false;
     }
 
     char **argv = command_template::stringVectorToArgv(params);
     GPid pid;
-    GError *gerror = NULL;
     if (!g_spawn_async(NULL, argv, NULL,
 		       static_cast<GSpawnFlags>(
                            G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH),
@@ -101,16 +93,11 @@ bool EmacsInstance::startEditor(long window_id,
         g_strfreev(argv);
         error_ = std::string("failed to spawn child process: ") +
                 gerror->message;
-        fprintf(stderr, "Error: Failed to spawn child process: %s\n",
-                gerror->message);
         g_error_free(gerror);
-        if (unlink(temp_file.c_str()) < 0)
-            perror("unlink");
         return false;
     }
     g_strfreev(argv);
 
-    temp_file_ = temp_file;
     child_pid_ = pid;
     return true;
 }
