@@ -15,11 +15,12 @@
 
 class EmacsInstance;
 class EmacsObject;
+class EventThread;
 typedef struct NPObject NPObject;
 
 // There really should only ever be one instance of this class.
 class EmacsManager : public npapi::PluginInstance {
-public:
+  public:
     EmacsManager(NPP npp);
     ~EmacsManager();
 
@@ -31,15 +32,16 @@ public:
 
     void setEditorCommand(const char *utf8Chars, uint32_t len);
 
-    // process_watcher calls this function when a child exitted.
-    void childExited(int job_id, pid_t pid, int status);
+    void childExited(EmacsInstance* instance, pid_t pid, int status);
 
     NPError getValue(NPPVariable variable, void* value);
-private:
+  private:
     int next_job_id_;
     npapi::scoped_npobject<EmacsObject> script_object_;
     std::string editor_command_;  // UTF-8 encoded
     std::tr1::unordered_map<int, EmacsInstance*> emacs_jobs_;
+
+    EventThread *event_thread_;
 
     DISALLOW_COPY_AND_ASSIGN(EmacsManager);
 };

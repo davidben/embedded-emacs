@@ -34,7 +34,6 @@ env.ParseConfig('pkg-config --cflags --libs glib-2.0')
 env.ParseConfig('pkg-config --cflags --libs gthread-2.0')
 
 base_files = ['npapi-cxx/browser.cc',
-              'npapi-cxx/message_proxy.cc',
               'npapi-cxx/plugin.cc',
               'npapi-cxx/plugin_instance.cc',
               'npapi-cxx/script_object.cc',
@@ -47,8 +46,8 @@ env.SharedLibrary('embedded-emacs-launcher', base_files + \
                        'emacs_manager.cc',
                        'emacs_object.cc',
                        'emacs_plugin.cc',
+                       'event_thread.cc',
                        'identifiers.cc',
-                       'process_watcher.cc',
                        ])
 
 env.SharedLibrary('embedded-emacs-container', base_files + \

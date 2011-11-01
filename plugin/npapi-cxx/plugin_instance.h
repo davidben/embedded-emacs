@@ -15,7 +15,6 @@ G_FORWARD_DECLARE(GAsyncQueue);
 
 namespace npapi {
 
-class MessageProxy;
 class Task;
 
 class PluginInstance {
@@ -30,12 +29,9 @@ class PluginInstance {
 
     NPP npp();
 
-    // Only call this on the plugin thread.
-    MessageProxy* getMessageProxy();
     // Called on any thread. Safe to call until around the end of the
-    // destructor. Specifically, EmacsInstance should inform everyone
-    // with a reference not to post more tasks before deleting the
-    // queue.
+    // destructor. Caller is responsible for ensuring thread lifetime
+    // is shorter than PluginInstance.
     void postTask(Task* task);
     // Called on the main plugin thread.
     void processTasks();
@@ -45,7 +41,6 @@ class PluginInstance {
   private:
     NPP npp_;
 
-    MessageProxy* message_proxy_;
     GAsyncQueue* task_queue_;
 
     DISALLOW_COPY_AND_ASSIGN(PluginInstance);

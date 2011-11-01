@@ -6,7 +6,6 @@
 
 #include <glib.h>
 
-#include "message_proxy.h"
 #include "task.h"
 
 namespace {
@@ -24,31 +23,18 @@ void processTasksThunk(void *ptr) {
 namespace npapi {
 
 PluginInstance::PluginInstance(NPP npp)
-        : npp_(npp),
-          message_proxy_(NULL) {
+        : npp_(npp) {
     npp_->pdata = this;
     task_queue_ = g_async_queue_new_full(deleteTask);
 }
 
 PluginInstance::~PluginInstance() {
-    if (message_proxy_) {
-        message_proxy_->invalidate();
-        message_proxy_->unref();
-        message_proxy_ = NULL;
-    }
     g_async_queue_unref(task_queue_);
     npp_->pdata = NULL;
 }
 
 NPP PluginInstance::npp() {
     return npp_;
-}
-
-MessageProxy* PluginInstance::getMessageProxy() {
-    if (!message_proxy_) {
-        message_proxy_ = new MessageProxy(this);
-    }
-    return message_proxy_;
 }
 
 void PluginInstance::postTask(Task* task) {

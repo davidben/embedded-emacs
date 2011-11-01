@@ -16,16 +16,46 @@
 
 #include "emacs_instance.h"
 #include "emacs_object.h"
+#include "event_thread.h"
 #include "npapi-cxx/browser.h"
+#include "npapi-cxx/task.h"
 #include "npapi-headers/npruntime.h"
-#include "process_watcher.h"
+
+namespace {
+
+class ChildExitedTask : public npapi::Task {
+  public:
+    ChildExitedTask(EmacsInstance *emacs, pid_t pid, int status)
+            : emacs_(emacs),
+              pid_(pid),
+              status_(status) {
+    }
+
+    virtual void run(npapi::PluginInstance* manager) {
+        static_cast<EmacsManager*>(manager)->childExited(emacs_, pid_, status_);
+    }
+
+  private:
+    EmacsInstance* emacs_;
+    pid_t pid_;
+    int status_;
+
+    DISALLOW_COPY_AND_ASSIGN(ChildExitedTask);
+};
+
+void childExitThunk(GPid pid, int status, gpointer data) {
+    EmacsInstance* instance = static_cast<EmacsInstance*>(data);
+    instance->manager()->postTask(
+        new ChildExitedTask(instance, pid, status));
+}
+
+}  // namespace
 
 EmacsManager::EmacsManager(NPP npp)
         : npapi::PluginInstance(npp),
-          next_job_id_(1) {
+          next_job_id_(1),
+          event_thread_(NULL) {
     // Set window-less so Chromium doesn't try to XEmbed us.
-    // NOTE: Chromium source says Mozilla documentation is lying; NULL
-    // is true for both Mozilla and Chromium.
     NPN_SetValue(npp, NPPVpluginWindowBool, NULL);
 }
 
@@ -37,6 +67,8 @@ EmacsManager::~EmacsManager() {
 	 ++i) {
         delete i->second;
     }
+
+    delete event_thread_;
 }
 
 int EmacsManager::startEditor(long windowId,
@@ -52,8 +84,18 @@ int EmacsManager::startEditor(long windowId,
         return 0;
     }
     int job_id = next_job_id_++;
+    instance->set_job_id(job_id);
     emacs_jobs_[job_id] = instance;
-    process_watcher::watchProcess(job_id, instance->pid(), this);
+
+    // Watch the pid.
+    if (!event_thread_)
+        event_thread_ = new EventThread;
+    GSource* source = g_child_watch_source_new(instance->pid());
+    g_source_set_callback(
+        source, reinterpret_cast<GSourceFunc>(childExitThunk), instance, NULL);
+    g_source_attach(source, event_thread_->main_context());
+    g_source_unref(source);
+
     return job_id;
 }
 
@@ -61,17 +103,9 @@ void EmacsManager::setEditorCommand(const char *utf8Chars, uint32_t len) {
     editor_command_.assign(utf8Chars, len);
 }
 
-void EmacsManager::childExited(int job_id, pid_t pid, int status) {
-    typedef std::tr1::unordered_map<int, EmacsInstance*>::iterator iter_t;
-    iter_t iter = emacs_jobs_.find(job_id);
-    if (iter == emacs_jobs_.end()) {
-        fprintf(stderr, "WARNING: Unexpected child exit (pid %d, job_id %d)\n",
-                pid, job_id);
-        return;
-    }
-    iter->second->childExited(pid, status);
-    delete iter->second;
-    emacs_jobs_.erase(iter);
+void EmacsManager::childExited(EmacsInstance* instance, pid_t pid, int status) {
+    instance->childExited(pid, status);
+    emacs_jobs_.erase(instance->job_id());
 }
 
 NPError EmacsManager::getValue(NPPVariable variable, void* value) {

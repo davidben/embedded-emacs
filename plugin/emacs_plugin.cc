@@ -7,16 +7,11 @@
 #include "emacs_manager.h"
 #include "npapi-cxx/browser.h"
 #include "npapi-cxx/plugin.h"
-#include "process_watcher.h"
 
 namespace {
 
 class EmacsPlugin : public npapi::Plugin {
   public:
-    ~EmacsPlugin() {
-        process_watcher::killAndJoinThread();
-    }
-
     NPError init() {
         int major_version, minor_version;
         NPN_Version(NULL, NULL, &major_version, &minor_version);

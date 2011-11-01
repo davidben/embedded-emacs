@@ -28,6 +28,11 @@ class EmacsInstance {
     pid_t pid() const { return child_pid_; }
     const std::string& error() const { return error_; }
 
+    int job_id() const { return job_id_; }
+    void set_job_id(int job_id) { job_id_ = job_id; }
+
+    EmacsManager* manager() const { return parent_; }
+
     void childExited(pid_t pid, int status);
 private:
     bool startEditor(long window_id,
@@ -38,6 +43,7 @@ private:
     std::string error_;
     pid_t child_pid_;
     npapi::scoped_npobject<NPObject> callback_;
+    int job_id_;
 
     std::string temp_file_;
 
