@@ -13,6 +13,7 @@
 #include "util.h"
 
 class EmacsManager;
+G_FORWARD_DECLARE(GtkWidget);
 typedef struct NPObject NPObject;
 
 class EmacsInstance {
@@ -44,6 +45,7 @@ private:
     pid_t child_pid_;
     npapi::scoped_npobject<NPObject> callback_;
     int job_id_;
+    GtkWidget* plug_;
 
     std::string temp_file_;
 

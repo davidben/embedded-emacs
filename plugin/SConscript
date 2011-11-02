@@ -22,6 +22,9 @@ if not conf.CheckPKG('glib-2.0'):
 if not conf.CheckPKG('gthread-2.0'):
     print 'GLib not found.'
     Exit(1)
+if not conf.CheckPKG('gtk+-2.0'):
+    print 'GTK+ not found.'
+    Exit(1)
 env = conf.Finish()
 
 # Allow includes relative to the top-level directory.
@@ -32,6 +35,7 @@ env.Append(CCFLAGS=['-fvisibility=hidden', '-fvisibility-inlines-hidden', '-Wall
 # Only pull in the header files; link against NSPR later if needbe.
 env.ParseConfig('pkg-config --cflags --libs glib-2.0')
 env.ParseConfig('pkg-config --cflags --libs gthread-2.0')
+env.ParseConfig('pkg-config --cflags --libs gtk+-2.0')
 
 base_files = ['npapi-cxx/browser.cc',
               'npapi-cxx/plugin.cc',

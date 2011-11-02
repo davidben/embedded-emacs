@@ -4,6 +4,7 @@
 #include "emacs_instance.h"
 
 #include <glib.h>
+#include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +25,9 @@ EmacsInstance::EmacsInstance(EmacsManager* parent,
                              const char *initial_text, uint32_t text_len,
                              NPObject *callback)
         : parent_(parent),
-          child_pid_(0) {
+          child_pid_(0),
+          job_id_(0),
+          plug_(NULL) {
     if (startEditor(window_id, editor_command, initial_text, text_len)) {
         callback_.reset(callback);
     }
@@ -35,6 +38,9 @@ EmacsInstance::~EmacsInstance() {
         if (unlink(temp_file_.c_str()) < 0)
             perror("unlink");
     }
+
+    if (plug_)
+        gtk_widget_destroy(plug_);
 }
 
 bool EmacsInstance::startEditor(long window_id,
@@ -68,8 +74,18 @@ bool EmacsInstance::startEditor(long window_id,
     fwrite(initial_text, text_len, 1, file);
     fclose(file);
 
+    // HACK: Wrap in socket so we can grab the focus. Remove this code
+    // when http://crbug.com/27868 is fixed.
+    plug_ = gtk_plug_new(window_id);
+    GtkWidget* socket = gtk_socket_new();
+    gtk_container_add(GTK_CONTAINER(plug_), socket);
+    gtk_widget_show_all(plug_);
+    gtk_widget_set_can_focus(socket, TRUE);
+    gtk_widget_grab_focus(socket);
+    gtk_widget_set_can_focus(socket, FALSE);
+
     std::stringstream ss;
-    ss << window_id;
+    ss << gtk_socket_get_id(GTK_SOCKET(socket));
     std::string window_str = ss.str();
 
     std::vector<std::string> params;
