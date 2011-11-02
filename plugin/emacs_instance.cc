@@ -19,6 +19,16 @@
 #include "emacs_manager.h"
 #include "npapi-cxx/browser.h"
 
+namespace {
+
+std::string intToString(int n) {
+    std::stringstream ss;
+    ss << n;
+    return ss.str();
+}
+
+}  // namespace
+
 EmacsInstance::EmacsInstance(EmacsManager* parent,
                              long window_id,
                              const std::string& editor_command,
@@ -84,13 +94,9 @@ bool EmacsInstance::startEditor(long window_id,
     gtk_widget_grab_focus(socket);
     gtk_widget_set_can_focus(socket, FALSE);
 
-    std::stringstream ss;
-    ss << gtk_socket_get_id(GTK_SOCKET(socket));
-    std::string window_str = ss.str();
-
     std::vector<std::string> params;
     command_template::Environment env;
-    env["WINDOW"] = window_str;
+    env["WINDOW"] = intToString(gtk_socket_get_id(GTK_SOCKET(socket)));
     env["PATH"] = temp_file_;
     if (!command_template::applyTemplate(editor_command, env, params, &error_)) {
         return false;
