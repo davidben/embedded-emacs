@@ -5,12 +5,25 @@
 // Doesn't hurt. Not sure if relying on the background page can race.
 initDefaultSettings();
 
+// Borrow Chromium WebUI-style i18n handling, or at least something
+// similar.
+function localizeElements() {
+    var elements = document.querySelectorAll("[i18n-content]");
+    for (var i = 0; i < elements.length; i++) {
+	var element = elements[i];
+	var key = element.getAttribute("i18n-content");
+	// Ick. I'd prefer textContent, but there are <kbd> tags in
+	// places.
+	element.innerHTML = chrome.i18n.getMessage(key);
+    }
+}
+
 var presets = [ {
-    name: "Emacs",
+    name: chrome.i18n.getMessage("PRESET_NAME_EMACS"),
     pattern: "emacs --parent-id $WINDOW -- $PATH",
     icon: "editors/emacs.png"
 }, {
-    name: "gVim",
+    name: chrome.i18n.getMessage("PRESET_NAME_GVIM"),
     pattern: "gvim --nofork --socketid $WINDOW -- $PATH",
     icon: "editors/gvim.png"
 }];
@@ -58,4 +71,5 @@ function saveOptions() {
     localStorage["triggerDoubleClick"] = (document.getElementById("triggerDoubleClick").checked ? "true" : "false");
 }
 
+window.addEventListener("load", localizeElements);
 window.addEventListener("load", setup);

@@ -1,49 +1,44 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Embedded Emacs Options</title>
+    <title i18n-content="OPTIONS_TITLE"></title>
     <script type="text/javascript" src="/default_settings.js"></script>
     <script type="text/javascript" src="/options.js"></script>
     <link rel="stylesheet" href="options.css">
   </head>
   <body>
-    <h1>Embedded Emacs Options</h1>
+    <h1 i18n-content="OPTIONS_TITLE"></h1>
 
     <section>
-      <h2>Text Editor</h2>
+      <h2 i18n-content="EDITOR_SECTION_TITLE"></h2>
       <div>
           <p id="presetsList"></p>
 
-          <p>Command to run:
+          <p><span i18n-content="EDITOR_COMMAND_LABEL"></span>
           <input id="commandPattern" type="text"></p>
 
-          <p>
-          The template syntax is similar to the shell, except that variables
-          needn't be quoted. Single quotes, double quotes, and variables are
-          supported. The variables are
-          </p>
+          <p i18n-content="TEMPLATE_SYNTAX_DESCRIPTION"></p>
           <dl>
               <dt><var>WINDOW</var></dt>
-              <dd>The X11 window id the editor should embed into.</dd>
+              <dd i18n-content="VARIABLE_DESCRIPTION_WINDOW"></dd>
               <dt><var>PATH</var></dt>
-              <dd>The path to the temporary file to read and write textarea
-              contents from.</dd>
+              <dd i18n-content="VARIABLE_DESCRIPTION_PATH"></dd>
           </dl>
 
       </div>
     </section>
 
     <section>
-        <h2>Invocation</h2>
+        <h2 i18n-content="INVOCATION_SECTION_TITLE"></h2>
         <div>
-            Embed into textareas on
+            <span i18n-content="TRIGGER_LIST_LABEL"></span>
             <label>
                 <input type="checkbox" id="triggerAltX">
-                Pressing <kbd>M-x</kbd> (<kbd>Alt-x</kbd>)
+                <span i18n-content="TRIGGER_DESCRIPTION_ALT_X"></span>
             </label>
             <label>
                 <input type="checkbox" id="triggerDoubleClick">
-                Double-click
+                <span i18n-content="TRIGGER_DESCRIPTION_DOUBLE_CLICK"></span>
             </label>
         </div>
     </section>

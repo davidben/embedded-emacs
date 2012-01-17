@@ -1,7 +1,8 @@
 {
-  "name": "Embedded Emacs",
+  "name": "__MSG_EXT_NAME__",
   "version": "1.0",
-  "description": "Replaces textareas with an embedded Emacs.",
+  "default_locale": "en",
+  "description": "__MSG_EXT_DESCRIPTION__",
   "permissions": [
   ],
   "background_page": "background.html",

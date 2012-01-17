@@ -1,0 +1,67 @@
+{
+  "EXT_NAME": {
+    "message": "Embedded Emacs",
+    "description": "Extension name."
+  },
+  "EXT_DESCRIPTION": {
+    "message": "Replaces textareas with an embedded Emacs.",
+    "description": "Extension description."
+  },
+
+  "OPTIONS_TITLE": {
+    "message": "Embedded Emacs Options",
+    "description": "Title of the Options page."
+  },
+
+  "EDITOR_SECTION_TITLE": {
+    "message": "Text Editor",
+    "description": "Title of the Text Editor section in Options."
+  },
+
+  "PRESET_NAME_EMACS": {
+    "message": "Emacs",
+    "description": "Name of emacs preset command."
+  },
+  "PRESET_NAME_GVIM": {
+    "message": "gVim",
+    "description": "Name of gVim preset command."
+  },
+
+  "EDITOR_COMMAND_LABEL": {
+    "message": "Command to run:",
+    "description": "Label next to the editor command in Options."
+  },
+
+  "TEMPLATE_SYNTAX_DESCRIPTION": {
+    "message": "The template syntax is similar to the shell, except that variables needn't be quoted. Single quotes, double quotes, and variables are supported. The variables are:",
+    "description": "Description of editor template syntax in Options."
+  },
+
+  "VARIABLE_DESCRIPTION_WINDOW": {
+    "message": "The X11 window id the editor should embed into.",
+    "description": "Description of the WINDOW variable in Options."
+  },
+  "VARIABLE_DESCRIPTION_PATH": {
+    "message": "The path to the temporary file to read and write textarea contents from.",
+    "description": "Description of the PATH variable in Options."
+  },
+
+  "INVOCATION_SECTION_TITLE": {
+    "message": "Invocation",
+    "description": "Title of the Invocation section in Options."
+  },
+
+  "TRIGGER_LIST_LABEL": {
+    "message": "Embed into textareas on:",
+    "description": "Label preceding list of configurable triggers."
+  },
+
+  "TRIGGER_DESCRIPTION_ALT_X": {
+    "message": "Pressing <kbd>M-x</kbd> (<kbd>Alt-x</kbd>)",
+    "description": "Description of the Alt-x trigger."
+  },
+  "TRIGGER_DESCRIPTION_DOUBLE_CLICK": {
+    "message": "Double-click",
+    "description": "Description of the double-click trigger."
+  }
+}
