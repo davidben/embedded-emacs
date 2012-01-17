@@ -1,6 +1,6 @@
 /* Look shamelessly borrowed from the Chromium tabbed settings page. */
 body {
-    direction: __MSG_@@bidi_dir__;
+    direction: __MSG_TEXT_DIRECTION__;
     font-family: Arial, sans-serif;
     font-size: 84%;
     width: 600px;

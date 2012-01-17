@@ -8,6 +8,11 @@
     "description": "Extension description."
   },
 
+  "TEXT_DIRECTION": {
+    "message": "ltr",
+    "description": "ltr or rtl, depending on text direction."
+  },
+
   "OPTIONS_TITLE": {
     "message": "Embedded Emacs Options",
     "description": "Title of the Options page."
