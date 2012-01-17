@@ -1,5 +1,6 @@
 /* Look shamelessly borrowed from the Chromium tabbed settings page. */
 body {
+    direction: __MSG_@@bidi_dir__;
     font-family: Arial, sans-serif;
     font-size: 84%;
     width: 600px;
@@ -79,7 +80,7 @@ section > div h3 {
 
 .presetButton > img {
     vertical-align: text-bottom;
-    margin-right: 5px;
+    -webkit-margin-end: 5px;
 }
 #commandPattern {
     width: 100%;
