@@ -27,3 +27,6 @@ env.Command('chrome/libembedded-emacs-container-64.so',
 env.Command('chrome/libembedded-emacs-container-32.so',
             'plugin/build-i386/libembedded-emacs-container.so',
             Copy("$TARGET", "$SOURCE"));
+
+env.Command('chrome/LICENSE', 'LICENSE',
+            Copy("$TARGET", "$SOURCE"));
