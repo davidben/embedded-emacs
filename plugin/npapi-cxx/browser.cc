@@ -20,7 +20,6 @@ NPError initializeBrowserFuncs(NPNetscapeFuncs* bFuncs)
         return NPERR_INVALID_FUNCTABLE_ERROR;
 
     int major_version = bFuncs->version >> 8;
-    int minor_version = bFuncs->version & 0xff;
 
     if (major_version != NP_VERSION_MAJOR)
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
