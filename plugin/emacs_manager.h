@@ -8,7 +8,7 @@
 #include <tr1/unordered_map>
 #include <string>
 
-#include <sys/types.h>
+#include <glib.h>
 
 #include "editor_type.h"
 #include "npapi-cxx/plugin_instance.h"
@@ -33,7 +33,7 @@ class EmacsManager : public npapi::PluginInstance {
                   std::string *error);
   // TODO: Implement some way to cancel a job?
 
-  void ChildExited(EmacsInstance* instance, pid_t pid, int status);
+  void ChildExited(EmacsInstance* instance, GPid pid, int status);
 
   NPError GetValue(NPPVariable variable, void* value);
  private:

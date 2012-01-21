@@ -5,10 +5,6 @@
 #ifndef INCLUDED_PLUGIN_INSTANCE_H_
 #define INCLUDED_PLUGIN_INSTANCE_H_
 
-#include <string>
-
-#include <sys/types.h>
-
 #include "npapi-cxx/browser.h"
 #include "util.h"
 

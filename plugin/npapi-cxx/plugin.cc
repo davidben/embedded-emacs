@@ -2,8 +2,10 @@
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
-#include <cstdio>
-#include <cstring>
+#include <stdio.h>
+#include <string.h>
+
+#include <algorithm>
 
 #include "browser.h"
 #include "npapi-headers/npfunctions.h"

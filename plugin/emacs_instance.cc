@@ -7,11 +7,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #include "emacs_manager.h"
 #include "npapi-cxx/browser.h"
@@ -100,7 +96,7 @@ bool EmacsInstance::StartEditor(long window_id,
   return true;
 }
 
-void EmacsInstance::ChildExited(pid_t pid, int status) {
+void EmacsInstance::ChildExited(GPid pid, int status) {
   if (child_pid_ != pid) {
     fprintf(stderr, "WARNING: Unexpected child exit (pid %d)\n", pid);
     return;

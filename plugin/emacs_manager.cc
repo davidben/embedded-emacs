@@ -6,10 +6,6 @@
 
 #include <glib.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #include "emacs_instance.h"
 #include "emacs_object.h"
@@ -22,7 +18,7 @@ namespace {
 
 class ChildExitedTask : public npapi::Task {
  public:
-  ChildExitedTask(EmacsInstance *emacs, pid_t pid, int status)
+  ChildExitedTask(EmacsInstance *emacs, GPid pid, int status)
       : emacs_(emacs),
         pid_(pid),
         status_(status) {
@@ -34,7 +30,7 @@ class ChildExitedTask : public npapi::Task {
 
  private:
   EmacsInstance* emacs_;
-  pid_t pid_;
+  GPid pid_;
   int status_;
 
   DISALLOW_COPY_AND_ASSIGN(ChildExitedTask);
@@ -97,7 +93,7 @@ int EmacsManager::StartEditor(long window_id,
   return job_id;
 }
 
-void EmacsManager::ChildExited(EmacsInstance* instance, pid_t pid, int status) {
+void EmacsManager::ChildExited(EmacsInstance* instance, GPid pid, int status) {
   instance->ChildExited(pid, status);
   emacs_jobs_.erase(instance->job_id());
 }

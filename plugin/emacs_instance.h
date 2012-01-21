@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include <sys/types.h>
+#include <glib.h>
 
 #include "editor_type.h"
 #include "npapi-cxx/browser.h"
@@ -28,7 +28,7 @@ class EmacsInstance {
   ~EmacsInstance();
 
   // Returns 0 if the launch failed.
-  pid_t pid() const { return child_pid_; }
+  GPid pid() const { return child_pid_; }
   const std::string& error() const { return error_; }
 
   int job_id() const { return job_id_; }
@@ -36,7 +36,7 @@ class EmacsInstance {
 
   EmacsManager* manager() const { return parent_; }
 
-  void ChildExited(pid_t pid, int status);
+  void ChildExited(GPid pid, int status);
  private:
   bool StartEditor(long window_id,
                    EditorType editor,
@@ -44,7 +44,7 @@ class EmacsInstance {
 
   EmacsManager *parent_;
   std::string error_;
-  pid_t child_pid_;
+  GPid child_pid_;
   npapi::scoped_npobject<NPObject> callback_;
   int job_id_;
   GtkWidget* plug_;
