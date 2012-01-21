@@ -4,6 +4,7 @@
 
 #include "emacs_object.h"
 
+#include "editor_type.h"
 #include "emacs_manager.h"
 
 EmacsObject::EmacsObject(NPP npp) : npapi::ScriptObject<EmacsObject>(npp) {
@@ -31,10 +32,13 @@ bool EmacsObject::Invoke(NPIdentifier name,
     return true;
   }
   if (name == NPN_GetStringIdentifier("startEditor")) {
+    // Argument count.
     if (arg_count < 4) {
       NPN_SetException(this, "startEditor takes four arguments");
       return true;
     }
+
+    // Window ID.
     int window_id;
     if (NPVARIANT_IS_INT32(args[0])) {
       window_id = NPVARIANT_TO_INT32(args[0]);
@@ -45,10 +49,22 @@ bool EmacsObject::Invoke(NPIdentifier name,
       NPN_SetException(this, "window argument is not a number");
       return true;
     }
+
+    // Editor type.
     if (!NPVARIANT_IS_STRING(args[1])) {
-      NPN_SetException(this, "command argument is not a string");
+      NPN_SetException(this, "editor argument is not a string");
       return true;
     }
+    std::string editor_string = std::string(
+        NPVARIANT_TO_STRING(args[1]).UTF8Characters,
+        NPVARIANT_TO_STRING(args[1]).UTF8Length);
+    EditorType editor = StringToEditorType(editor_string);
+    if (editor == EDITOR_TYPE_INVALID) {
+      NPN_SetException(this, "invalid editor type");
+      return true;
+    }
+
+    // Initial text.
     if (!NPVARIANT_IS_STRING(args[2])) {
       NPN_SetException(this, "text argument is not a string");
       return true;
@@ -57,16 +73,15 @@ bool EmacsObject::Invoke(NPIdentifier name,
       NPN_SetException(this, "callback argument is not an object");
       return true;
     }
-    std::string error;
-    std::string editor_command = std::string(
-        NPVARIANT_TO_STRING(args[1]).UTF8Characters,
-        NPVARIANT_TO_STRING(args[1]).UTF8Length);
     std::string initial_text = std::string(
         NPVARIANT_TO_STRING(args[2]).UTF8Characters,
         NPVARIANT_TO_STRING(args[2]).UTF8Length);
+
+    // Finally run the function.
+    std::string error;
     int job_id = emacs->StartEditor(
         window_id,
-        editor_command,
+        editor,
         initial_text,
         NPVARIANT_TO_OBJECT(args[3]),
         &error);

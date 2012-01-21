@@ -45,7 +45,7 @@ base_files = ['npapi-cxx/browser.cc',
               ]
 
 env.SharedLibrary('embedded-emacs-launcher', base_files + \
-                      ['command_template.cc',
+                      ['editor_type.cc',
                        'emacs_instance.cc',
                        'emacs_manager.cc',
                        'emacs_object.cc',

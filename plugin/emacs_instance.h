@@ -9,6 +9,7 @@
 
 #include <sys/types.h>
 
+#include "editor_type.h"
 #include "npapi-cxx/browser.h"
 #include "npapi-cxx/scoped_npobject.h"
 #include "util.h"
@@ -21,7 +22,7 @@ class EmacsInstance {
  public:
   EmacsInstance(EmacsManager* parent,
                 long window_id,
-                const std::string& editor_command,
+                EditorType editor,
                 const std::string& initial_text,
                 NPObject *callback);
   ~EmacsInstance();
@@ -38,7 +39,7 @@ class EmacsInstance {
   void ChildExited(pid_t pid, int status);
  private:
   bool StartEditor(long window_id,
-                   const std::string& editor_command,
+                   EditorType editor,
                    const std::string& initial_text);
 
   EmacsManager *parent_;

@@ -13,33 +13,19 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <string>
-#include <sstream>
-
-#include "command_template.h"
 #include "emacs_manager.h"
 #include "npapi-cxx/browser.h"
 
-namespace {
-
-std::string IntToString(int n) {
-  std::stringstream ss;
-  ss << n;
-  return ss.str();
-}
-
-}  // namespace
-
 EmacsInstance::EmacsInstance(EmacsManager* parent,
                              long window_id,
-                             const std::string& editor_command,
+                             EditorType editor,
                              const std::string& initial_text,
                              NPObject *callback)
     : parent_(parent),
       child_pid_(0),
       job_id_(0),
       plug_(NULL) {
-  if (StartEditor(window_id, editor_command, initial_text)) {
+  if (StartEditor(window_id, editor, initial_text)) {
     callback_.reset(callback);
   }
 }
@@ -55,7 +41,7 @@ EmacsInstance::~EmacsInstance() {
 }
 
 bool EmacsInstance::StartEditor(long window_id,
-                                const std::string& editor_command,
+                                EditorType editor,
                                 const std::string& initial_text) {
   GError *gerror = NULL;
 
@@ -95,19 +81,8 @@ bool EmacsInstance::StartEditor(long window_id,
   gtk_widget_grab_focus(socket);
   gtk_widget_set_can_focus(socket, FALSE);
 
-  std::vector<std::string> params;
-  command_template::Environment env;
-  env["WINDOW"] = IntToString(gtk_socket_get_id(GTK_SOCKET(socket)));
-  env["PATH"] = temp_file_;
-  if (!command_template::ApplyTemplate(editor_command, env, params, &error_)) {
-    return false;
-  }
-  if (params.size() == 0) {
-    error_ = "empty parameter list";
-    return false;
-  }
-
-  char **argv = command_template::StringVectorToArgv(params);
+  char **argv = GetEditorCommandArgv(
+      editor, gtk_socket_get_id(GTK_SOCKET(socket)), temp_file_);
   GPid pid;
   if (!g_spawn_async(NULL, argv, NULL,
                      static_cast<GSpawnFlags>(

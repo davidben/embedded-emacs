@@ -10,6 +10,7 @@
 
 #include <sys/types.h>
 
+#include "editor_type.h"
 #include "npapi-cxx/plugin_instance.h"
 #include "npapi-cxx/scoped_npobject.h"
 #include "util.h"
@@ -26,7 +27,7 @@ class EmacsManager : public npapi::PluginInstance {
   ~EmacsManager();
 
   int StartEditor(long window_id,
-                  const std::string& editor_command,
+                  EditorType editor,
                   const std::string& initial_text,
                   NPObject *callback,
                   std::string *error);

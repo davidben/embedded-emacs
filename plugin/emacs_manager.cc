@@ -7,13 +7,9 @@
 #include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-#include <string>
-#include <sstream>
 
 #include "emacs_instance.h"
 #include "emacs_object.h"
@@ -73,13 +69,12 @@ EmacsManager::~EmacsManager() {
 }
 
 int EmacsManager::StartEditor(long window_id,
-                              const std::string& editor_command,
+                              EditorType editor,
 			      const std::string& initial_text,
                               NPObject *callback,
                               std::string *error) {
   EmacsInstance *instance =
-      new EmacsInstance(this, window_id, editor_command,
-                        initial_text, callback);
+      new EmacsInstance(this, window_id, editor, initial_text, callback);
   if (!instance->pid()) {
     *error = instance->error();
     fprintf(stderr, "Error: %s\n", error->c_str());
