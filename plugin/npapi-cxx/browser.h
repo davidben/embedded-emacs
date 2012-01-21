@@ -13,6 +13,10 @@
 
 typedef struct _NPNetscapeFuncs NPNetscapeFuncs;
 
+namespace npapi {
+
 NPError InitializeBrowserFuncs(NPNetscapeFuncs* bFuncs);
+
+}  // namespace npapi
 
 #endif  // INCLUDED_BROWSER_H_

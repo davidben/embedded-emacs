@@ -15,6 +15,8 @@ NPNetscapeFuncs g_browser_functions = { 0 };
 
 }  // namespace
 
+namespace npapi {
+
 NPError InitializeBrowserFuncs(NPNetscapeFuncs* bFuncs) {
     if (!bFuncs)
         return NPERR_INVALID_FUNCTABLE_ERROR;
@@ -29,6 +31,8 @@ NPError InitializeBrowserFuncs(NPNetscapeFuncs* bFuncs) {
 
     return NPERR_NO_ERROR;
 }
+
+}  // namespace npapi
 
 void NPN_Version(int* plugin_major, int* plugin_minor,
                  int* netscape_major, int* netscape_minor) {

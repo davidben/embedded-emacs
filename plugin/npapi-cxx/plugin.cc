@@ -63,7 +63,7 @@ NPError NP_GetEntryPoints(NPPluginFuncs* pFuncs) {
 
 NPError NP_Initialize(NPNetscapeFuncs* bFuncs,
 		      NPPluginFuncs* pFuncs) {
-  NPError err = InitializeBrowserFuncs(bFuncs);
+  NPError err = npapi::InitializeBrowserFuncs(bFuncs);
   if (err != NPERR_NO_ERROR)
     return err;
 
