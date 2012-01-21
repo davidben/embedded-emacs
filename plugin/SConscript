@@ -51,7 +51,6 @@ env.SharedLibrary('embedded-emacs-launcher', base_files + \
                        'emacs_object.cc',
                        'emacs_plugin.cc',
                        'event_thread.cc',
-                       'identifiers.cc',
                        ])
 
 env.SharedLibrary('embedded-emacs-container', base_files + \

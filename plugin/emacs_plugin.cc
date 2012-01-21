@@ -2,7 +2,6 @@
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 
-#include "identifiers.h"
 #include "emacs_manager.h"
 #include "npapi-cxx/browser.h"
 #include "npapi-cxx/plugin.h"
@@ -28,8 +27,6 @@ class EmacsPlugin : public npapi::Plugin {
     NPError err = NPN_GetValue(NULL, NPNVSupportsXEmbedBool, &has_xembed);
     if (err != NPERR_NO_ERROR || !has_xembed)
       return NPERR_INCOMPATIBLE_VERSION_ERROR;
-
-    InitializeIdentifiers();
 
     return NPERR_NO_ERROR;
   }

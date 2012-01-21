@@ -5,7 +5,6 @@
 #include "emacs_object.h"
 
 #include "emacs_manager.h"
-#include "identifiers.h"
 
 EmacsObject::EmacsObject(NPP npp) : npapi::ScriptObject<EmacsObject>(npp) {
 }
@@ -18,7 +17,7 @@ EmacsManager* EmacsObject::emacs_manager() {
 }
 
 bool EmacsObject::HasMethod(NPIdentifier name) {
-  return (name == identifier::startEditor());
+  return (name == NPN_GetStringIdentifier("startEditor"));
 }
 
 bool EmacsObject::Invoke(NPIdentifier name,
@@ -31,7 +30,7 @@ bool EmacsObject::Invoke(NPIdentifier name,
     VOID_TO_NPVARIANT(*result);
     return true;
   }
-  if (name == identifier::startEditor()) {
+  if (name == NPN_GetStringIdentifier("startEditor")) {
     if (arg_count < 4) {
       NPN_SetException(this, "startEditor takes four arguments");
       return true;
@@ -87,7 +86,7 @@ bool EmacsObject::Enumerate(NPIdentifier **identifiers,
       NPN_MemAlloc(sizeof(NPIdentifier) * kPropertyCount));
   if (!properties) return false;
 
-  properties[0] = identifier::startEditor();
+  properties[0] = NPN_GetStringIdentifier("startEditor");
 
   *identifiers = properties;
   *identifier_count = kPropertyCount;
