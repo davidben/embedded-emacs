@@ -1,4 +1,4 @@
-// Copyright (c) 2011 David Benjamin. All rights reserved.
+// Copyright (c) 2012 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #include "emacs_object.h"
@@ -17,8 +17,7 @@ EmacsManager* EmacsObject::emacsManager() {
 }
 
 bool EmacsObject::hasMethod(NPIdentifier name) {
-    return (name == identifier::startEditor() ||
-            name == identifier::setEditorCommand());
+    return (name == identifier::startEditor());
 }
 
 bool EmacsObject::invoke(NPIdentifier name,
@@ -32,8 +31,8 @@ bool EmacsObject::invoke(NPIdentifier name,
         return true;
     }
     if (name == identifier::startEditor()) {
-        if (argCount < 3) {
-            NPN_SetException(this, "startEditor takes three arguments");
+        if (argCount < 4) {
+            NPN_SetException(this, "startEditor takes four arguments");
             return true;
         }
         int windowId;
@@ -44,38 +43,35 @@ bool EmacsObject::invoke(NPIdentifier name,
             windowId = static_cast<int>(NPVARIANT_TO_DOUBLE(args[0]));
         } else {
             NPN_SetException(this, "window argument is not a number");
+            return true;
 	}
         if (!NPVARIANT_IS_STRING(args[1])) {
+            NPN_SetException(this, "command argument is not a string");
+            return true;
+        }
+        if (!NPVARIANT_IS_STRING(args[2])) {
             NPN_SetException(this, "text argument is not a string");
             return true;
         }
-        if (!NPVARIANT_IS_OBJECT(args[2])) {
+        if (!NPVARIANT_IS_OBJECT(args[3])) {
             NPN_SetException(this, "callback argument is not an object");
             return true;
         }
         std::string error;
+        std::string editorCommand = std::string(
+            NPVARIANT_TO_STRING(args[1]).UTF8Characters,
+            NPVARIANT_TO_STRING(args[1]).UTF8Length);
         int jobId = emacs->startEditor(
             windowId,
-            NPVARIANT_TO_STRING(args[1]).UTF8Characters,
-            NPVARIANT_TO_STRING(args[1]).UTF8Length,
-            NPVARIANT_TO_OBJECT(args[2]),
+            editorCommand,
+            NPVARIANT_TO_STRING(args[2]).UTF8Characters,
+            NPVARIANT_TO_STRING(args[2]).UTF8Length,
+            NPVARIANT_TO_OBJECT(args[3]),
             &error);
         if (jobId == 0)
             NPN_SetException(this, error.c_str());
         INT32_TO_NPVARIANT(jobId, *result);
 	return true;
-    } else if (name == identifier::setEditorCommand()) {
-        if (argCount < 1) {
-            NPN_SetException(this, "setEditorCommand takes one argument");
-        } else if (!NPVARIANT_IS_STRING(args[0])) {
-            NPN_SetException(
-                this, "argument to setEditorCommand is not a string");
-        } else {
-            emacs->setEditorCommand(NPVARIANT_TO_STRING(args[0]).UTF8Characters,
-                                    NPVARIANT_TO_STRING(args[0]).UTF8Length);
-        }
-        VOID_TO_NPVARIANT(*result);
-        return true;
     }
 
     return false;
@@ -83,13 +79,12 @@ bool EmacsObject::invoke(NPIdentifier name,
 
 bool EmacsObject::enumerate(NPIdentifier **identifiers,
 			    uint32_t *identifierCount) {
-    const int NUM_PROPS = 2;
+    const int NUM_PROPS = 1;
     NPIdentifier* properties = static_cast<NPIdentifier*>(
         NPN_MemAlloc(sizeof(NPIdentifier) * NUM_PROPS));
     if (!properties) return false;
 
     properties[0] = identifier::startEditor();
-    properties[1] = identifier::setEditorCommand();
 
     *identifiers = properties;
     *identifierCount = NUM_PROPS;

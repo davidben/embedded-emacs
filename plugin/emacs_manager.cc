@@ -1,4 +1,4 @@
-// Copyright (c) 2011 David Benjamin. All rights reserved.
+// Copyright (c) 2012 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #include "emacs_manager.h"
@@ -72,11 +72,12 @@ EmacsManager::~EmacsManager() {
 }
 
 int EmacsManager::startEditor(long windowId,
+                              const std::string& editorCommand,
                               const char *initialText, uint32_t textLen,
                               NPObject *callback,
                               std::string *error) {
     EmacsInstance *instance =
-            new EmacsInstance(this, windowId, editor_command_,
+            new EmacsInstance(this, windowId, editorCommand,
                               initialText, textLen, callback);
     if (!instance->pid()) {
         *error = instance->error();
@@ -98,10 +99,6 @@ int EmacsManager::startEditor(long windowId,
     g_source_unref(source);
 
     return job_id;
-}
-
-void EmacsManager::setEditorCommand(const char *utf8Chars, uint32_t len) {
-    editor_command_.assign(utf8Chars, len);
 }
 
 void EmacsManager::childExited(EmacsInstance* instance, pid_t pid, int status) {

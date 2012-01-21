@@ -1,4 +1,4 @@
-// Copyright (c) 2011 David Benjamin. All rights reserved.
+// Copyright (c) 2012 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
 #ifndef INCLUDED_EMACS_MANAGER_H_
@@ -25,12 +25,11 @@ class EmacsManager : public npapi::PluginInstance {
     ~EmacsManager();
 
     int startEditor(long windowId,
+                    const std::string& editorCommand,
 		    const char *initialText, uint32_t textLen,
 		    NPObject *callback,
 		    std::string *error);
     // TODO: Implement some way to cancel a job?
-
-    void setEditorCommand(const char *utf8Chars, uint32_t len);
 
     void childExited(EmacsInstance* instance, pid_t pid, int status);
 
@@ -38,7 +37,6 @@ class EmacsManager : public npapi::PluginInstance {
   private:
     int next_job_id_;
     npapi::scoped_npobject<EmacsObject> script_object_;
-    std::string editor_command_;  // UTF-8 encoded
     std::tr1::unordered_map<int, EmacsInstance*> emacs_jobs_;
 
     EventThread *event_thread_;
