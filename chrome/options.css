@@ -56,6 +56,9 @@ section {
     margin-bottom: 1em;
     padding-bottom: 0.5em;
 }
+section:last-child {
+    border-bottom: none;
+}
 section > h2 {
     width: 150px;
     vertical-align: middle;
@@ -78,11 +81,6 @@ section > div h3 {
     padding-top: 2px;
 }
 
-.presetButton > img {
-    vertical-align: text-bottom;
-    -webkit-margin-end: 5px;
-}
-#commandPattern {
-    width: 100%;
-    font-family: monospace;
+.editorOption > kbd {
+    float: right;
 }

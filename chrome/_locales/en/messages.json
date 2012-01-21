@@ -31,24 +31,14 @@
     "message": "gVim",
     "description": "Name of gVim preset command."
   },
+  "PRESET_NAME_CUSTOM": {
+    "message": "Custom",
+    "description": "Name of custom preset command."
+  },
 
   "EDITOR_COMMAND_LABEL": {
     "message": "Command to run:",
     "description": "Label next to the editor command in Options."
-  },
-
-  "TEMPLATE_SYNTAX_DESCRIPTION": {
-    "message": "The template syntax is similar to the shell, except that variables needn't be quoted. Single quotes, double quotes, and variables are supported. The variables are:",
-    "description": "Description of editor template syntax in Options."
-  },
-
-  "VARIABLE_DESCRIPTION_WINDOW": {
-    "message": "The X11 window id the editor should embed into.",
-    "description": "Description of the WINDOW variable in Options."
-  },
-  "VARIABLE_DESCRIPTION_PATH": {
-    "message": "The path to the temporary file to read and write textarea contents from.",
-    "description": "Description of the PATH variable in Options."
   },
 
   "INVOCATION_SECTION_TITLE": {

@@ -18,7 +18,7 @@ chrome.extension.onRequest.addListener(
             });
         } else if (request.type === 'start_editor') {
             launcher.startEditor(
-                request.windowId, localStorage['commandPattern'], request.text,
+                request.windowId, localStorage['editorType'], request.text,
                 function (contents, status) { sendResponse(contents);});
         } else {
             console.log("WARNING: Unknown request type '" +

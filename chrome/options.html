@@ -12,19 +12,24 @@
     <section>
       <h2 i18n-content="EDITOR_SECTION_TITLE"></h2>
       <div>
-          <p id="presetsList"></p>
+	<span i18n-content="EDITOR_COMMAND_LABEL"></span>
+	<label class="editorOption">
+	  <input type="radio" value="emacs" name="editor">
+	  <span i18n-content="PRESET_NAME_EMACS"></span>
+	  <kbd>emacs --parent-id $WINDOW -- $PATH</kbd>
+	</label>
 
-          <p><span i18n-content="EDITOR_COMMAND_LABEL"></span>
-          <input id="commandPattern" type="text"></p>
+	<label class="editorOption">
+	  <input type="radio" value="gvim" name="editor">
+	  <span i18n-content="PRESET_NAME_GVIM"></span>
+	  <kbd>gvim --nofork --socketid $WINDOW -- $PATH</kbd>
+	</label>
 
-          <p i18n-content="TEMPLATE_SYNTAX_DESCRIPTION"></p>
-          <dl>
-              <dt><var>WINDOW</var></dt>
-              <dd i18n-content="VARIABLE_DESCRIPTION_WINDOW"></dd>
-              <dt><var>PATH</var></dt>
-              <dd i18n-content="VARIABLE_DESCRIPTION_PATH"></dd>
-          </dl>
-
+	<label class="editorOption">
+	  <input type="radio" value="custom" name="editor">
+	  <span i18n-content="PRESET_NAME_CUSTOM"></span>
+	  <kbd>embedded-text-editor $WINDOW $PATH</kbd>
+	</label>
       </div>
     </section>
 

@@ -18,58 +18,38 @@ function localizeElements() {
     }
 }
 
-var presets = [ {
-    name: chrome.i18n.getMessage("PRESET_NAME_EMACS"),
-    pattern: "emacs --parent-id $WINDOW -- $PATH",
-    icon: "editors/emacs.png"
-}, {
-    name: chrome.i18n.getMessage("PRESET_NAME_GVIM"),
-    pattern: "gvim --nofork --socketid $WINDOW -- $PATH",
-    icon: "editors/gvim.png"
-}];
-
-function makeButton(spec) {
-    var img = document.createElement("img");
-    var button = document.createElement("button");
-    img.setAttribute("src", spec.icon);
-    img.setAttribute("alt", "");
-    button.setAttribute("class", "presetButton");
-    button.appendChild(img);
-    button.appendChild(document.createTextNode(spec.name));
-    button.addEventListener("click", function (ev) {
-        document.getElementById("commandPattern").value = spec.pattern;
-        // This doesn't fire the change event.
-        saveOptions();
-    });
-    return button;
-}
-
 function setup() {
-    // Make the preset buttons.
-    var list = document.getElementById("presetsList");
-    for (var i = 0; i < presets.length; i++) {
-        list.appendChild(makeButton(presets[i]));
-    }
-
+    localizeElements();
     loadOptions();
 
     // Hook up listeners.
-    document.getElementById("commandPattern").addEventListener("change", saveOptions);
+    var editorOptions = document.getElementsByName("editor");
+    for (var i = 0; i < editorOptions.length; i++) {
+        editorOptions[i].addEventListener("change", saveOptions);
+    }
     document.getElementById("triggerAltX").addEventListener("change", saveOptions);
     document.getElementById("triggerDoubleClick").addEventListener("change", saveOptions);
 }
 
 function loadOptions() {
-    document.getElementById("commandPattern").value = localStorage["commandPattern"];
+    var editorOptions = document.getElementsByName("editor");
+    for (var i = 0; i < editorOptions.length; i++) {
+        editorOptions[i].checked = (editorOptions[i].value == localStorage["editorType"]);
+    }
+
     document.getElementById("triggerAltX").checked = (localStorage["triggerAltX"] == "true");
     document.getElementById("triggerDoubleClick").checked = (localStorage["triggerDoubleClick"] == "true");
 }
 
 function saveOptions() {
-    localStorage["commandPattern"] = document.getElementById("commandPattern").value;
+    var editorOptions = document.getElementsByName("editor");
+    for (var i = 0; i < editorOptions.length; i++) {
+        if (editorOptions[i].checked)
+            localStorage["editorType"] = editorOptions[i].value;
+    }
+
     localStorage["triggerAltX"] = (document.getElementById("triggerAltX").checked ? "true" : "false");
     localStorage["triggerDoubleClick"] = (document.getElementById("triggerDoubleClick").checked ? "true" : "false");
 }
 
-window.addEventListener("load", localizeElements);
 window.addEventListener("load", setup);
