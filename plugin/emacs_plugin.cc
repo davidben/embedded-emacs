@@ -23,7 +23,7 @@ class EmacsPlugin : public npapi::Plugin {
       return NPERR_INCOMPATIBLE_VERSION_ERROR;
 
     // Require XEmbed support.
-    NPBool has_xembed = false;
+    int has_xembed = false;
     NPError err = NPN_GetValue(NULL, NPNVSupportsXEmbedBool, &has_xembed);
     if (err != NPERR_NO_ERROR || !has_xembed)
       return NPERR_INCOMPATIBLE_VERSION_ERROR;
