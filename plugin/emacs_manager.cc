@@ -73,12 +73,12 @@ EmacsManager::~EmacsManager() {
 
 int EmacsManager::startEditor(long windowId,
                               const std::string& editorCommand,
-                              const char *initialText, uint32_t textLen,
+			      const std::string& initialText,
                               NPObject *callback,
                               std::string *error) {
     EmacsInstance *instance =
             new EmacsInstance(this, windowId, editorCommand,
-                              initialText, textLen, callback);
+                              initialText, callback);
     if (!instance->pid()) {
         *error = instance->error();
         fprintf(stderr, "Error: %s\n", error->c_str());

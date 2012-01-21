@@ -26,7 +26,7 @@ class EmacsManager : public npapi::PluginInstance {
 
     int startEditor(long windowId,
                     const std::string& editorCommand,
-		    const char *initialText, uint32_t textLen,
+                    const std::string& initialText,
 		    NPObject *callback,
 		    std::string *error);
     // TODO: Implement some way to cancel a job?

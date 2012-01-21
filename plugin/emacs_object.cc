@@ -61,11 +61,13 @@ bool EmacsObject::invoke(NPIdentifier name,
         std::string editorCommand = std::string(
             NPVARIANT_TO_STRING(args[1]).UTF8Characters,
             NPVARIANT_TO_STRING(args[1]).UTF8Length);
+        std::string initialText = std::string(
+            NPVARIANT_TO_STRING(args[2]).UTF8Characters,
+            NPVARIANT_TO_STRING(args[2]).UTF8Length);
         int jobId = emacs->startEditor(
             windowId,
             editorCommand,
-            NPVARIANT_TO_STRING(args[2]).UTF8Characters,
-            NPVARIANT_TO_STRING(args[2]).UTF8Length,
+            initialText,
             NPVARIANT_TO_OBJECT(args[3]),
             &error);
         if (jobId == 0)

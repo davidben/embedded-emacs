@@ -21,7 +21,7 @@ class EmacsInstance {
     EmacsInstance(EmacsManager* parent,
                   long window_id,
                   const std::string& editor_command,
-                  const char *initial_text, uint32_t text_len,
+                  const std::string& initial_text,
                   NPObject *callback);
     ~EmacsInstance();
 
@@ -38,7 +38,7 @@ class EmacsInstance {
 private:
     bool startEditor(long window_id,
                      const std::string& editor_command,
-                     const char *initial_text, uint32_t text_len);
+                     const std::string& initial_text);
 
     EmacsManager *parent_;
     std::string error_;

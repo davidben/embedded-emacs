@@ -32,13 +32,13 @@ std::string intToString(int n) {
 EmacsInstance::EmacsInstance(EmacsManager* parent,
                              long window_id,
                              const std::string& editor_command,
-                             const char *initial_text, uint32_t text_len,
+                             const std::string& initial_text,
                              NPObject *callback)
         : parent_(parent),
           child_pid_(0),
           job_id_(0),
           plug_(NULL) {
-    if (startEditor(window_id, editor_command, initial_text, text_len)) {
+    if (startEditor(window_id, editor_command, initial_text)) {
         callback_.reset(callback);
     }
 }
@@ -55,7 +55,7 @@ EmacsInstance::~EmacsInstance() {
 
 bool EmacsInstance::startEditor(long window_id,
                                 const std::string& editor_command,
-                                const char *initial_text, uint32_t text_len) {
+                                const std::string& initial_text) {
     GError *gerror = NULL;
 
     if (!window_id) {
@@ -81,7 +81,7 @@ bool EmacsInstance::startEditor(long window_id,
         error_ = "failed to fdopen";
         return false;
     }
-    fwrite(initial_text, text_len, 1, file);
+    fwrite(initial_text.c_str(), initial_text.size(), 1, file);
     fclose(file);
 
     // HACK: Wrap in socket so we can grab the focus. Remove this code
