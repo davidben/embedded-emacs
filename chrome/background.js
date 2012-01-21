@@ -17,9 +17,15 @@ chrome.extension.onRequest.addListener(
                 triggerDoubleClick: (localStorage['triggerDoubleClick'] == 'true')
             });
         } else if (request.type === 'start_editor') {
-            launcher.startEditor(
-                request.windowId, localStorage['editorType'], request.text,
-                function (contents, status) { sendResponse(contents);});
+	    try {
+		launcher.startEditor(
+                    request.windowId, localStorage['editorType'], request.text,
+                    function (contents, status) { sendResponse(contents);});
+	    } catch (err) {
+		// Don't leave the page hanging.
+		sendResponse(request.text);
+		throw err;
+	    }
         } else {
             console.log("WARNING: Unknown request type '" +
                         request.type + "'");
