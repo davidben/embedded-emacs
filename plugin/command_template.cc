@@ -11,9 +11,9 @@
 namespace {
 
 bool FindVariable(const std::string& pattern,
-                  int pos,
+                  size_t pos,
                   std::string *varname,
-                  int *endp,
+                  size_t *endp,
 		  std::string *error) {
     assert(pattern[pos] == '$');
     if (pos+1 >= pattern.size()) {
@@ -32,7 +32,7 @@ bool FindVariable(const std::string& pattern,
         return true;
     } else {
         // Look for whitespace.
-        int end;
+        size_t end;
         for (end = pos+1; end < pattern.size(); end++) {
             if (!g_ascii_isalnum(pattern[end]) && pattern[end] != '_')
                 break;
@@ -59,7 +59,7 @@ bool ApplyTemplate(const std::string& pattern,
     };
     State state = NONE;
     std::string cur_param;
-    for (int i = 0; i < pattern.size(); i++) {
+    for (size_t i = 0; i < pattern.size(); i++) {
         if (state == PARAM_END) {
             // Finish the current parameter.
             if (g_ascii_isspace(pattern[i]))
@@ -103,21 +103,21 @@ bool ApplyTemplate(const std::string& pattern,
             if (pattern[i] == '$') {
                 // Take care of variables.
                 std::string varname;
-                int end;
+                size_t end;
                 if (!FindVariable(pattern, i, &varname, &end, error)) {
                     return false;
                 }
                 Environment::const_iterator iter = env.find(varname);
                 if (iter != env.end())
                     cur_param += iter->second;
-                i = end-1;
+                i = end - 1;
                 continue;
             }
             // Backslashes are somewhat more complicated than this,
             // but whatever. Honestly, if you want something fancy,
             // you should write a wrapper shell script.
             if (pattern[i] == '\\') {
-                if (i+1 >= pattern.size()) {
+                if (i + 1 >= pattern.size()) {
                     *error = "expected character after \\";
                     return false;
                 }
@@ -146,7 +146,7 @@ bool ApplyTemplate(const std::string& pattern,
 
 char** StringVectorToArgv(const std::vector<std::string>& vec) {
     char **argv = g_new(char*, vec.size() + 1);
-    for (int i = 0; i < vec.size(); i++) {
+    for (size_t i = 0; i < vec.size(); i++) {
         argv[i] = g_strdup(vec[i].c_str());
     }
     argv[vec.size()] = NULL;
