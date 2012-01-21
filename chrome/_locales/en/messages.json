@@ -41,6 +41,11 @@
     "description": "Label next to the editor command in Options."
   },
 
+  "CUSTOM_COMMAND_INSTRUCTIONS": {
+    "message": "To use a custom command, place a script titled <kbd>embedded-text-editor</kbd> somewhere in your <kbd><var>PATH</var></kbd>. The script takes two arguments, an X11 window ID and the path to a temporary file containing the initial text. When finished, the script should exit with the final text in that file. For example,",
+    "description": "Instructions for setting up a custom command."
+  },
+
   "INVOCATION_SECTION_TITLE": {
     "message": "Invocation",
     "description": "Title of the Invocation section in Options."

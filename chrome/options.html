@@ -16,20 +16,29 @@
 	<label class="editorOption">
 	  <input type="radio" value="emacs" name="editor">
 	  <span i18n-content="PRESET_NAME_EMACS"></span>
-	  <kbd>emacs --parent-id $WINDOW -- $PATH</kbd>
+	  <kbd>emacs --parent-id $WINDOW -- $FILE</kbd>
 	</label>
 
 	<label class="editorOption">
 	  <input type="radio" value="gvim" name="editor">
 	  <span i18n-content="PRESET_NAME_GVIM"></span>
-	  <kbd>gvim --nofork --socketid $WINDOW -- $PATH</kbd>
+	  <kbd>gvim --nofork --socketid $WINDOW -- $FILE</kbd>
 	</label>
 
 	<label class="editorOption">
-	  <input type="radio" value="custom" name="editor">
+	  <input type="radio" value="custom" name="editor" id="editorOptionCustom">
 	  <span i18n-content="PRESET_NAME_CUSTOM"></span>
-	  <kbd>embedded-text-editor $WINDOW $PATH</kbd>
+	  <kbd>embedded-text-editor $WINDOW $FILE</kbd>
 	</label>
+
+	<div id="customInstructions">
+	  <span i18n-content="CUSTOM_COMMAND_INSTRUCTIONS"></span>
+<pre><code>#!/bin/sh
+WINDOW="$1"
+FILE="$2"
+exec urxvt -embed "$WINDOW" -e nano "$FILE"
+</code></pre>
+	</div>
       </div>
     </section>
 

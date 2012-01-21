@@ -21,6 +21,7 @@ function localizeElements() {
 function setup() {
     localizeElements();
     loadOptions();
+    updateInstructions();
 
     // Hook up listeners.
     var editorOptions = document.getElementsByName("editor");
@@ -29,6 +30,12 @@ function setup() {
     }
     document.getElementById("triggerAltX").addEventListener("change", saveOptions);
     document.getElementById("triggerDoubleClick").addEventListener("change", saveOptions);
+}
+
+function updateInstructions() {
+    var customInstructions = document.getElementById("customInstructions");
+    var editorOptionCustom = document.getElementById("editorOptionCustom");
+    customInstructions.hidden = !editorOptionCustom.checked;
 }
 
 function loadOptions() {
@@ -50,6 +57,8 @@ function saveOptions() {
 
     localStorage["triggerAltX"] = (document.getElementById("triggerAltX").checked ? "true" : "false");
     localStorage["triggerDoubleClick"] = (document.getElementById("triggerDoubleClick").checked ? "true" : "false");
+
+    updateInstructions();
 }
 
 window.addEventListener("load", setup);
