@@ -14,20 +14,20 @@ G_FORWARD_DECLARE(GThread);
 // A thread that runs a GMainLoop so we don't assume the browser has a
 // glib-based event loop.
 class EventThread {
-  public:
-    EventThread();
-    ~EventThread();
+ public:
+  EventThread();
+  ~EventThread();
 
-    GMainContext* main_context() const { return main_context_; }
+  GMainContext* main_context() const { return main_context_; }
 
-  private:
-    GThread* thread_;
-    GMainContext* main_context_;
-    GMainLoop* main_loop_;
+ private:
+  GThread* thread_;
+  GMainContext* main_context_;
+  GMainLoop* main_loop_;
 
-    static void* threadFunction(void* data);
+  static void* ThreadFunction(void* data);
 
-    DISALLOW_COPY_AND_ASSIGN(EventThread);
+  DISALLOW_COPY_AND_ASSIGN(EventThread);
 };
 
 #endif  // INCLUDED_EVENT_THREAD_H_

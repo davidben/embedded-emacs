@@ -1,3 +1,7 @@
+// Copyright (c) 2012 David Benjamin. All rights reserved.
+// Use of this source code is governed by an MIT-style license that can be
+// found in the LICENSE file.
+
 #include "command_template.h"
 
 #include <assert.h>
@@ -6,7 +10,7 @@
 
 namespace {
 
-bool findVariable(const std::string& pattern,
+bool FindVariable(const std::string& pattern,
                   int pos,
                   std::string *varname,
                   int *endp,
@@ -43,7 +47,7 @@ bool findVariable(const std::string& pattern,
 
 namespace command_template {
 
-bool applyTemplate(const std::string& pattern,
+bool ApplyTemplate(const std::string& pattern,
                    const Environment& env,
                    std::vector<std::string>& argv,
                    std::string *error) {
@@ -54,14 +58,14 @@ bool applyTemplate(const std::string& pattern,
         PARAM_END,
     };
     State state = NONE;
-    std::string curParam;
+    std::string cur_param;
     for (int i = 0; i < pattern.size(); i++) {
         if (state == PARAM_END) {
             // Finish the current parameter.
             if (g_ascii_isspace(pattern[i]))
                 continue;
-            argv.push_back(curParam);
-            curParam.clear();
+            argv.push_back(cur_param);
+            cur_param.clear();
             state = NONE;
         }
 
@@ -100,12 +104,12 @@ bool applyTemplate(const std::string& pattern,
                 // Take care of variables.
                 std::string varname;
                 int end;
-                if (!findVariable(pattern, i, &varname, &end, error)) {
+                if (!FindVariable(pattern, i, &varname, &end, error)) {
                     return false;
                 }
                 Environment::const_iterator iter = env.find(varname);
                 if (iter != env.end())
-                    curParam += iter->second;
+                    cur_param += iter->second;
                 i = end-1;
                 continue;
             }
@@ -117,14 +121,14 @@ bool applyTemplate(const std::string& pattern,
                     *error = "expected character after \\";
                     return false;
                 }
-                curParam += pattern[i+1];
+                cur_param += pattern[i+1];
                 i++;
                 continue;
             }
         }
         // Okay, there's nothing interesting to be done. Just append
         // the character.
-        curParam += pattern[i];
+        cur_param += pattern[i];
     }
 
     if (state == SINGLE_QUOTE) {
@@ -135,12 +139,12 @@ bool applyTemplate(const std::string& pattern,
         *error = "expected \"";
         return false;
     }
-    argv.push_back(curParam);
+    argv.push_back(cur_param);
 
     return true;
 }
 
-char** stringVectorToArgv(const std::vector<std::string>& vec) {
+char** StringVectorToArgv(const std::vector<std::string>& vec) {
     char **argv = g_new(char*, vec.size() + 1);
     for (int i = 0; i < vec.size(); i++) {
         argv[i] = g_strdup(vec[i].c_str());

@@ -1,6 +1,7 @@
 // Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
+
 #ifndef INCLUDED_EMACS_INSTANCE_H_
 #define INCLUDED_EMACS_INSTANCE_H_
 
@@ -17,39 +18,39 @@ G_FORWARD_DECLARE(GtkWidget);
 typedef struct NPObject NPObject;
 
 class EmacsInstance {
-  public:
-    EmacsInstance(EmacsManager* parent,
-                  long window_id,
-                  const std::string& editor_command,
-                  const std::string& initial_text,
-                  NPObject *callback);
-    ~EmacsInstance();
+ public:
+  EmacsInstance(EmacsManager* parent,
+                long window_id,
+                const std::string& editor_command,
+                const std::string& initial_text,
+                NPObject *callback);
+  ~EmacsInstance();
 
-    // Returns 0 if the launch failed.
-    pid_t pid() const { return child_pid_; }
-    const std::string& error() const { return error_; }
+  // Returns 0 if the launch failed.
+  pid_t pid() const { return child_pid_; }
+  const std::string& error() const { return error_; }
 
-    int job_id() const { return job_id_; }
-    void set_job_id(int job_id) { job_id_ = job_id; }
+  int job_id() const { return job_id_; }
+  void set_job_id(int job_id) { job_id_ = job_id; }
 
-    EmacsManager* manager() const { return parent_; }
+  EmacsManager* manager() const { return parent_; }
 
-    void childExited(pid_t pid, int status);
-private:
-    bool startEditor(long window_id,
-                     const std::string& editor_command,
-                     const std::string& initial_text);
+  void ChildExited(pid_t pid, int status);
+ private:
+  bool StartEditor(long window_id,
+                   const std::string& editor_command,
+                   const std::string& initial_text);
 
-    EmacsManager *parent_;
-    std::string error_;
-    pid_t child_pid_;
-    npapi::scoped_npobject<NPObject> callback_;
-    int job_id_;
-    GtkWidget* plug_;
+  EmacsManager *parent_;
+  std::string error_;
+  pid_t child_pid_;
+  npapi::scoped_npobject<NPObject> callback_;
+  int job_id_;
+  GtkWidget* plug_;
 
-    std::string temp_file_;
+  std::string temp_file_;
 
-    DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
+  DISALLOW_COPY_AND_ASSIGN(EmacsInstance);
 };
 
 #endif  // INCLUDED_EMACS_INSTANCE_H_

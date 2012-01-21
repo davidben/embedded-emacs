@@ -1,6 +1,7 @@
 // Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
+
 #include "npapi-cxx/script_object.h"
 
 #include "npapi-cxx/plugin_instance.h"
@@ -8,130 +9,131 @@
 namespace npapi {
 
 ScriptObjectBase::ScriptObjectBase(NPP npp)
-        : npp_(npp) {
+    : npp_(npp) {
 }
 
 ScriptObjectBase::~ScriptObjectBase() {
 }
 
-PluginInstance* ScriptObjectBase::pluginInstance() {
-    return PluginInstance::fromNPP(npp_);
+PluginInstance* ScriptObjectBase::plugin_instance() {
+  return PluginInstance::from_npp(npp_);
 }
 
-void ScriptObjectBase::invalidate() {
-    npp_ = NULL;
+void ScriptObjectBase::Invalidate() {
+  npp_ = NULL;
 }
 
-bool ScriptObjectBase::hasMethod(NPIdentifier name) {
+bool ScriptObjectBase::HasMethod(NPIdentifier name) {
+  return false;
+}
+
+bool ScriptObjectBase::Invoke(NPIdentifier name,
+                              const NPVariant *args,
+                              uint32_t arg_count,
+                              NPVariant *result) {
+  return false;
+}
+
+bool ScriptObjectBase::InvokeDefault(const NPVariant *args,
+                                     uint32_t arg_count,
+                                     NPVariant *result) {
     return false;
 }
 
-bool ScriptObjectBase::invoke(NPIdentifier name,
-                          const NPVariant *args,
-                          uint32_t argCount,
-                          NPVariant *result) {
+bool ScriptObjectBase::HasProperty(NPIdentifier name) {
+  return false;
+}
+
+bool ScriptObjectBase::GetProperty(NPIdentifier name, NPVariant *result) {
+  return false;
+}
+
+bool ScriptObjectBase::SetProperty(NPIdentifier name, const NPVariant *value) {
     return false;
 }
 
-bool ScriptObjectBase::invokeDefault(const NPVariant *args,
-                                 uint32_t argCount,
+bool ScriptObjectBase::RemoveProperty(NPIdentifier name) {
+    return false;
+}
+
+bool ScriptObjectBase::Enumerate(NPIdentifier **identifiers,
+                                 uint32_t *identifier_count) {
+    return false;
+}
+
+bool ScriptObjectBase::Construct(const NPVariant *args, uint32_t arg_count,
                                  NPVariant *result) {
     return false;
 }
 
-bool ScriptObjectBase::hasProperty(NPIdentifier name) {
-    return false;
-}
-
-bool ScriptObjectBase::getProperty(NPIdentifier name, NPVariant *result) {
-    return false;
-}
-
-bool ScriptObjectBase::setProperty(NPIdentifier name, const NPVariant *value) {
-    return false;
-}
-
-bool ScriptObjectBase::removeProperty(NPIdentifier name) {
-    return false;
-}
-
-bool ScriptObjectBase::enumerate(NPIdentifier **identifiers,
-                             uint32_t *identifierCount) {
-    return false;
-}
-
-bool ScriptObjectBase::construct(const NPVariant *args, uint32_t argCount,
-                             NPVariant *result) {
-    return false;
+// static
+void ScriptObjectBase::DeallocateThunk(NPObject *npobj) {
+  delete static_cast<ScriptObjectBase*>(npobj);
 }
 
 // static
-void ScriptObjectBase::deallocateThunk(NPObject *npobj) {
-    delete static_cast<ScriptObjectBase*>(npobj);
+void ScriptObjectBase::InvalidateThunk(NPObject *npobj) {
+  static_cast<ScriptObjectBase*>(npobj)->Invalidate();
 }
 
 // static
-void ScriptObjectBase::invalidateThunk(NPObject *npobj) {
-    static_cast<ScriptObjectBase*>(npobj)->invalidate();
+bool ScriptObjectBase::HasMethodThunk(NPObject *npobj, NPIdentifier name) {
+  return static_cast<ScriptObjectBase*>(npobj)->HasMethod(name);
 }
 
 // static
-bool ScriptObjectBase::hasMethodThunk(NPObject *npobj, NPIdentifier name) {
-    return static_cast<ScriptObjectBase*>(npobj)->hasMethod(name);
+bool ScriptObjectBase::InvokeThunk(
+    NPObject *npobj, NPIdentifier name,
+    const NPVariant *args, uint32_t arg_count, NPVariant *result) {
+  return static_cast<ScriptObjectBase*>(npobj)->Invoke(name, args, arg_count,
+                                                       result);
 }
 
 // static
-bool ScriptObjectBase::invokeThunk(NPObject *npobj, NPIdentifier name,
-                               const NPVariant *args, uint32_t argCount,
-                               NPVariant *result) {
-    return static_cast<ScriptObjectBase*>(npobj)->invoke(name, args, argCount,
-                                                         result);
+bool ScriptObjectBase::InvokeDefaultThunk(
+    NPObject *npobj, const NPVariant *args, uint32_t arg_count,
+    NPVariant *result) {
+  return static_cast<ScriptObjectBase*>(npobj)->InvokeDefault(
+      args, arg_count, result);
 }
 
 // static
-bool ScriptObjectBase::invokeDefaultThunk(NPObject *npobj,
-                                          const NPVariant *args, uint32_t argCount,
-                                          NPVariant *result) {
-    return static_cast<ScriptObjectBase*>(npobj)->invokeDefault(
-        args, argCount, result);
+bool ScriptObjectBase::HasPropertyThunk(NPObject *npobj, NPIdentifier name) {
+  return static_cast<ScriptObjectBase*>(npobj)->HasProperty(name);
 }
 
 // static
-bool ScriptObjectBase::hasPropertyThunk(NPObject *npobj, NPIdentifier name) {
-    return static_cast<ScriptObjectBase*>(npobj)->hasProperty(name);
-}
-
-// static
-bool ScriptObjectBase::getPropertyThunk(NPObject *npobj,
+bool ScriptObjectBase::GetPropertyThunk(NPObject *npobj,
                                         NPIdentifier name,
                                         NPVariant *result) {
-    return static_cast<ScriptObjectBase*>(npobj)->getProperty(name, result);
+  return static_cast<ScriptObjectBase*>(npobj)->GetProperty(name, result);
 }
 
 // static
-bool ScriptObjectBase::setPropertyThunk(NPObject *npobj,
+bool ScriptObjectBase::SetPropertyThunk(NPObject *npobj,
                                         NPIdentifier name,
                                         const NPVariant *value) {
-    return static_cast<ScriptObjectBase*>(npobj)->setProperty(name, value);
+  return static_cast<ScriptObjectBase*>(npobj)->SetProperty(name, value);
 }
 
 // static
-bool ScriptObjectBase::removePropertyThunk(NPObject *npobj, NPIdentifier name) {
-    return static_cast<ScriptObjectBase*>(npobj)->removeProperty(name);
+bool ScriptObjectBase::RemovePropertyThunk(NPObject *npobj, NPIdentifier name) {
+  return static_cast<ScriptObjectBase*>(npobj)->RemoveProperty(name);
 }
 
 // static
-bool ScriptObjectBase::enumerateThunk(NPObject *npobj, NPIdentifier **identifiers,
-                                  uint32_t *identifierCount) {
-    return static_cast<ScriptObjectBase*>(npobj)->enumerate(identifiers,
-                                                        identifierCount);
+bool ScriptObjectBase::EnumerateThunk(NPObject *npobj,
+                                      NPIdentifier **identifiers,
+                                      uint32_t *identifier_count) {
+  return static_cast<ScriptObjectBase*>(npobj)->Enumerate(identifiers,
+                                                          identifier_count);
 }
 
 // static
-bool ScriptObjectBase::constructThunk(NPObject *npobj,
-                                  const NPVariant *args, uint32_t argCount,
-                                  NPVariant *result) {
-    return static_cast<ScriptObjectBase*>(npobj)->construct(args, argCount, result);
+bool ScriptObjectBase::ConstructThunk(NPObject *npobj,
+                                      const NPVariant *args, uint32_t arg_count,
+                                      NPVariant *result) {
+  return static_cast<ScriptObjectBase*>(npobj)->Construct(args, arg_count, result);
 }
 
 }  // namespace npapi

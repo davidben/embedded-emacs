@@ -10,12 +10,12 @@
 
 namespace {
 
-void deleteTask(void *ptr) {
-    delete static_cast<npapi::Task*>(ptr);
+void DeleteTaskThunk(void *ptr) {
+  delete static_cast<npapi::Task*>(ptr);
 }
 
-void processTasksThunk(void *ptr) {
-    static_cast<npapi::PluginInstance*>(ptr)->processTasks();
+void ProcessTasksThunk(void *ptr) {
+  static_cast<npapi::PluginInstance*>(ptr)->ProcessTasks();
 }
 
 }  // namespace
@@ -23,44 +23,40 @@ void processTasksThunk(void *ptr) {
 namespace npapi {
 
 PluginInstance::PluginInstance(NPP npp)
-        : npp_(npp) {
-    npp_->pdata = this;
-    task_queue_ = g_async_queue_new_full(deleteTask);
+    : npp_(npp) {
+  npp_->pdata = this;
+  task_queue_ = g_async_queue_new_full(DeleteTaskThunk);
 }
 
 PluginInstance::~PluginInstance() {
-    g_async_queue_unref(task_queue_);
-    npp_->pdata = NULL;
+  g_async_queue_unref(task_queue_);
+  npp_->pdata = NULL;
 }
 
-NPP PluginInstance::npp() {
-    return npp_;
+void PluginInstance::PostTask(Task* task) {
+  if (!task) return;
+  g_async_queue_push(task_queue_, task);
+  // No memory is allocated, so we don't care if this runs or
+  // not. It may also run more often than necessary, but that's
+  // okay.
+  NPN_PluginThreadAsyncCall(npp_, ProcessTasksThunk, this);
 }
 
-void PluginInstance::postTask(Task* task) {
-    if (!task) return;
-    g_async_queue_push(task_queue_, task);
-    // No memory is allocated, so we don't care if this runs or
-    // not. It may also run more often than necessary, but that's
-    // okay.
-    NPN_PluginThreadAsyncCall(npp_, processTasksThunk, this);
+void PluginInstance::ProcessTasks() {
+  void* data;
+  while ((data = g_async_queue_try_pop(task_queue_))) {
+    Task* task = static_cast<Task*>(data);
+    task->Run(this);
+    delete task;
+  }
 }
 
-void PluginInstance::processTasks() {
-    void* data;
-    while ((data = g_async_queue_try_pop(task_queue_))) {
-        Task* task = static_cast<Task*>(data);
-        task->run(this);
-        delete task;
-    }
+NPError PluginInstance::SetWindow(NPWindow* window) {
+  return NPERR_NO_ERROR;
 }
 
-NPError PluginInstance::setWindow(NPWindow* window) {
-    return NPERR_NO_ERROR;
-}
-
-NPError PluginInstance::getValue(NPPVariable variable, void* value) {
-    return NPERR_INVALID_PARAM;
+NPError PluginInstance::GetValue(NPPVariable variable, void* value) {
+  return NPERR_INVALID_PARAM;
 }
 
 }  // namespace npapi

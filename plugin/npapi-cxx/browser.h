@@ -1,6 +1,7 @@
 // Copyright (c) 2010 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
+
 #ifndef INCLUDED_BROWSER_H_
 #define INCLUDED_BROWSER_H_
 
@@ -12,6 +13,6 @@
 
 typedef struct _NPNetscapeFuncs NPNetscapeFuncs;
 
-NPError initializeBrowserFuncs(NPNetscapeFuncs* bFuncs);
+NPError InitializeBrowserFuncs(NPNetscapeFuncs* bFuncs);
 
 #endif  // INCLUDED_BROWSER_H_

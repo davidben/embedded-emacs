@@ -1,6 +1,7 @@
 // Copyright (c) 2012 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
+
 #ifndef INCLUDED_EMACS_MANAGER_H_
 #define INCLUDED_EMACS_MANAGER_H_
 
@@ -20,28 +21,28 @@ typedef struct NPObject NPObject;
 
 // There really should only ever be one instance of this class.
 class EmacsManager : public npapi::PluginInstance {
-  public:
-    EmacsManager(NPP npp);
-    ~EmacsManager();
+ public:
+  EmacsManager(NPP npp);
+  ~EmacsManager();
 
-    int startEditor(long windowId,
-                    const std::string& editorCommand,
-                    const std::string& initialText,
-		    NPObject *callback,
-		    std::string *error);
-    // TODO: Implement some way to cancel a job?
+  int StartEditor(long window_id,
+                  const std::string& editor_command,
+                  const std::string& initial_text,
+                  NPObject *callback,
+                  std::string *error);
+  // TODO: Implement some way to cancel a job?
 
-    void childExited(EmacsInstance* instance, pid_t pid, int status);
+  void ChildExited(EmacsInstance* instance, pid_t pid, int status);
 
-    NPError getValue(NPPVariable variable, void* value);
-  private:
-    int next_job_id_;
-    npapi::scoped_npobject<EmacsObject> script_object_;
-    std::tr1::unordered_map<int, EmacsInstance*> emacs_jobs_;
+  NPError GetValue(NPPVariable variable, void* value);
+ private:
+  int next_job_id_;
+  npapi::scoped_npobject<EmacsObject> script_object_;
+  std::tr1::unordered_map<int, EmacsInstance*> emacs_jobs_;
 
-    EventThread *event_thread_;
+  EventThread *event_thread_;
 
-    DISALLOW_COPY_AND_ASSIGN(EmacsManager);
+  DISALLOW_COPY_AND_ASSIGN(EmacsManager);
 };
 
 #endif  // INCLUDED_EMACS_MANAGER_H_

@@ -1,6 +1,7 @@
 // Copyright (c) 2011 David Benjamin. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
 // found in the LICENSE file.
+
 #ifndef INCLUDED_SCRIPT_OBJECT_H_
 #define INCLUDED_SCRIPT_OBJECT_H_
 
@@ -13,95 +14,95 @@ namespace npapi {
 class PluginInstance;
 
 class ScriptObjectBase : public NPObject {
-public:
-    virtual void invalidate();
-    virtual bool hasMethod(NPIdentifier name);
-    virtual bool invoke(NPIdentifier name,
-                        const NPVariant *args,
-                        uint32_t argCount,
-                        NPVariant *result);
-    virtual bool invokeDefault(const NPVariant *args, uint32_t argCount,
+ public:
+  virtual void Invalidate();
+  virtual bool HasMethod(NPIdentifier name);
+  virtual bool Invoke(NPIdentifier name,
+                      const NPVariant *args,
+                      uint32_t arg_count,
+                      NPVariant *result);
+  virtual bool InvokeDefault(const NPVariant *args, uint32_t arg_count,
+                             NPVariant *result);
+  virtual bool HasProperty(NPIdentifier name);
+  virtual bool GetProperty(NPIdentifier name, NPVariant *result);
+  virtual bool SetProperty(NPIdentifier name, const NPVariant *value);
+  virtual bool RemoveProperty(NPIdentifier name);
+  virtual bool Enumerate(NPIdentifier **identifiers,
+                         uint32_t *identifier_count);
+  virtual bool Construct(const NPVariant *args, uint32_t arg_count,
+                         NPVariant *result);
+
+  PluginInstance* plugin_instance();
+
+ protected:
+  static void DeallocateThunk(NPObject *npobj);
+  static void InvalidateThunk(NPObject *npobj);
+  static bool HasMethodThunk(NPObject *npobj, NPIdentifier name);
+  static bool InvokeThunk(NPObject *npobj, NPIdentifier name,
+                          const NPVariant *args, uint32_t arg_count,
+                          NPVariant *result);
+  static bool InvokeDefaultThunk(NPObject *npobj,
+                                 const NPVariant *args, uint32_t arg_count,
+                                 NPVariant *result);
+  static bool HasPropertyThunk(NPObject *npobj, NPIdentifier name);
+  static bool GetPropertyThunk(NPObject *npobj,
+                               NPIdentifier name,
                                NPVariant *result);
-    virtual bool hasProperty(NPIdentifier name);
-    virtual bool getProperty(NPIdentifier name, NPVariant *result);
-    virtual bool setProperty(NPIdentifier name, const NPVariant *value);
-    virtual bool removeProperty(NPIdentifier name);
-    virtual bool enumerate(NPIdentifier **identifiers,
-                           uint32_t *identifierCount);
-    virtual bool construct(const NPVariant *args, uint32_t argCount,
-                           NPVariant *result);
+  static bool SetPropertyThunk(NPObject *npobj,
+                               NPIdentifier name,
+                               const NPVariant *value);
+  static bool RemovePropertyThunk(NPObject *npobj, NPIdentifier name);
+  static bool EnumerateThunk(NPObject *npobj, NPIdentifier **identifiers,
+                             uint32_t *identifier_count);
+  static bool ConstructThunk(NPObject *npobj,
+                             const NPVariant *args,
+                             uint32_t arg_count,
+                             NPVariant *result);
+  ScriptObjectBase(NPP npp);
+  ~ScriptObjectBase();
 
-    PluginInstance* pluginInstance();
+  NPP npp_;
 
-protected:
-    static void deallocateThunk(NPObject *npobj);
-    static void invalidateThunk(NPObject *npobj);
-    static bool hasMethodThunk(NPObject *npobj, NPIdentifier name);
-    static bool invokeThunk(NPObject *npobj, NPIdentifier name,
-			    const NPVariant *args, uint32_t argCount,
-			    NPVariant *result);
-    static bool invokeDefaultThunk(NPObject *npobj,
-				   const NPVariant *args, uint32_t argCount,
-				   NPVariant *result);
-    static bool hasPropertyThunk(NPObject *npobj, NPIdentifier name);
-    static bool getPropertyThunk(NPObject *npobj,
-				 NPIdentifier name,
-				 NPVariant *result);
-    static bool setPropertyThunk(NPObject *npobj,
-				 NPIdentifier name,
-				 const NPVariant *value);
-    static bool removePropertyThunk(NPObject *npobj, NPIdentifier name);
-    static bool enumerateThunk(NPObject *npobj, NPIdentifier **identifiers,
-			       uint32_t *identifierCount);
-    static bool constructThunk(NPObject *npobj,
-			       const NPVariant *args,
-			       uint32_t argCount,
-			       NPVariant *result);
-    ScriptObjectBase(NPP npp);
-    ~ScriptObjectBase();
-
-    NPP npp_;
-
-  private:
-    DISALLOW_COPY_AND_ASSIGN(ScriptObjectBase);
+ private:
+  DISALLOW_COPY_AND_ASSIGN(ScriptObjectBase);
 };
 
 template <class T>
 class ScriptObject : public ScriptObjectBase {
-  public:
-    static T* create(NPP npp) {
-        return static_cast<T*>(NPN_CreateObject(npp, &npclass));
-    }
+ public:
+  static T* Create(NPP npp) {
+    return static_cast<T*>(NPN_CreateObject(npp, &npclass));
+  }
 
-  protected:
-    static NPClass npclass;
+ protected:
+  static NPClass npclass;
 
-    static NPObject* allocateThunk(NPP npp, NPClass *aClass) {
-        return new T(npp);
-    }
+  static NPObject* AllocateThunk(NPP npp, NPClass *aClass) {
+    return new T(npp);
+  }
 
-    ScriptObject(NPP npp) : ScriptObjectBase(npp) {}
+  ScriptObject(NPP npp) : ScriptObjectBase(npp) {}
 
-  private:
-    DISALLOW_COPY_AND_ASSIGN(ScriptObject<T>);
+ private:
+  DISALLOW_COPY_AND_ASSIGN(ScriptObject<T>);
 };
 
 // Apparently I'm not allowed to define this inline. Okay, then.
 template <class T>
 NPClass ScriptObject<T>::npclass = {
-    NP_CLASS_STRUCT_VERSION,
-    ScriptObject::allocateThunk,  // allocate
-    ScriptObjectBase::deallocateThunk,  // deallocate
-    ScriptObjectBase::invalidateThunk,  // invalidate
-    ScriptObjectBase::hasMethodThunk,  // hasMethod
-    ScriptObjectBase::invokeThunk,  // invoke
-    ScriptObjectBase::invokeDefaultThunk,  // invokeDefault
-    ScriptObjectBase::hasPropertyThunk,  // hasProperty
-    ScriptObjectBase::getPropertyThunk,  // getProperty
-    ScriptObjectBase::setPropertyThunk,  // setProperty
-    ScriptObjectBase::removePropertyThunk,  // removeProperty
-    ScriptObjectBase::enumerateThunk,  // enumerate
-    ScriptObjectBase::constructThunk,  // construct
+  NP_CLASS_STRUCT_VERSION,
+  ScriptObject::AllocateThunk,  // allocate
+  ScriptObjectBase::DeallocateThunk,  // deallocate
+  ScriptObjectBase::InvalidateThunk,  // invalidate
+  ScriptObjectBase::HasMethodThunk,  // hasMethod
+  ScriptObjectBase::InvokeThunk,  // invoke
+  ScriptObjectBase::InvokeDefaultThunk,  // invokeDefault
+  ScriptObjectBase::HasPropertyThunk,  // hasProperty
+  ScriptObjectBase::GetPropertyThunk,  // getProperty
+  ScriptObjectBase::SetPropertyThunk,  // setProperty
+  ScriptObjectBase::RemovePropertyThunk,  // removeProperty
+  ScriptObjectBase::EnumerateThunk,  // enumerate
+  ScriptObjectBase::ConstructThunk,  // construct
 };
 
 }  // namespace npapi
