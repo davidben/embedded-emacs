@@ -5,7 +5,7 @@
 // Initialize default settings:
 function initDefaultSettings() {
     var defaultSettings = {
-        commandPattern: 'emacs --parent-id $WINDOW -- $PATH',
+        editorType: "emacs",
         triggerAltX: true,
         triggerDoubleClick: false
     };
