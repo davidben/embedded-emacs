@@ -12,24 +12,26 @@
     <section>
       <h2 i18n-content="EDITOR_SECTION_TITLE"></h2>
       <div>
-	<span i18n-content="EDITOR_COMMAND_LABEL"></span>
-	<label class="editorOption">
-	  <input type="radio" value="emacs" name="editor">
-	  <span i18n-content="PRESET_NAME_EMACS"></span>
-	  <kbd>emacs --parent-id $WINDOW -- $FILE</kbd>
-	</label>
+	<p>
+	  <span i18n-content="EDITOR_COMMAND_LABEL"></span>
+	  <label class="editorOption">
+	    <input type="radio" value="emacs" name="editor">
+	    <span i18n-content="PRESET_NAME_EMACS"></span>
+	    <kbd>emacs --parent-id $WINDOW -- $FILE</kbd>
+	  </label>
 
-	<label class="editorOption">
-	  <input type="radio" value="gvim" name="editor">
-	  <span i18n-content="PRESET_NAME_GVIM"></span>
-	  <kbd>gvim --nofork --socketid $WINDOW -- $FILE</kbd>
-	</label>
+	  <label class="editorOption">
+	    <input type="radio" value="gvim" name="editor">
+	    <span i18n-content="PRESET_NAME_GVIM"></span>
+	    <kbd>gvim --nofork --socketid $WINDOW -- $FILE</kbd>
+	  </label>
 
-	<label class="editorOption">
-	  <input type="radio" value="custom" name="editor" id="editorOptionCustom">
-	  <span i18n-content="PRESET_NAME_CUSTOM"></span>
-	  <kbd>embedded-text-editor $WINDOW $FILE</kbd>
-	</label>
+	  <label class="editorOption">
+	    <input type="radio" value="custom" name="editor" id="editorOptionCustom">
+	    <span i18n-content="PRESET_NAME_CUSTOM"></span>
+	    <kbd>embedded-text-editor $WINDOW $FILE</kbd>
+	  </label>
+	</p>
 
 	<div id="customInstructions">
 	  <span i18n-content="CUSTOM_COMMAND_INSTRUCTIONS"></span>
