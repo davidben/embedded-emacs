@@ -19,6 +19,7 @@
      "48": "icon-48.png",
     "128": "icon-128.png"
   },
+  "offline_enabled": true,
   "options_page": "options.html",
   "plugins": [
     { "path": "libembedded-emacs-launcher-i386.so" },
