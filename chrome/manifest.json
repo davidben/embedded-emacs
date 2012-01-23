@@ -21,9 +21,9 @@
   },
   "options_page": "options.html",
   "plugins": [
-    { "path": "libembedded-emacs-launcher-32.so" },
-    { "path": "libembedded-emacs-launcher-64.so" },
-    { "path": "libembedded-emacs-container-32.so", "public": true },
-    { "path": "libembedded-emacs-container-64.so", "public": true }
+    { "path": "libembedded-emacs-launcher-i386.so" },
+    { "path": "libembedded-emacs-launcher-x86_64.so" },
+    { "path": "libembedded-emacs-container-i386.so", "public": true },
+    { "path": "libembedded-emacs-container-x86_64.so", "public": true }
   ]
 }
