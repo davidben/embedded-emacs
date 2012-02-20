@@ -32,7 +32,6 @@ env.Append(CPPPATH=['.'])
 # Hide symbols unless told otherwise.
 env.Append(CCFLAGS=['-fvisibility=hidden', '-fvisibility-inlines-hidden', '-Wall'])
 
-# Only pull in the header files; link against NSPR later if needbe.
 env.ParseConfig('pkg-config --cflags --libs glib-2.0')
 env.ParseConfig('pkg-config --cflags --libs gthread-2.0')
 env.ParseConfig('pkg-config --cflags --libs gtk+-2.0')
