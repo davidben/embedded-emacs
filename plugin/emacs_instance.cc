@@ -53,6 +53,7 @@ bool EmacsInstance::StartEditor(long window_id,
   if (fd < 0) {
     error_ = "failed to create temporary file: ";
     error_ += gerror->message;
+    g_error_free(gerror);
     return false;
   }
   temp_file_.assign(name);
