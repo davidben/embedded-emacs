@@ -62,13 +62,6 @@ function hookTextArea(node, config) {
             return;
         }
 
-        function onAttrModified(ev) {
-            if (ev.attrName !== "style")
-                return;
-            relayout();
-        }
-        // FIXME: This doesn't actually catch CSS changes.
-        node.addEventListener("DOMAttrModified", onAttrModified);
         window.addEventListener("resize", relayout);
 
         // FIXME: If another script decides to change this value
@@ -81,7 +74,6 @@ function hookTextArea(node, config) {
             text: node.value,
             windowId: embed.windowId
         }, function (text) {
-            node.removeEventListener("DOMAttrModified", onAttrModified);
             window.removeEventListener("resize", relayout);
 
             node.value = text;
